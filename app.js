@@ -3,8 +3,8 @@ AdmZip = require('adm-zip'),
 pm2 = require('pm2'),
 moment = require('moment'), 
 express = require("express"),
- moment = require('jalali-moment'),
- fileUpload = require('express-fileupload'),
+moment = require('jalali-moment'),
+fileUpload = require('express-fileupload'),
   roundTo = require('round-to'),
 mysql = require('mysql2'),
 transaction = require('node-mysql-transaction'),
@@ -1521,7 +1521,7 @@ app.use('/', billRoutes);
                         con.query("select * from stack_factory_registration ",function(err,rows_02)
                         {
 
-                            con.query("SELECT MAX(id) as new_bill , bill_no FROM stack_to_market_details", function(err,rows_04)
+                            con.query("SELECT id as new_bill, bill_no FROM stack_to_market_details ORDER BY id DESC LIMIT 1", function(err,rows_04)
                            {
                             if(err){
                                 console.error("Error fetching stack_to_market_details:", err);
