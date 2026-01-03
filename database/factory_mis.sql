@@ -54,6 +54,25 @@ INSERT INTO `bill_details` (`id`, `bill_id`, `item_name`, `item_type`, `quantity
 -- --------------------------------------------------------
 
 --
+-- Table structure for table `bill_items`
+--
+
+CREATE TABLE `bill_items` (
+  `id` int(11) NOT NULL,
+  `bill_detail_id` int(11) NOT NULL,
+  `item_name` varchar(50) COLLATE utf8mb4_persian_ci NOT NULL,
+  `item_type` varchar(20) COLLATE utf8mb4_persian_ci NOT NULL,
+  `quantity` float NOT NULL,
+  `price` float NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_persian_ci;
+
+--
+-- Dumping data for table `bill_items`
+--
+
+-- --------------------------------------------------------
+
+--
 -- Table structure for table `company_info`
 --
 
@@ -966,6 +985,13 @@ ALTER TABLE `bill_details`
   ADD KEY `item_id` (`item_name`);
 
 --
+-- Indexes for table `bill_items`
+--
+ALTER TABLE `bill_items`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `bill_detail_id` (`bill_detail_id`);
+
+--
 -- Indexes for table `company_info`
 --
 ALTER TABLE `company_info`
@@ -1216,6 +1242,11 @@ ALTER TABLE `users`
 ALTER TABLE `bill_details`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
 --
+-- AUTO_INCREMENT for table `bill_items`
+--
+ALTER TABLE `bill_items`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+--
 -- AUTO_INCREMENT for table `company_info`
 --
 ALTER TABLE `company_info`
@@ -1409,6 +1440,12 @@ ALTER TABLE `users`
 --
 ALTER TABLE `bill_details`
   ADD CONSTRAINT `bill_details_ibfk_1` FOREIGN KEY (`bill_id`) REFERENCES `froshat_details` (`id`);
+
+--
+-- Constraints for table `bill_items`
+--
+ALTER TABLE `bill_items`
+  ADD CONSTRAINT `bill_items_ibfk_1` FOREIGN KEY (`bill_detail_id`) REFERENCES `bill_details` (`id`) ON DELETE CASCADE;
 
 --
 -- Constraints for table `constant`

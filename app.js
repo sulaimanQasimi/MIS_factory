@@ -60,24 +60,14 @@ app.use(fileUpload())
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(urlencodedParser);
 
- 
-var con = mysql.createConnection({
-    user: 'root',
-    password: 'S11solai',
-    host: 'localhost',
-    dateStrings:true,
-    database: 'factory_mis',
-    charset: 'utf8',
-    
-    });
-    
-    con.connect(function(err) {
-    if (err){
-      console.log(err);
-    } else{
-    console.log("Connected!");
-    }
-    });
+// Import database connection
+var con = require('./config/database');
+
+// Import route files
+var billRoutes = require('./routes/billRoutes');
+
+// Use bill routes
+app.use('/', billRoutes);
     
 /* 
     mysqlDump({
@@ -369,8 +359,18 @@ var con = mysql.createConnection({
 
                   con.query("select * from company_info ", function(err,rows_02)
                   {
-                    con.query("select * from bill_details where bill_id = '"+req.query.customer_id+"' ", function(err,rows_05)
+                    // Query bill_items by joining with bill_details
+                    con.query("SELECT bill_items.*, bill_details.bill_id FROM bill_items INNER JOIN bill_details ON bill_items.bill_detail_id = bill_details.id WHERE bill_details.bill_id = '"+req.query.customer_id+"' ", function(err,rows_05)
                     {
+                        if(err) {
+                            console.error("Error loading bill items:", err);
+                            rows_05 = [];
+                        }
+                        
+                        // Check if rows_05 exists and is an array
+                        if(!rows_05 || !Array.isArray(rows_05)) {
+                            rows_05 = [];
+                        }
                         con.query("select * from stack_to_market ", function(err,rows_03)
                       {
                            con.query("SELECT froshat_details.email,froshat_details.bill_no,froshat_details.contact,froshat_details.total_amount,froshat_details.paid_amount, customer_account.name FROM froshat_details INNER JOIN customer_account ON froshat_details.cus_id = customer_account.id WHERE froshat_details.id = '"+req.query.customer_id+"' ", function(err,rows_04)
@@ -856,7 +856,25 @@ var con = mysql.createConnection({
 
            app.post('/froshat_details', function(req,res)
            {
-               
+            // Validate required fields
+            if(!req.body.bill_no2) {
+                return res.status(400).send("نمبر بل خالی است!");
+            }
+            if(!req.body.dis_type) {
+                return res.status(400).send("نام دکان را انتخاب کنید!");
+            }
+            if(!req.body.data_man) {
+                return res.status(400).send("تاریخ را وارد کنید!");
+            }
+            if(!req.body.to_dollar || req.body.to_dollar === '') {
+                return res.status(400).send("نرخ تبدیل را وارد کنید!");
+            }
+            if(!req.body.currency) {
+                return res.status(400).send("واحد پولی را انتخاب کنید!");
+            }
+            if(!req.body.item || (Array.isArray(req.body.item) && req.body.item.length === 0)) {
+                return res.status(400).send("حداقل یک جنس اضافه کنید!");
+            }
 
             var items = [];
             var new_items = [];
@@ -869,60 +887,106 @@ var con = mysql.createConnection({
             var stak_to_market_id = [];
             var new_stack_to_market_id = [];
 
-            var bill_no = req.body.bill_no2;
-            //console.log(bill_no);
-            // var bill_no2 = req.body.bill_no2;
-             var customer_name = req.body.dis_type;
-             var customer_contact = req.body.customer_contact;
-             var date1 = req.body.data_man;
-             var items = req.body.item;
+            var bill_no = parseInt(req.body.bill_no2) || 0;
+            var customer_name = parseInt(req.body.dis_type) || 0;
+            var customer_contact = req.body.customer_contact || '';
+            var date1 = req.body.data_man;
             
-             var buy_type = req.body.type;
-             var quantity = req.body.quantity;
-             var stak_to_market_id = req.body.stak_to_market;
-                
-             var price = req.body.price;
-             var newstr = "someerr";
+            // Handle items - can be array or string
+            var items_raw = req.body.item;
+            var buy_type_raw = req.body.type;
+            var quantity_raw = req.body.quantity;
+            var stak_to_market_id_raw = req.body.stak_to_market;
+            var price_raw = req.body.price;
+            
+            // Convert to arrays if they're strings
+            if(typeof items_raw === 'string') {
+                items = items_raw.split(',').filter(item => item && item.trim() !== '');
+            } else if(Array.isArray(items_raw)) {
+                items = items_raw.filter(item => item && item.trim() !== '');
+            }
+            
+            if(typeof buy_type_raw === 'string') {
+                buy_type = buy_type_raw.split(',').filter(item => item && item.trim() !== '');
+            } else if(Array.isArray(buy_type_raw)) {
+                buy_type = buy_type_raw.filter(item => item && item.trim() !== '');
+            }
+            
+            if(typeof quantity_raw === 'string') {
+                quantity = quantity_raw.split(',').filter(item => item && item.trim() !== '');
+            } else if(Array.isArray(quantity_raw)) {
+                quantity = quantity_raw.filter(item => item && item.trim() !== '');
+            }
+            
+            if(typeof price_raw === 'string') {
+                price = price_raw.split(',').filter(item => item && item.trim() !== '');
+            } else if(Array.isArray(price_raw)) {
+                price = price_raw.filter(item => item && item.trim() !== '');
+            }
+            
+            if(typeof stak_to_market_id_raw === 'string') {
+                stak_to_market_id = stak_to_market_id_raw.split(',').filter(item => item && item.trim() !== '');
+            } else if(Array.isArray(stak_to_market_id_raw)) {
+                stak_to_market_id = stak_to_market_id_raw.filter(item => item && item.trim() !== '');
+            }
+            
+            if(items.length === 0) {
+                return res.status(400).send("حداقل یک جنس اضافه کنید!");
+            }
+            
+            var newstr = "someerr";
+            var new_items = items.join(',') + "," + newstr;
+            var new_type = buy_type.join(',') + "," + newstr;
+            var new_quantity = quantity.join(',') + "," + newstr;
+            var new_price = price.join(',') + "," + newstr;
+            var new_stack_to_market_id = stak_to_market_id.join(',') + "," + newstr;
 
-             new_items= items += ","+newstr;
-             new_type= buy_type += ","+newstr;
-             new_quantity= quantity += ","+newstr;
-             new_price= price += ","+newstr;
-             new_stack_to_market_id= stak_to_market_id += ","+newstr;
-
-             var items_array = new_items.split(',');
-             var buy_type_array = new_type.split(',');
-             var quantity_array = new_quantity.split(',');
-             var price_array = new_price.split(',');
-             var stak_to_market_id_array = new_stack_to_market_id.split(',');
-             //var total = req.body.total;
-             var total_show = req.body.total_show;
-             var received_show = req.body.reciept_show;
-             var remain_show = req.body.remain_show;
+            var items_array = new_items.split(',').filter(item => item && item.trim() !== 'someerr');
+            var buy_type_array = new_type.split(',').filter(item => item && item.trim() !== 'someerr');
+            var quantity_array = new_quantity.split(',').filter(item => item && item.trim() !== 'someerr');
+            var price_array = new_price.split(',').filter(item => item && item.trim() !== 'someerr');
+            var stak_to_market_id_array = new_stack_to_market_id.split(',').filter(item => item && item.trim() !== 'someerr');
+            
+            var total_show = parseFloat(req.body.total_show) || 0;
+            var received_show = parseFloat(req.body.reciept_show) || 0;
+            var remain_show = parseFloat(req.body.remain_show) || 0;
              
-             var ex_rate = req.body.to_dollar;
-             var currency = req.body.currency;
-            // var date = req.body.data_man;
-             var m = moment.from(date1, 'fa', 'YYYY/MM/DD').locale('en').format('YYYY/MM/DD');
+            var ex_rate = parseFloat(req.body.to_dollar) || 1;
+            var currency = req.body.currency;
+            
+            // Validate and convert date
+            var m;
+            try {
+                m = moment.from(date1, 'fa', 'YYYY/MM/DD').locale('en').format('YYYY-MM-DD');
+            } catch(e) {
+                return res.status(400).send("تاریخ نامعتبر است!");
+            }
 
      con.beginTransaction(function(err) {
         if (err)
         {
-          throw err;
+          return res.status(500).send("خطا در شروع تراکنش: " + err.message);
         }else{
 
 
             con.query("select bill_no from froshat_details where bill_no = '"+bill_no+"'",function(err,rows_001)
             {
+            if(err) {
+                return con.rollback(function() {
+                    res.status(500).send("خطا در بررسی نمبر بل: " + err.message);
+                });
+            }
             if(rows_001.length >0)
             {
-                res.send("معذرت! بل قبلا ثبت شده");
+                return con.rollback(function() {
+                    res.send("معذرت! بل قبلا ثبت شده");
+                });
             }else{
            
                 con.query("INSERT INTO froshat_details(`cus_id`,`contact`,`bill_no`,`total_amount`,`paid_amount`,`currency`,`ex_rate`,`date`) VALUES ('"+customer_name+"','"+customer_contact+"','"+bill_no+"','"+total_show+"','"+received_show+"','"+currency+"','"+ex_rate+"','"+m+"')", function (error, results, fields) {
                   if (error) {
                     return con.rollback(function() {
-                      throw error;
+                      res.status(500).send("خطا در ثبت اطلاعات: " + error.message);
                     });
                   }
                   var lst_id = results.insertId;
@@ -930,28 +994,50 @@ var con = mysql.createConnection({
                    
                    con.query("insert into sales_payments(`sales_id`, `paid`, `currency`, `ex_rate`, `date`) values('"+lst_id+"','"+received_show+"','"+currency+"','"+ex_rate+"','"+m+"')",function(err,rows_009)
                    {
-
+                    if(err) {
+                        return con.rollback(function() {
+                            res.status(500).send("خطا در ثبت پرداخت: " + err.message);
+                        });
+                    }
                    
                    /* here we should save in sales_payments */
-                  for(var i=0;i<items_array.length-1;i++)
+                  for(var i=0;i<items_array.length;i++)
                     {
                         (function(i)
                         {
                             setTimeout(function()
                             {
+                                // First insert into bill_details
                                 con.query("insert into bill_details(bill_id,item_name,item_type,quantity,price) values('"+lst_id+"','"+items_array[i]+"','"+buy_type_array[i]+"','"+quantity_array[i]+"','"+price_array[i]+"')", function (error, results1, fields) {
                                     if (error) {
                                     return con.rollback(function() {
-                                        throw error;
+                                        res.status(500).send("خطا در ثبت جزئیات بل: " + error.message);
                                     });
                                     }
+                                    
+                                    // Get the bill_detail_id from the insert
+                                    var bill_detail_id = results1.insertId;
+                                    
+                                    // Then insert into bill_items
+                                    con.query("insert into bill_items(bill_detail_id,item_name,item_type,quantity,price) values('"+bill_detail_id+"','"+items_array[i]+"','"+buy_type_array[i]+"','"+quantity_array[i]+"','"+price_array[i]+"')", function (error2, results2, fields2) {
+                                        if (error2) {
+                                            return con.rollback(function() {
+                                                res.status(500).send("خطا در ثبت آیتم های بل: " + error2.message);
+                                            });
+                                        }
+                                    });
                                 });
                        
                                             con.query("select * from stack_to_market_lists where id = '"+stak_to_market_id_array[i]+"'", function (error, results2, fields) {
                                                 if (error) {
                                                   return con.rollback(function() {
-                                                    throw error;
+                                                    res.status(500).send("خطا در بررسی موجودی: " + error.message);
                                                   });
+                                                }
+                                                if(!results2 || results2.length === 0) {
+                                                    return con.rollback(function() {
+                                                        res.status(400).send("جنس مورد نظر در موجودی یافت نشد!");
+                                                    });
                                                 }
 
                                                 console.log("web quantity"+quantity_array[i]);
@@ -963,7 +1049,7 @@ var con = mysql.createConnection({
                                                             console.log("update stack_to_market_lists set quantity = '"+update_quantity+"' where id='"+stak_to_market_id_array[i]+"'");
                                                             if (error) {
                                                               return con.rollback(function() {
-                                                                throw error;
+                                                                res.status(500).send("خطا در بروزرسانی موجودی: " + error.message);
                                                               });
                                                             }
 
@@ -973,25 +1059,27 @@ var con = mysql.createConnection({
                                 },i)
                         })(i);
                      }//end of loop
-                     res.send("  موفقانه ثبت شد!");
-
-                     con.commit(function(err) {
-                        if (err) {
-                          return con.rollback(function() {
-                            throw err;
-                          });
-                        }
+                     
+                     // Wait a bit for all async operations to complete, then commit
+                     setTimeout(function() {
+                         con.commit(function(err) {
+                            if (err) {
+                              return con.rollback(function() {
+                                res.status(500).send("خطا در ثبت نهایی: " + err.message);
+                              });
+                            }
+                            res.send("موفقانه ثبت شد!");
+                         });
+                     }, 1000); // Wait 1 second for all setTimeout operations to complete
                 
                 // }
-             });
-           });
-        });
-        }
-        });//end of bill_no query
-        }//end of else 
-       
-        });
-        });
+             }); // end of sales_payments query
+           }); // end of INSERT query
+            }//end of else (line 984)
+        });//end of bill_no query (line 972)
+        }//end of else (line 969)
+        }); // end of beginTransaction (line 965)
+           }); // end of app.post (line 857)
 
         /* testing update froshat details */
         app.post('/update_froshat_details', function(req,res)
@@ -3373,6 +3461,15 @@ var con = mysql.createConnection({
 
                    con.query("SELECT customer_account.company_name, froshat_details.* FROM customer_account INNER JOIN froshat_details ON customer_account.id=froshat_details.cus_id WHERE froshat_details.date BETWEEN '"+f_d+"' AND '"+t_d+"'", function(err,rows_02)
                    {
+                       if(err) {
+                           console.error("Error in query:", err);
+                           return res.status(500).send("خطا در بارگذاری اطلاعات: " + err.message);
+                       }
+                       
+                       // Check if rows_02 exists and is an array
+                       if(!rows_02 || !Array.isArray(rows_02)) {
+                           rows_02 = [];
+                       }
                        
                     var table_data = "";
                     var no =1;
@@ -3900,8 +3997,13 @@ var con = mysql.createConnection({
                        con.query("select * from stack_to_market_lists where item_name ='"+item_name+"' and item_type='"+item_type+"' ",function(err,rows_08)
                         {
                             var stk_qunt = rows_08[0].quantity;
-                       con.query("select * from bill_details where id ='"+bil_id+"' ",function(err,rows_07)
+                       // Query bill_items instead of bill_details
+                       con.query("SELECT bill_items.*, bill_details.bill_id FROM bill_items INNER JOIN bill_details ON bill_items.bill_detail_id = bill_details.id WHERE bill_items.id ='"+bil_id+"' ",function(err,rows_07)
                         {
+                            if(err || !rows_07 || rows_07.length === 0) {
+                                return res.status(500).send("آیتم مورد نظر یافت نشد!");
+                            }
+                            
                             var db_quantity = rows_07[0].quantity;
 
                             if( db_quantity == quantity)
@@ -3926,19 +4028,30 @@ var con = mysql.createConnection({
                         con.query("update stack_to_market_lists set quantity = '"+sta_update_quan+"' where item_name ='"+item_name+"' and item_type='"+item_type+"' ",function(err,rows_02)
                         {
 
-                con.query("UPDATE `bill_details` SET `quantity`='"+quantity+"',`price`='"+price+"' where id = '"+bil_id+"' ", function(err,rows_02)
+                // Update bill_items instead of bill_details
+                con.query("UPDATE `bill_items` SET `quantity`='"+quantity+"',`price`='"+price+"' where id = '"+bil_id+"' ", function(err,rows_02)
                     {
+                        if(err) {
+                            return res.status(500).send("خطا در بروزرسانی آیتم: " + err.message);
+                        }
                         
 
                         
 
-                        con.query("SELECT SUM(price * quantity) as fro_total FROM bill_details WHERE bill_id ='"+fro_id+"'",function(err1,rows_04)
+                        // Calculate total from bill_items
+                        con.query("SELECT SUM(bill_items.price * bill_items.quantity) as fro_total FROM bill_items INNER JOIN bill_details ON bill_items.bill_detail_id = bill_details.id WHERE bill_details.bill_id ='"+fro_id+"'",function(err1,rows_04)
                         {
-                            var fro_total = rows_04[0].fro_total;
+                            if(err1) {
+                                return res.status(500).send("خطا در محاسبه مجموع: " + err1.message);
+                            }
+                            
+                            var fro_total = rows_04[0].fro_total || 0;
                             
                             con.query("update froshat_details set total_amount = '"+fro_total+"' where id ='"+fro_id+"'",function(err1,rows_03)
                             {
-                            
+                                if(err1) {
+                                    return res.status(500).send("خطا در بروزرسانی مجموع: " + err1.message);
+                                }
                                  res.send("hello success");
                             });
                         });
@@ -4076,16 +4189,26 @@ var con = mysql.createConnection({
                       }); 
              });
 
-            app.post('/update_bill_details', function(req,res)
+            // Moved to routes/billRoutes.js
+            /* app.post('/update_bill_details', function(req,res)
             {
                 var my_id =  req.query.param;
 
-                     var  query2 = "SELECT * from bill_details WHERE id = '"+my_id+"'";
+                     // Query bill_items joined with bill_details to get bill_id
+                     var  query2 = "SELECT bill_items.*, bill_details.bill_id FROM bill_items INNER JOIN bill_details ON bill_items.bill_detail_id = bill_details.id WHERE bill_items.id = '"+my_id+"'";
                       con.query(query2,function(err,rows_02)
-                      {    
+                      {
+                          if(err) {
+                              return res.status(500).send("خطا در بارگذاری آیتم: " + err.message);
+                          }
+                          
+                          if(!rows_02 || rows_02.length === 0) {
+                              return res.status(404).send("آیتم مورد نظر یافت نشد!");
+                          }
+                          
                          res.send(rows_02);
                       }); 
-             });//
+             }); */
 
              app.post('/update_formula', function(req,res)
              {
@@ -4223,14 +4346,25 @@ var con = mysql.createConnection({
 
                  // var fro_id =  req.query.bill_detail_id;
 
-                  con.query("select * from bill_details where id = '"+bill_id+"'",function(err4,rows_01)
+                  // First get the bill_item details, then get bill_detail to find bill_id
+                  con.query("SELECT bill_items.*, bill_details.bill_id FROM bill_items INNER JOIN bill_details ON bill_items.bill_detail_id = bill_details.id WHERE bill_items.id = '"+bill_id+"'",function(err4,rows_01)
                   {
+                      if(err4 || !rows_01 || rows_01.length === 0) {
+                          return res.status(500).send("آیتم مورد نظر یافت نشد!");
+                      }
+                      
                       var item_name = rows_01[0].item_name;
                       var item_type = rows_01[0].item_type;
                       var bill_qunatity = rows_01[0].quantity;
+                      var bill_detail_id = rows_01[0].bill_detail_id;
+                      var fro_id = rows_01[0].bill_id;
 
                   con.query("select * from stack_to_market where item_name = '"+item_name+"' and item_type='"+item_type+"'",function(err4,rows_08)
                   {
+                      if(err4 || !rows_08 || rows_08.length === 0) {
+                          return res.status(500).send("جنس در موجودی یافت نشد!");
+                      }
+                      
                    var stak_qun = rows_08[0].quantity;
                    var update_stck_quna = parseFloat(stak_qun )+parseFloat(bill_qunatity);
 
@@ -4238,24 +4372,41 @@ var con = mysql.createConnection({
                    {
                        console.log("update stack_to_market set quantity='"+update_stck_quna+"' where item_name = '"+item_name+"' and item_type='"+item_type+"'");
 
-                  var fro_id = rows_01[0].bill_id;
                   //var loan_id =  req.query.loan_id;
   
-                      con.query("delete from bill_details WHERE id = '"+bill_id+"'", function(err,rows_02)
+                      // Delete from bill_items
+                      con.query("delete from bill_items WHERE id = '"+bill_id+"'", function(err,rows_02)
                       {
-                          console.log("delete from bill_details WHERE id = '"+bill_id+"'");
-                        con.query("SELECT SUM(price * quantity) as fro_total FROM bill_details WHERE bill_id ='"+fro_id+"'",function(err1,rows_03){    
-                                  var fro_total =  rows_03[0].fro_total;
+                          if(err) {
+                              return res.status(500).send("خطا در حذف آیتم: " + err.message);
+                          }
+                          
+                          console.log("delete from bill_items WHERE id = '"+bill_id+"'");
+                          
+                          // Check if bill_detail has any remaining items, if not, delete it too
+                          con.query("SELECT COUNT(*) as item_count FROM bill_items WHERE bill_detail_id = '"+bill_detail_id+"'", function(err_check, rows_check) {
+                              if(!err_check && rows_check && rows_check[0].item_count == 0) {
+                                  // No more items, delete the bill_detail
+                                  con.query("delete from bill_details WHERE id = '"+bill_detail_id+"'", function(err_del, rows_del) {
+                                      console.log("Deleted empty bill_detail: " + bill_detail_id);
+                                  });
+                              }
+                          });
+                          
+                        // Calculate total from bill_items
+                        con.query("SELECT SUM(bill_items.price * bill_items.quantity) as fro_total FROM bill_items INNER JOIN bill_details ON bill_items.bill_detail_id = bill_details.id WHERE bill_details.bill_id ='"+fro_id+"'",function(err1,rows_03){
+                                  if(err1) {
+                                      return res.status(500).send("خطا در محاسبه مجموع: " + err1.message);
+                                  }
+                                  
+                                  var fro_total = rows_03[0].fro_total || 0;
                             con.query("update froshat_details set total_amount = '"+fro_total+"' where id ='"+fro_id+"'",function(err2,rows_04)
                             {
-
-
                                 if(err2)
                                 {
-                                    throw err2;
+                                    return res.status(500).send("خطا در بروزرسانی مجموع: " + err2.message);
                                 }
                                 else{
-
                                     res.send("hello");
                                 }
                                 });
@@ -5074,32 +5225,8 @@ var con = mysql.createConnection({
                     
                 
 
-           app.post('/sending_details', function(req,res)
-           {
-               var my_id =  req.query.param;
-
-                   con.query("select * from bill_details WHERE bill_id = '"+my_id+"'", function(err,rows_02)
-                   {
-                       console.log("select * from bill_details WHERE bill_id = '"+my_id+"'");
-                    var table_data = "";
-                    var no =1;
-                    rows_02.forEach( (row) => {
-                        table_data += "<tr>";
-                            table_data += "<td>"+ no+ "</td>";
-                            table_data += "<td>"+ row.item_name+ "</td>";
-                            table_data += "<td>"+ row.item_type+ "</td>";
-                            table_data += "<td>"+ row.quantity+ "</td>";
-                            table_data += "<td>"+ row.price+ "</td>";
-                            table_data += "<td>"+parseFloat(row.price) * parseFloat(row.quantity)+"</td>";
-
-                            table_data += "<td><a onclick="+"cat_delet1("+row.id+")"+" href='#' style='color:red;'> حذف /</a>     <a onclick="+"cat_edit("+row.id+")"+" data-toggle='modal' data-target='#basicModal' href=# style='color:green;'>ویرایش</a></td>";
-                            table_data += "</tr>";
-                            no++;
-                        
-                    });
-                    res.send(table_data);
-                   });
-           });
+// Bill routes - moved to routes/billRoutes.js
+app.use('/', billRoutes);
 
            app.post('/searching_bill_no_01', function(req,res)
            {

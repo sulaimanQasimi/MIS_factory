@@ -72,10 +72,6 @@
                 <div class="">
                     
                 </div>
-                <div class="title">
-                    <!-- <h3>عصر پویا</h3>
-                    <h6>پیشتاز در عرصه تولیدات صنعتی</h6> -->
-                </div>
             </div>
                    <div class="invoice-number">
                        <!-- نمبر بیل: 12288 -->
@@ -490,24 +486,58 @@ $(document).ready(function(e){
 
                         function submitHandler (e) {
                         e.preventDefault()
-                        /* var sell_date = $("#data_man").val();
-                            if(sell_date == "")
-                            {
-                                alert("تاریخ فروش خالی است !");
-                            }else{ */
+                        
+                        // Validate required fields
+                        var sell_date = $("#data_man").val();
+                        if(sell_date == "" || !sell_date) {
+                            alert("تاریخ فروش خالی است !");
+                            return false;
+                        }
+                        
+                        var currency = $("#currency").val();
+                        if(!currency) {
+                            alert("واحد پولی را انتخاب کنید!");
+                            return false;
+                        }
+                        
+                        var to_dollar = $("#to_dollar").val();
+                        if(!to_dollar || to_dollar == "") {
+                            alert("نرخ تبدیل را وارد کنید!");
+                            return false;
+                        }
+                        
+                        var customer = $("#dis_type").val();
+                        if(!customer) {
+                            alert("نام دکان را انتخاب کنید!");
+                            return false;
+                        }
+                        
+                        // Check if there are any items in the table
+                        var rowCount = $("#tbody tr").length;
+                        if(rowCount == 0) {
+                            alert("لطفا حداقل یک جنس اضافه کنید!");
+                            return false;
+                        }
 
                                     $.ajax({
                                         url: '/froshat_details',
                                         type:'POST',
                                         data: $form.serialize()
                                     }).done(response => {
-                                        document.getElementById("data_for_invoice").reset();
-                                        console.log(response)
+                                        console.log("Success:", response);
                                         alert(response);
+                                        document.getElementById("data_for_invoice").reset();
+                                        $("#tbody").empty();
+                                        $("#quantity-show").val("");
+                                        $("#reciept-show").val("");
+                                        $("#total-show").val("");
                                         window.location.href= "fro.ejs";
+                                    }).fail(function(xhr, status, error) {
+                                        console.error("Error:", status, error);
+                                        console.error("Response:", xhr.responseText);
+                                        alert("خطا در ثبت اطلاعات: " + (xhr.responseText || error));
                                     })
                                   }
-                      //  }
 
 $(function(){
     var dis_type = $("#dis_type").val();

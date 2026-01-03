@@ -199,14 +199,23 @@ $('#sharik_menu').toggle();
 });
 var screen_height = $(window).height();
 var screen_height_without_nav = screen_height - 60;
-document.getElementById('iframe').style.height = screen_height_without_nav + "px";
+// Check if iframe exists before accessing its style
+var iframeElement = document.getElementById('iframe');
+if(iframeElement) {
+    iframeElement.style.height = screen_height_without_nav + "px";
+}
 $(window).on('resize',()=>{
 // alert('window is resized');
 var screen_height2 = $(window).height();
 var screen_height_without_nav2 = screen_height2 - 60;
 // var sidebar = $('#right-menu').css("height");
-document.getElementById("right_menu").style.height = screen_height_without_nav2 + "px";
-document.getElementById('iframe').style.height = screen_height_without_nav + "px";
+var rightMenuElement = document.getElementById("right_menu");
+if(rightMenuElement) {
+    rightMenuElement.style.height = screen_height_without_nav2 + "px";
+}
+if(iframeElement) {
+    iframeElement.style.height = screen_height_without_nav2 + "px";
+}
 });
 $(function () {
 $('[data-toggle="tooltip"]').tooltip();

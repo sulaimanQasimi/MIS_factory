@@ -12,12 +12,12 @@
    <link rel="stylesheet" href="assets/css/emp.css">
    <link rel="stylesheet" href="assets/css/persian-datepicker.css">
    <link rel="stylesheet" href="assets/css/operation.css">
-   <link rel="stylesheet" href="DataTables/datatables.min.css"/>
-   <link rel="stylesheet" href="assets/css/talabat-sabt.css">
-   <link rel="stylesheet" href="assets/css/responsive.css">
+  <link rel="stylesheet" href="DataTables/datatables.min.css"/>
+  <link rel="stylesheet" href="assets/css/responsive.css">
 
    <!-- script -->
    <script src="assets/js/jquery.min.js"></script>
+   <script src="assets/js/jquery-ui.js"></script>
    <script src="assets/js/popper.min.js"></script>
    <script src="assets/js/persian-datepicker.js"></script>
   <script src="assets/js/bootstrap.min.js"></script>
@@ -258,7 +258,9 @@
   </style>
 <script>
   $(document).ready(()=>{
-    $('#table-man').dataTable({filter:false,pagination:false});
+    // DataTables disabled for this table due to nested accordion structure
+    // The table uses Bootstrap accordion with nested tables which conflicts with DataTables
+    // Search functionality is handled by custom JavaScript (see line 436)
   });
 </script>
 <body class="my-login-page">
@@ -390,6 +392,11 @@
                                           </thead>
                                           <tbody id="bill_details_<%= fro_view.id %>">
                                     
+                                          </tbody>
+                                        </table>
+                                      </div>
+                                  </div>
+                                </div>
                             </th>
                             
                           </tr>
@@ -412,9 +419,26 @@
     </div>
 
     <a href="#back-top" style="display: none;" class="go-top"><i class="fa fa-angle-up"></i></a>
-    <script src="assets/js/script.js"></script>
     <script>
+      // Fix script.js errors for elements that don't exist in this view
       $(document).ready(function(){
+        // Prevent script.js errors for missing elements
+        if(document.getElementById('iframe')) {
+          var screen_height = $(window).height();
+          var screen_height_without_nav = screen_height - 60;
+          document.getElementById('iframe').style.height = screen_height_without_nav + "px";
+        }
+        if(document.getElementById("right_menu")) {
+          $(window).on('resize',()=>{
+            var screen_height2 = $(window).height();
+            var screen_height_without_nav2 = screen_height2 - 60;
+            document.getElementById("right_menu").style.height = screen_height_without_nav2 + "px";
+            if(document.getElementById('iframe')) {
+              document.getElementById('iframe').style.height = screen_height_without_nav2 + "px";
+            }
+          });
+        }
+        
         $("#myInput").on("keyup", function() {
           var value = $(this).val().toLowerCase();
           $("#myTable tr").filter(function() {
@@ -423,21 +447,28 @@
         });
       });
       $(function () {
-  $('[data-toggle="tooltip"]').tooltip();
-});
-$(()=>{
-  $('.dataTables_length').addClass('print');
-  $('.dataTables_info').addClass('print');
-  $('.dataTables_paginate').addClass('print');
-
-  function ref(){
-    
-  }
-
-});
-
-      </script>
-        <script src="assets/js/script.js">
+        $('[data-toggle="tooltip"]').tooltip();
+      });
+      $(()=>{
+        $('.dataTables_length').addClass('print');
+        $('.dataTables_info').addClass('print');
+        $('.dataTables_paginate').addClass('print');
+      });
+      
+      // Handle draggable errors gracefully
+      $(document).ready(function() {
+        if(typeof $.fn.draggable === 'function') {
+          try {
+            // Initialize draggable if needed
+          } catch(e) {
+            console.log("Draggable initialization skipped:", e);
+          }
+        } else {
+          console.log("jQuery UI draggable not available");
+        }
+      });
+    </script>
+    <script src="assets/js/script.js"></script>
         
    
 
@@ -643,6 +674,10 @@ function delete1(id)
                 var count = 2;
                 
                 function change_icon(id){
+                    // Show loading indicator
+                    $("#bill_details_"+id).html("<tr><td colspan='7' style='text-align:center;'><i class='fa fa-spinner fa-spin'></i> در حال بارگذاری...</td></tr>");
+                    
+                    console.log("Loading bill items for bill ID:", id);
                                            
                             $.ajax({
                                     url: '/sending_details?param='+id,
@@ -653,10 +688,22 @@ function delete1(id)
                                     contentType: false,
                                     processData: false,
                                     success: function (data) {
-                                    $("#bill_details_"+id).html(data);
+                                        console.log("Bill items response:", data);
+                                        if(data && data.trim() !== '') {
+                                            $("#bill_details_"+id).html(data);
+                                        } else {
+                                            $("#bill_details_"+id).html("<tr><td colspan='7' style='text-align:center; color:gray;'>هیچ آیتمی ثبت نشده است</td></tr>");
+                                        }
                                     },
-                                    error: function(data){
-                                        // alert(data);
+                                    error: function(xhr, status, error) {
+                                        console.error("Error loading bill details:", error);
+                                        console.error("Response:", xhr.responseText);
+                                        console.error("Status:", xhr.status);
+                                        var errorMsg = "خطا در بارگذاری آیتم ها";
+                                        if(xhr.responseText) {
+                                            errorMsg += ": " + xhr.responseText.substring(0, 100);
+                                        }
+                                        $("#bill_details_"+id).html("<tr><td colspan='7' style='text-align:center; color:red;'>" + errorMsg + "</td></tr>");
                                     }
                                   });
 
