@@ -1018,8 +1018,12 @@ app.use('/', billRoutes);
                                     // Get the bill_detail_id from the insert
                                     var bill_detail_id = results1.insertId;
                                     
+                                    // Get stack_to_market_list_id if available
+                                    var stack_to_market_list_id = (stak_to_market_id_array[i] && stak_to_market_id_array[i] !== 'undefined' && stak_to_market_id_array[i] !== '') ? stak_to_market_id_array[i] : null;
+                                    
                                     // Then insert into bill_items
-                                    con.query("insert into bill_items(bill_detail_id,item_name,item_type,quantity,price) values('"+bill_detail_id+"','"+items_array[i]+"','"+buy_type_array[i]+"','"+quantity_array[i]+"','"+price_array[i]+"')", function (error2, results2, fields2) {
+                                    var stack_to_market_list_id_value = stack_to_market_list_id ? "'"+stack_to_market_list_id+"'" : 'NULL';
+                                    con.query("insert into bill_items(bill_detail_id,stack_to_market_list_id,item_name,item_type,quantity,price) values('"+bill_detail_id+"',"+stack_to_market_list_id_value+",'"+items_array[i]+"','"+buy_type_array[i]+"','"+quantity_array[i]+"','"+price_array[i]+"')", function (error2, results2, fields2) {
                                         if (error2) {
                                             return con.rollback(function() {
                                                 res.status(500).send("خطا در ثبت آیتم های بل: " + error2.message);
@@ -1519,19 +1523,36 @@ app.use('/', billRoutes);
 
                             con.query("SELECT MAX(id) as new_bill , bill_no FROM stack_to_market_details", function(err,rows_04)
                            {
+                            if(err){
+                                console.error("Error fetching stack_to_market_details:", err);
+                                return res.status(500).send("Database error");
+                            }
 
                         con.query("SELECT id,serial_number,item_name, item_type FROM stack_factory_registration_list", function(err,rows_03)
                         {
+                            if(err){
+                                console.error("Error fetching stack_factory_registration_list:", err);
+                                return res.status(500).send("Database error");
+                            }
                         
                           
                        con.query("SELECT * FROM stuff_registration", function(err,rows_05)
                       {
+                        if(err){
+                            console.error("Error fetching stuff_registration:", err);
+                            return res.status(500).send("Database error");
+                        }
                         con.query("select * from company_info ", function(err,rows_02)
                         {
+                           if(err){
+                               console.error("Error fetching company_info:", err);
+                               return res.status(500).send("Database error");
+                           }
                            // res.render("fro",{data_02:rows_02,data_03:rows_03,data_04:rows_04[0].new_bill,data_05:rows_05});
        
-                      
-                            res.render("city_store",{data_02:rows_02,data_03:rows_03,data_03:rows_03,data_04:rows_04[0].new_bill,data_05:rows_05}); 
+                            // Check if rows_04 exists and has at least one element
+                            const newBillId = (rows_04 && rows_04.length > 0 && rows_04[0].new_bill) ? rows_04[0].new_bill : null;
+                            res.render("city_store",{data_02:rows_02,data_03:rows_03,data_03:rows_03,data_04:newBillId,data_05:rows_05}); 
             
                         });
                         });

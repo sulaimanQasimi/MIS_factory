@@ -4,7 +4,6 @@
    <meta charset="UTF-8">
    <meta name="viewport" content="width=device-width, initial-scale=1.0">
    <title>معلومات ذخیره شده درباره کارمندان</title>
-   <!-- style -->
    <link rel="stylesheet" href="assets/css/bootstrap.min.css">
    <link rel="stylesheet" href="assets/css/bootstrap-rtl.min.css">
    <link rel="stylesheet" href="assets/css/font-awesome.min.css">
@@ -15,7 +14,6 @@
   <link rel="stylesheet" href="DataTables/datatables.min.css"/>
   <link rel="stylesheet" href="assets/css/responsive.css">
 
-   <!-- script -->
    <script src="assets/js/jquery.min.js"></script>
    <script src="assets/js/jquery-ui.js"></script>
    <script src="assets/js/popper.min.js"></script>
@@ -42,8 +40,6 @@
 
 </head>
 <body id="back-top" >
-
-  <!-- starting test modal -->
   <div class="modal  fade" id="basicModal" tabindex="-1" role="dialog" aria-labelledby="basicModal" aria-hidden="true">
     <div class="modal-dialog modal-lg">
       <div class="modal-content" style="height: 200px; ">
@@ -64,7 +60,7 @@
                   <tbody >
                     <tr>
 
-                      <td><input  type="text" value="husain" disabled id="item_name"></td>
+                      <td><input  type="text" value="" disabled id="item_name"></td>
                       <td><input  type="text" disabled id="item_type"></td>
                       <td><input type="text" id="quantity"></td>
                       <td><input type="text" id="price"></td>
@@ -72,8 +68,6 @@
                       <input type="hidden" id="bil_id" name="bil_id">
                     </tr>
                     <td colspan="4">
-                    
-                      <!-- <button type="button" onclick="update_data()" name="sabt_taghirat" id="update" class="btn btn-success rounded-pill btn-block mt-5">ذخیره تغیرات</button> -->
                       <input type="submit" value="ذخیره کردن" onclick="update_bills()" class="btn btn-success rounded-pill btn-block mt-3">
                     </td>
                     
@@ -81,15 +75,11 @@
                   
                 </table>
         </form>
-          <!-- </div> -->
         </div>
       </div>
       
     </div>
   </div>
-  <!-- ending test modal -->
-   <!-- modal for operations -->
-  <!-- for add -->
   <div class="black-bg"></div>
   <div class="add-modal">
     <span class="close_span"><img src="assets/img/last-project/delete.svg" width="20px" alt="close"></span>
@@ -101,23 +91,20 @@
             <thead>
               <input type="hidden" id="edit_id" name="edit_id">
               <tr>
-                
                 <th>مقدار </th>
-                <!-- <th>رسید</th> -->
                 <th>واحد پولی</th>
                 <th>نرخ</th>
                 <th>تاریخ</th>
     
               </tr>
             </thead>
-            <!-- <tbody id="myTable"> -->
               <tbody>
               <input type="hidden" id="display_edit_id" name="display_edit_id">
               <tr>
               
                 <td><input type="text" name="amount" id="amount" class="form-control"></td>
                
-                <td><!-- <input type="text" name="currency" id="currency" class="form-control"> -->
+                <td>
                   <select type="number" id="currency" style="width: 120px;" name="currency" onchange="change_c()" required class="currency mb-3 col-12 form-control">
                     <option value="دالر">دالر</option>      
                     <option value="افغانی">افغانی</option>      
@@ -175,17 +162,6 @@
               </tr>
             </thead>
             <tbody id="myTable_payment">
-              <!-- <tr>
-                <td>1</td>
-                <td>132 af</td>
-                <td>832 af</td>
-                <td>1399/9/2</td>
-                <td>
-                  <button data-toggle="tooltip" title="حذف" class="edt del"><img width="15px" src="assets/img/last-project/delete.svg" alt=""></button>
-                  <button title="ویرایش" data-toggle="tooltip" class="edt edit-tbl" ><img width="15px"
-                      src="assets/img/last-project/edit.svg" alt=""></button>
-                </td>
-              </tr> -->
             </tbody>
           </table>
    
@@ -193,7 +169,6 @@
 
     </div>
   </div>
-<!-- for edit -->
 <div class="edit-modal">
   <span class="close_span"><img src="assets/img/last-project/delete.svg" width="20px" alt="close"></span>
   <div class="modal-header"><h3>ویرایش کردن</h3></div>
@@ -202,10 +177,6 @@
         <table class="table table-striped" id="table-adding">
                           <thead>
                               <tr>
-                              
-                              <!--  <th>نام مشتری </th> -->
-                                <!-- <th>ایمیل</th>
-                                <th>تیلیفون </th> -->
                                 <th> مقدار پرداخت </th>
                                 <th>باقی</th>
                                 <th>نام شرکت</th>
@@ -218,12 +189,8 @@
                      <tbody>
                             <tr>
                               <input type="hidden" id="sales_id" name="sales_id">
-                              <!-- <td><input type="text" name="customer_name" id="customer_name" class="form-control"></td> -->
-                              <!-- <td><input type="text" name="email" id="email" class="form-control"></td> -->
-                              <!-- <td><input type="text" name="contact" id="contact" class="form-control"></td> -->
                               <td><input type="text" readonly name="paid_amount" id="paid_amount" class="form-control"></td>
                               <td><input type="text" readonly name="remain" id="remain" class="form-control"></td>
-                             <!--  <td><input type="text" name="company_name" id="company_name" class="form-control"></td> -->
                                 <td>  <select required  id="dis_type" onchange="showUser(this.value)" name="comp_name" class="dis_type mb-3 js-example-basic-single col-12 form-control">
                                   <% data_03.forEach(function(cus_det) { %>
                                 <option value="<%= cus_det.id %>"><%= cus_det.company_name %></option>
@@ -258,9 +225,6 @@
   </style>
 <script>
   $(document).ready(()=>{
-    // DataTables disabled for this table due to nested accordion structure
-    // The table uses Bootstrap accordion with nested tables which conflicts with DataTables
-    // Search functionality is handled by custom JavaScript (see line 436)
   });
 </script>
 <body class="my-login-page">
@@ -275,12 +239,6 @@
                   
                   بل دریافتی</a>
                 <h3 style="text-align: center; margin-bottom: 20px;">جدول فروشات </h3>
-               <!--  <div class="srch-inp">
-                  <span class="fa fa-search sh-m print"></span>
-                  <input id="myInput" class="tb-search print"  placeholder="چی را جستجو میکنی؟" type="search">
-
-                  
-                </div> -->
                 <br>
 <br>
 <br>
@@ -337,7 +295,6 @@
                             <th colspan="11" style=" padding: 0px;">
                               
                                 <div class="card mb-2" style=" padding: 0px;">
-                                  <!-- starting ejs -->
                                  
                                   <div class="card-header " style="padding: 0px;" id="headingOne">
                                     <table class=" mb-0 mt-0 ml-0 mr-0" style="width: 100%;">
@@ -347,7 +304,6 @@
                                         <td style="width:100px;"><%= fro_view.contact %></td>
                                         <td style="width:143px;"><%= date_data[i] %></td>
                                         <td><%=  fro_view.paid_amount %></td>
-                                       <!--  Number(100).toFixed(2) - Number(99.1).toFixed(2) -->
                                         <td><%= Number(fro_view.total_amount.toFixed(3)) - Number(fro_view.paid_amount.toFixed(3))   %></td>
                                         <td><%= fro_view.total_amount %></td>
                                         <td style="width:40px;">#<%= fro_view.bill_no %></td>
@@ -369,9 +325,6 @@
                                             <button type="button" class="btn btn-link" data-toggle="collapse" data-target="#collapseOne_<%= fro_view.id %>" style="float:left;"><img src="assets/img/expand_arrow_26px.png" onclick="change_icon(this.id)" id="<%= fro_view.id %>" alt=""></button>									
                                         </h2>
                                   </div>
-                                 
-                                  <!-- end of ejs -->     
-                                  
                                   <div id="collapseOne_<%= fro_view.id %>" class="collapse" aria-labelledby="headingOne" data-parent="#accordionExample">
                                       <div class="card-body">
                                         <table class="table table-bordered">
@@ -408,7 +361,6 @@
                     
                     </div>
                 </div>
-                <!-- end of card body -->
 
           <a href="fro.ejs" data-toggle="tooltip" title="صفحه پیشین" type="button" style="color:white" class="btn mt-5 btn-success btn-medium print">
             صفحه
@@ -420,9 +372,7 @@
 
     <a href="#back-top" style="display: none;" class="go-top"><i class="fa fa-angle-up"></i></a>
     <script>
-      // Fix script.js errors for elements that don't exist in this view
       $(document).ready(function(){
-        // Prevent script.js errors for missing elements
         if(document.getElementById('iframe')) {
           var screen_height = $(window).height();
           var screen_height_without_nav = screen_height - 60;
@@ -455,11 +405,9 @@
         $('.dataTables_paginate').addClass('print');
       });
       
-      // Handle draggable errors gracefully
       $(document).ready(function() {
         if(typeof $.fn.draggable === 'function') {
           try {
-            // Initialize draggable if needed
           } catch(e) {
             console.log("Draggable initialization skipped:", e);
           }
@@ -472,110 +420,21 @@
         
    
 
-/* $("#form_1").submit(function () {
-  alert("ddd");
-      var formData = new FormData(this);
-      $.ajax({
-          url: '/updated_froshats',
-          type: 'POST',
-          data: formData,
-          async: false,
-          cache: false,
-          contentType: false,
-          processData: false,
-          success: function (data) {
-            //alert("hello success ");
-            alert(data);
-               window.location.href= "froshat_view.ejs";
-          },
-          error: function(data){
-              alert(data);
-          }
-      });
-      return false;
-  }); */
-
-  /* function update_fro_03()
-              {
-
-                              var sales_id = $("#sales_id").val();
-                              
-                              var currency =$("#currency1").val();
-                              var ex_rate = $("#ex_rate1").val();
-                              var date =    $("#data_man2").val();
-
-                              
-
-                                  $.ajax({
-                                    url: '/updated_froshats?sales_id='+sales_id+'&currency1='+currency+'&ex_rate1='+ex_rate+'&data_man2='+date,
-                                        type: 'POST',
-                                        //data: formData,
-                                        async: false,
-                                        cache: false,
-                                        contentType: false,
-                                        processData: false,
-                                        success: function (data) {
-                                        // alert("hello success ");
-                                          
-                                          alert(data);
-                                          window.location.href= "froshat_view.ejs";
-                                        },
-                                        error: function(data){
-                                            alert(data);
-                                        }
-                                    });
-                                    return false;
-                            
-              } */
-
-
-     
-  
-
   </script>
   <script>
-
-/* function search_bill()
-    {
-      var bill_no2 = $("#bill_numbers").val();
-     
-            $.ajax({
-              url: '/searching_bill_no?param='+bill_no2,
-              type: 'POST',
-              //data: formData,
-              async: false,
-              cache: false,
-              contentType: false,
-              processData: false,
-              success: function (data) {
-                
-              $("#accordionExample").html(data);
-              },
-              error: function(data){
-                 
-              }
-            });
-    } */
-
     function from_to_date()
               {
-                     
-                   // var id = $("#edit_id").val();
                     var from_date =  $("#date_man4").val();
-                 
                     var to_date =$("#date_man1").val();
                    
                       $.ajax({
                         url: '/searching_bill_no?from_date='+from_date+'&to_date='+to_date,
                             type: 'POST',
-                            //data: formData,
                             async: false,
                             cache: false,
                             contentType: false,
                             processData: false,
                             success: function (data) {
-                           //  $(".all_data").hide();
-                           
                              $("#myTable").html(data);
                               
                             },
@@ -588,7 +447,6 @@
 
 function delete1(id)
               {
-               // alert(id)
                 var result = confirm('are you sure ?');
                 if(result == true)
                 {
@@ -605,8 +463,7 @@ function delete1(id)
                         },
                         error: function(error) {
                             console.log("some error in fetching the notifications");
-                           // alert("این شخص معامله دارد نمیتوانید حذف کنید! ");
-                           alert(data);
+                            alert("خطا در حذف اطلاعات");
                         }
                         });
                 }
@@ -623,20 +480,14 @@ function delete1(id)
                                     dataType:'json',
                                     url: '/update_froshat_view?param='+id,                      
                                     success: function(data) {
-                                      var obj_to_staring = JSON.stringify(data);//always server data is coming in object type we have to converted in string
-
-                                      var string_to_object = JSON.parse(obj_to_staring);//for accessing the value of key we have to convert to object
-                                      var shamsi_date = string_to_object.data;//our first part of data converted to object so we can access the value
-                                      var name1 = string_to_object.data1;//our second part of data still in string type so we again convt to obj
-
-                                      var pars2 = JSON.parse(name1);//here we have parse(convrt to obj) it again,because second parts was nested string
+                                      var obj_to_staring = JSON.stringify(data);
+                                      var string_to_object = JSON.parse(obj_to_staring);
+                                      var shamsi_date = string_to_object.data;
+                                      var name1 = string_to_object.data1;
+                                      var pars2 = JSON.parse(name1);
 
                                       var expense_id= pars2.id;
                                       var company_name= pars2.company_name;
-                                      //alert(expense_id);
-                                      /* var email = pars2.email;
-                                      var contact= pars2.contact; */
-                                      
                                       var paid_amount = pars2.paid_amount;
                                      
                                       var total_amount= pars2.total_amount;
@@ -645,12 +496,7 @@ function delete1(id)
                                       var ex_rate = pars2.ex_rate;
                                       
                                      
-                                      
                                       $("#sales_id").val(expense_id);
-                                      // $("#customer_name").val(customer_name);
-                                      /* $("#email").val(email);
-                                      $("#contact").val(contact); */
-                                     
                                       $("#company_name").val(company_name);
                                       $("#paid_amount").val(paid_amount);
                                       $("#remain").val(remain);
@@ -674,16 +520,14 @@ function delete1(id)
                 var count = 2;
                 
                 function change_icon(id){
-                    // Show loading indicator
                     $("#bill_details_"+id).html("<tr><td colspan='7' style='text-align:center;'><i class='fa fa-spinner fa-spin'></i> در حال بارگذاری...</td></tr>");
                     
                     console.log("Loading bill items for bill ID:", id);
                                            
                             $.ajax({
                                     url: '/sending_details?param='+id,
-                                    type: 'POST',
-                                    //data: formData,
-                                    async: false,
+                            type: 'POST',
+                            async: false,
                                     cache: false,
                                     contentType: false,
                                     processData: false,
@@ -735,9 +579,8 @@ function delete1(id)
               
                 $.ajax({
                     url: '/show_all_payment_002?each_loaner_id='+id,
-                    type: 'POST',
-                    //data: formData,
-                    async: false,
+                            type: 'POST',
+                            async: false,
                     cache: false,
                     contentType: false,
                     processData: false,
@@ -768,15 +611,12 @@ function delete1(id)
 
                                   $.ajax({
                                     url: '/add_output_sales?incoming_loan_id='+id+'&amount='+amount+'&currency='+currency+'&ex_rate='+ex_rate+'&date='+date,
-                                        type: 'POST',
-                                        //data: formData,
-                                        async: false,
+                            type: 'POST',
+                            async: false,
                                         cache: false,
                                         contentType: false,
                                         processData: false,
                                         success: function (data) {
-                                        // alert("hello success ");
-                                          /*  $("#expens_tble").html(data); */
                                           $("#myTable_payment").html(data);
                                         },
                                         error: function(data){
@@ -843,16 +683,13 @@ function delete1(id)
 
                                     $.ajax({
                                           url: '/update_show_edit_002?id_val='+id+"&amount="+amount+"&currency="+currency+"&ex_rate="+ex_rate+"&date_man="+date_man+"&loan_id="+loan_id,
-                                          type: 'POST',
-                                          //data: formData,
-                                          async: false,
+                            type: 'POST',
+                            async: false,
                                           cache: false,
                                           contentType: false,
                                           processData: false,
                                           success: function (data) {
-                                          // alert("hello success ");
                                           $("#myTable_payment").html(data);
-                                            //document.getElementById("form2").reset();
                                           },
                                           error: function(data){
                                               alert(data);
@@ -877,9 +714,6 @@ function delete1(id)
                                             dataType:'json',
                                             url: '/add_payment_delete_002?param='+id+"&loan_id="+loan_id,                      
                                             success: function(data) {
-                                              //alert(data);
-                                              //$("#myTable_payment").html(data);
-                                              //$("#myTable_payment").load(window.location.href+"#myTable_payment");
                                             },
                                             error: function(error) {
                                                 console.log("some error in fetching the notifications");
@@ -941,16 +775,12 @@ function delete1(id)
 
                           $.ajax({
                             url: '/update_bills_01?bil_id='+bil_id+'&fro_id='+fro_id+'&quantity='+quantity+'&price='+price+'&item_name='+item_name+'&item_type='+item_type,
-                                type: 'POST',
-                                //data: formData,
-                                async: false,
+                            type: 'POST',
+                            async: false,
                                 cache: false,
                                 contentType: false,
                                 processData: false,
                                 success: function (data) {
-                                /*  alert(data); */
-                                  /*  $("#expens_tble").html(data); */
-                                //  $("#myTable_payment").html(data);
                                 },
                                 error: function(data){
                                     alert(data);
@@ -975,7 +805,6 @@ function delete1(id)
                                             url: '/add_payment_delete_004?bill_detail_id='+id,                      
                                             success: function(data){
                                               alert("اطلاعات موفقانه حذف گردید");
-                                              //$("#myTable_payment").html(data);
                                               window.open('froshat_view.ejs','_self');
                                             },
                                             error: function(error) {

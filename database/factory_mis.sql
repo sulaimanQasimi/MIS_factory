@@ -22,6 +22,10 @@ SET time_zone = "+00:00";
 -- Database: `factory_mis`
 --
 
+DROP DATABASE IF EXISTS `factory_mis`;
+CREATE DATABASE `factory_mis` DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_persian_ci;
+USE `factory_mis`;
+
 -- --------------------------------------------------------
 
 --
@@ -60,6 +64,7 @@ INSERT INTO `bill_details` (`id`, `bill_id`, `item_name`, `item_type`, `quantity
 CREATE TABLE `bill_items` (
   `id` int(11) NOT NULL,
   `bill_detail_id` int(11) NOT NULL,
+  `stack_to_market_list_id` int(11) DEFAULT NULL,
   `item_name` varchar(50) COLLATE utf8mb4_persian_ci NOT NULL,
   `item_type` varchar(20) COLLATE utf8mb4_persian_ci NOT NULL,
   `quantity` float NOT NULL,
@@ -472,30 +477,6 @@ INSERT INTO `payable_amount` (`id`, `stuff_id`, `taken_amount`, `tax`, `overtime
 -- --------------------------------------------------------
 
 --
--- Stand-in structure for view `rawmin`
--- (See below for the actual view)
---
-CREATE TABLE `rawmin` (
-`item_name` varchar(50)
-,`item_type` varchar(50)
-,`totqunatity` double(20,3)
-);
-
--- --------------------------------------------------------
-
---
--- Stand-in structure for view `rawmout`
--- (See below for the actual view)
---
-CREATE TABLE `rawmout` (
-`item_name` varchar(50)
-,`item_type` varchar(50)
-,`mahsol_qnt` double(20,3)
-);
-
--- --------------------------------------------------------
-
---
 -- Table structure for table `raw_materials`
 --
 
@@ -565,18 +546,6 @@ INSERT INTO `ready_materials_type` (`id`, `name`, `type`, `serial_no`) VALUES
 (3, 'کاک 70*2', 'دانه', 3),
 (4, 'کاک 1*2', 'دانه', 4),
 (5, 'کاک 70*2 تراکم 10', 'دانه', 5);
-
--- --------------------------------------------------------
-
---
--- Stand-in structure for view `remrawmaterial`
--- (See below for the actual view)
---
-CREATE TABLE `remrawmaterial` (
-`item_name` varchar(50)
-,`item_type` varchar(50)
-,`remainrawm` double(20,3)
-);
 
 -- --------------------------------------------------------
 
@@ -950,7 +919,7 @@ INSERT INTO `users` (`id`, `username`, `full_name`, `authority`, `password`, `pr
 --
 -- Structure for view `rawmin`
 --
-DROP TABLE IF EXISTS `rawmin`;
+DROP VIEW IF EXISTS `rawmin`;
 
 CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `rawmin`  AS  select `stack_raw_materials`.`item_name` AS `item_name`,`stack_raw_materials`.`item_type` AS `item_type`,round(sum(`stack_raw_materials`.`quantity`),3) AS `totqunatity` from `stack_raw_materials` group by `stack_raw_materials`.`item_name`,`stack_raw_materials`.`item_type` ;
 
@@ -959,7 +928,7 @@ CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW 
 --
 -- Structure for view `rawmout`
 --
-DROP TABLE IF EXISTS `rawmout`;
+DROP VIEW IF EXISTS `rawmout`;
 
 CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `rawmout`  AS  select `raw_material_each_mahsol`.`item_name` AS `item_name`,`raw_material_each_mahsol`.`item_type` AS `item_type`,round(sum(`raw_material_each_mahsol`.`quantity`),3) AS `mahsol_qnt` from `raw_material_each_mahsol` group by `raw_material_each_mahsol`.`item_name`,`raw_material_each_mahsol`.`item_type` ;
 
@@ -968,7 +937,7 @@ CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW 
 --
 -- Structure for view `remrawmaterial`
 --
-DROP TABLE IF EXISTS `remrawmaterial`;
+DROP VIEW IF EXISTS `remrawmaterial`;
 
 CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `remrawmaterial`  AS  select `rawmin`.`item_name` AS `item_name`,`rawmin`.`item_type` AS `item_type`,round((`rawmin`.`totqunatity` - `rawmout`.`mahsol_qnt`),3) AS `remainrawm` from (`rawmin` join `rawmout`) where ((`rawmin`.`item_type` = `rawmout`.`item_type`) and (`rawmin`.`item_name` = `rawmout`.`item_name`)) group by `rawmin`.`item_type`,`rawmin`.`item_name` ;
 
@@ -989,7 +958,8 @@ ALTER TABLE `bill_details`
 --
 ALTER TABLE `bill_items`
   ADD PRIMARY KEY (`id`),
-  ADD KEY `bill_detail_id` (`bill_detail_id`);
+  ADD KEY `bill_detail_id` (`bill_detail_id`),
+  ADD KEY `stack_to_market_list_id` (`stack_to_market_list_id`);
 
 --
 -- Indexes for table `company_info`
@@ -1445,7 +1415,8 @@ ALTER TABLE `bill_details`
 -- Constraints for table `bill_items`
 --
 ALTER TABLE `bill_items`
-  ADD CONSTRAINT `bill_items_ibfk_1` FOREIGN KEY (`bill_detail_id`) REFERENCES `bill_details` (`id`) ON DELETE CASCADE;
+  ADD CONSTRAINT `bill_items_ibfk_1` FOREIGN KEY (`bill_detail_id`) REFERENCES `bill_details` (`id`) ON DELETE CASCADE,
+  ADD CONSTRAINT `bill_items_ibfk_2` FOREIGN KEY (`stack_to_market_list_id`) REFERENCES `stack_to_market_lists` (`id`) ON DELETE SET NULL ON UPDATE CASCADE;
 
 --
 -- Constraints for table `constant`
