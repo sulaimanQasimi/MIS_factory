@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>سیستم مدیریتی</title>
+  <!-- style -->
+  <link rel="stylesheet" href="assets/css/bootstrap.min.css" />
+  <link rel="stylesheet" href="assets/css/bootstrap-rtl.min.css" />
+  <link rel="stylesheet" href="assets/css/font-awesome.min.css" />
+  <link rel="stylesheet" href="assets/css/persian-datepicker.css">
+  <link rel="stylesheet" href="assets/css/jquery-ui.css" />
+  <link rel="stylesheet" href="assets/css/main.css" />
+  <link rel="stylesheet" href="assets/css/emp.css" />
+  <link rel="stylesheet" href="assets/css/dashboard.css" />
+  <link rel="stylesheet" href="assets/css/scrollbar.css" />
+  <link rel="stylesheet" href="assets/css/responsive.css" />
+  <link rel="icon" href="assets/img/co-nav.png" />
+  <!-- script -->
+  <script src="assets/js/jquery.min.js"></script>
+  <script src="assets/js/jquery-ui.js"></script>
+  <script src="assets/js/popper.min.js"></script>
+  <script src="assets/js/bootstrap.min.js"></script>
+  <script src="assets/js/persian-datepicker.js"></script>
+  <script src="assets/js/append.js"></script>
+
+</head>
+<body>
+    <div class="container">
+      <div class="row">
+      <section class="all-web mb-5" >
+
+        <h3 class="mt-5 mb-5 " style="text-align: center;">گزارشات</h3>
+        <hr>
+        <br>
+        <form action="" method="post" class="needs-validation" novalidate id="form1">
+        <div class="row">
+          <div class="col-xs-12 col-sm-12 col-md-10 col-lg-4">
+            <input type="text" id="date_man" name="from_date" class="form-control rounded-pill rp-inp az_tarikh data-man" placeholder="از تاریخ">
+          </div>
+          <!-- second -->
+          <div class="col-xs-12 col-sm-12 col-md-10 col-lg-4">
+            <input type="text" id="date_man1" name="to_date" class="form-control rounded-pill rp-inp ta_tarikh data-man" placeholder="تا تاریخ">
+
+        </div>
+          <!-- third -->
+          <div class="col-xs-12 col-sm-12 col-md-10 col-lg-4">
+            <input type="button" onclick="from_to_date()" class="btn btn-primary col-8  rounded-pill print" value="جستجو">
+            <button type="button" class="btn btn-primary col-2 rounded-pill print" ><img width="18px" src="assets/img/filter.svg" class="print" alt="filter"></button>
+            <button type="button" class="btn btn-success rounded-pill print" ><img width="18px" src="assets/img/mawadkham/print.svg" class="print" onclick="javascript:window.print();" alt="print"></button>
+        </div>
+        </div>
+    </form>
+      </section>
+      <div class="panel col-sm-12 col-md-3 mt-5">
+        <div class="color-box">
+          <img width="70px" src="assets/img/disposal.svg" alt="disposal">
+        </div>
+        <div class="content">
+            <h2 class="numbers"><%= data_02 %>
+            </h2>  
+            
+            <h6>مجموعه مصارف</h6>
+        </div>
+    </div>
+    <div class="panel col-sm-12 col-md-3 mt-5">
+      <div class="color-box balance">
+        <img width="70px" src="assets/img/total_sales.svg" alt="disposal">
+      </div>
+      <div class="content" >
+          <h2 class="numbers">232312
+          </h2>
+          <h6>مجموعه فروشات</h6> 
+         
+      </div>
+  </div>
+  <div class="panel col-sm-12  col-md-3 mt-5">
+    <div class="color-box sales">
+      <img width="70px" src="assets/img/create_order.svg" alt="disposal">
+    </div>
+    <div class="content">
+        <h2 class="numbers">2322
+        </h2>
+        <h6>مفاد </h6>
+        
+    </div>
+</div>
+              <div class="panel col-sm-12  col-md-3 mt-5">
+                <div class="color-box orders">
+                  <img width="70px" src="assets/img/money_pound.svg" alt="disposal">
+                </div>
+                <div class="content">
+                    <h2 class="numbers">123123</h2>
+                    <h6>&nbsp;&nbsp; قرضه های ورودی  </h6>
+                  </div>
+              </div>
+
+              <div class="panel col-sm-12  col-md-3 mt-5">
+                <div class="color-box orders">
+                  <img width="70px" src="assets/img/money_pound.svg" alt="disposal">
+                </div>
+                <div class="content">
+                    <h2 class="numbers">313</h2>
+                    <h6>&nbsp;&nbsp; قرضه های خروجی  </h6>
+                  </div>
+              </div>
+      </div>
+    </div>
+</body>
+<script src="assets/js/script.js"></script>
+<script src="assets/js/form-valiate.js"></script>
+
+<script>
+   $(document).ready(()=>{
+  $(function() {
+  $('#date_man').datepicker({
+       changeMonth: true,
+       changeYear: true
+   });
+   });
+   });
+
+   $(document).ready(()=>{
+  $(function() {
+  $('#date_man1').datepicker({
+       changeMonth: true,
+       changeYear: true
+   });
+   });
+   });
+
+ </script>
+
+ <script>
+   
+   
+
+   function from_to_date()
+              {
+
+                   // var id = $("#edit_id").val();
+                    var from_date =  $("#date_man").val();
+                    var to_date =$("#date_man1").val();
+                   
+                      $.ajax({
+                        url: '/from_date_to_date?from_date='+from_date+'&to_date='+to_date,
+                            type: 'POST',
+                            //data: formData,
+                            async: false,
+                            cache: false,
+                            contentType: false,
+                            processData: false,
+                            success: function (data) {
+                            // alert("hello success ");
+                               /*  $("#expens_tble").html(data); */
+                              // $("#myTable_payment").html(data);
+                            },
+                            error: function(data){
+                                alert(data);
+                            }
+                        });
+                        return false;
+              }
+ </script>
+
+</html>

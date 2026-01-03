@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>سیستم مدیریتی</title>
+  <!-- style -->
+  <link rel="stylesheet" href="assets/css/bootstrap.min.css" />
+  <link rel="stylesheet" href="assets/css/bootstrap-rtl.min.css" />
+  <link rel="stylesheet" href="assets/css/font-awesome.min.css" />
+  <link rel="stylesheet" href="assets/css/persian-datepicker.css">
+  <link rel="stylesheet" href="assets/css/jquery-ui.css" />
+  <link rel="stylesheet" href="assets/css/main.css" />
+  <link rel="stylesheet" href="assets/css/emp.css" />
+  <link rel="stylesheet" href="assets/css/dashboard.css" />
+  <link rel="stylesheet" href="assets/css/scrollbar.css" />
+  <link rel="stylesheet" href="assets/css/responsive.css" />
+  <link rel="icon" href="assets/img/co-nav.png" />
+  <!-- script -->
+  <script src="assets/js/jquery.min.js"></script>
+  <script src="assets/js/jquery-ui.js"></script>
+  <script src="assets/js/popper.min.js"></script>
+  <script src="assets/js/bootstrap.min.js"></script>
+  <script src="assets/js/persian-datepicker.js"></script>
+  <script src="assets/js/append.js"></script>
+    <!-- end of scripts for this page -->
+</head>
+<body>
+    <div class="container">
+      <div class="row">
+            <section class="all-web">
+                <h3 class=" mb-5" style="text-align: center;"> بیلانس شرکا</h3>
+                <hr>
+                
+            </section>
+      </div>
+      <div class="row" style="padding-right:12%;">
+        <!-- <a href="holders_rep.ejs"  class="cs_prof_box col-sm-3 mt-3 ml-3 col-md-3 col-lg-3 col-xl-3 ">
+            <div  >
+                <div class="avatar">
+                    <img src="assets/img/tech_bg.png" alt="this-is-an-image">
+                    <img src="assets/img/avatar.png" alt="ivatar" width="40px" class="forg">
+                </div>
+                <div class="content">
+                    <h3 class="Title mx-auto" style="text-align: center !important;">رضا محمدی </h3>
+                    <div class="awayed aw cn">     <img src="assets/img/growing_money.svg" width="16px" alt="growing_money"> عواید : 20000 
+                    </div>
+                    <div class="bardasht br cn"> <img src="assets/img/growing_money.svg" width="16px" alt="growing_money"> عواید :  برداشت 4000  </div>
+                    <div class="billnace_benefit bl cn"> <img src="assets/img/growing_money.svg" width="16px" alt="growing_money"> عواید :  باقی 10000 </div>
+                </div>
+            </div>
+        </a> -->
+        <% var i =0; partner_details.forEach(function(partner_details) {  %>
+        <a href="holders_rep.ejs"  class="cs_prof_box col-sm-3 mt-3 ml-3 col-md-3 col-lg-3 col-xl-3 ">
+            <div  >
+                <div class="avatar">
+                    <img src="assets/img/tech_bg.png" alt="this-is-an-image">
+                    <img src="<%= partner_details.document %>" alt="ivatar" height="180px" width="60px" class="forg">
+                </div>
+                <div class="content">
+                    <h3 class="Title mx-auto" style="text-align: center !important;"><%= partner_details.full_name %></h3>
+                    <div class="awayed aw cn">     <img src="assets/img/growing_money.svg" width="16px" alt="growing_money"> عواید :&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <%= each_part_income[i]%> 
+                    </div>
+                    <div class="bardasht br cn"> <img src="assets/img/growing_money.svg" width="16px" alt="growing_money"> برداشت : &nbsp;&nbsp;  <%=  each_partner_taken[i] %>  </div>
+                    <div class="billnace_benefit bl cn"> <img src="assets/img/growing_money.svg" width="16px" alt="growing_money"> باقی :&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;  <%= parseFloat(each_part_income[i]) - parseFloat(each_partner_taken[i]) %> </div>
+                </div>
+            </div>
+        </a>
+        <% i++; }); %>
+        <!-- <a href="holders_rep.ejs"  class="cs_prof_box col-sm-3 mt-3 ml-3 col-md-3 col-lg-3 col-xl-3 ">
+            <div  >
+                <div class="avatar">
+                    <img src="assets/img/tech_bg.png" alt="this-is-an-image">
+                    <img src="assets/img/avatar.png" alt="ivatar" width="40px" class="forg">
+                </div>
+                <div class="content">
+                    <h3 class="Title mx-auto" style="text-align: center !important;">رضا محمدی </h3>
+                    <div class="awayed aw cn">     <img src="assets/img/growing_money.svg" width="16px" alt="growing_money"> عواید : 20000 
+                    </div>
+                    <div class="bardasht br cn"> <img src="assets/img/growing_money.svg" width="16px" alt="growing_money"> عواید :  برداشت 4000  </div>
+                    <div class="billnace_benefit bl cn"> <img src="assets/img/growing_money.svg" width="16px" alt="growing_money"> عواید :  باقی 10000 </div>
+                </div>
+            </div>
+        </a> -->
+        <!-- <a href="holders_rep.ejs"  class="cs_prof_box col-sm-3 mt-3 ml-3 col-md-3 col-lg-3 col-xl-3 ">
+            <div  >
+                <div class="avatar">
+                    <img src="assets/img/tech_bg.png" alt="this-is-an-image">
+                    <img src="assets/img/avatar.png" alt="ivatar" width="40px" class="forg">
+                </div>
+                <div class="content">
+                    <h3 class="Title mx-auto" style="text-align: center !important;">رضا محمدی </h3>
+                    <div class="awayed aw cn">     <img src="assets/img/growing_money.svg" width="16px" alt="growing_money"> عواید : 20000 
+                    </div>
+                    <div class="bardasht br cn"> <img src="assets/img/growing_money.svg" width="16px" alt="growing_money"> عواید :  برداشت 4000  </div>
+                    <div class="billnace_benefit bl cn"> <img src="assets/img/growing_money.svg" width="16px" alt="growing_money"> عواید :  باقی 10000 </div>
+                </div>
+            </div>
+        </a> -->
+        
+       
+      </div>
+    </div>
+</body>
+<script src="assets/js/script.js"></script>
+<script src="assets/js/form-valiate.js"></script>
+</html>

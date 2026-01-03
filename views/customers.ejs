@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>سیستم مدیریتی</title>
+  <!-- style -->
+  <link rel="stylesheet" href="assets/css/bootstrap.min.css" />
+  <link rel="stylesheet" href="assets/css/bootstrap-rtl.min.css" />
+  <link rel="stylesheet" href="assets/css/font-awesome.min.css" />
+  <link rel="stylesheet" href="assets/css/persian-datepicker.css">
+  <link rel="stylesheet" href="assets/css/jquery-ui.css" />
+  <link rel="stylesheet" href="assets/css/main.css" />
+  <link rel="stylesheet" href="assets/css/emp.css" />
+  <link rel="stylesheet" href="assets/css/dashboard.css" />
+  <link rel="stylesheet" href="assets/css/scrollbar.css" />
+  <link rel="stylesheet" href="assets/css/responsive.css" />
+  <link rel="icon" href="assets/img/co-nav.png" />
+  <!-- script -->
+  <script src="assets/js/jquery.min.js"></script>
+  <script src="assets/js/jquery-ui.js"></script>
+  <script src="assets/js/popper.min.js"></script>
+  <script src="assets/js/bootstrap.min.js"></script>
+  <script src="assets/js/persian-datepicker.js"></script>
+  <script src="assets/js/append.js"></script>
+
+</head>
+<body>
+    <div class="container">
+      <div class="row">
+      <section class="all-web" >
+
+        <h3 class="mt-5 mb-5 " style="text-align: center;">ثبت    حساب مشتریان</h3>
+        <hr>
+        <br>
+        <form action="" method="post" class="needs-validation" id="form1">
+        <div class="row">
+          <div class="col-xs-12 col-sm-12 col-md-10 col-lg-4">
+            <div class="input-group">
+              <label class="mt-2" for="name" >نام :</label>
+              <input type="text" id="name" name="name" required class="name mb-3 col-12 form-control">
+              
+            </div>
+            <div class="input-group">
+              <label class="mt-2" for="last_name" >تخلص :</label>
+              <input type="text" id="last_name" name="last_name" class="last_name mb-3 col-12 form-control">
+            </div>
+            <div class="input-group">
+              <label class="mt-2" for="phone" >تیلیفون :</label>
+              <input type="text" id="phone" name="phone"  class="phone mb-3 col-12 form-control">
+            </div>
+
+           <!--  <div class="input-group">
+              <label class="mt-2" for="email" >ایمیل (اختیاری) :</label>
+              <input type="email" id="email" name="email" class="email mb-3 col-12 form-control">
+            </div> -->
+
+          </div>
+          <!-- second -->
+          <div class="col-xs-12 col-sm-12 col-md-10 col-lg-4">
+            <div class="input-group">
+              <label class="mt-2" for="co_name" >نام دکان  :</label>
+              <input type="text" id="co_name" name="co_name" required class="co_name mb-3 col-12 form-control">
+            </div>
+            <div class="input-group">
+              <label class="mt-2" for="address" > آدرس:</label>
+              <textarea type="text" id="address" name="address" class="address mb-3 col-12 form-control"></textarea>
+            </div>
+            <!-- <div class="input-group">
+              <label class="mt-2" for="emp_j_area" >ساحه کاری :</label>
+              <input type="text" id="j_area" name="j_area" required class="j_area mb-3 col-12 form-control">
+            </div> -->
+            <div class="input-group">
+              <label class="mt-2" for="date-man" >تاریخ :</label>
+              <input type="text" id="date-man" name="date_man" class="date-man mb-3 col-12 form-control">
+            </div> 
+          </div>
+          <!-- third -->
+          <div class="col-xs-12 col-sm-12 col-md-10 col-lg-4">
+            <!-- <div class="input-group">
+              <label class="mt-2" for="emp_salary" >معاش :</label>
+              <input type="text" id="emp_salary" name="emp_salary" required class="emp_salary mb-3 col-12 form-control">
+            </div>
+            <div class="input-group">
+              <label class="mt-2" for="emp_id_staff" >نمبر ثبت کارمند:</label>
+              <input type="text" id="emp_id_staff" name="emp_id_staff" required class="emp_id_staff mb-3 col-12 form-control">
+            </div>
+            <div class="input-group">
+              <label class="mt-2 " for="emp_img" > تصویر:</label>
+              <input type="file"  id="emp_img" name="emp_img" class="emp_img mb-3 col-12 form-control"> -->
+           <!--    <label class="btn mb-3 mt-2 st btn-default btn-sm form-control center-block btn-file">
+                <i style="color:dodgerblue;" class="fa fa-upload fa-2x" aria-hidden="true"></i>
+                <input type="file" style="display: none;">
+              </label>
+            </div> -->
+          <!--   <div class="input-group">
+              <label class="mt-2" for="date-man" >تاریخ :</label>
+              <input type="text" id="date-man" name="date-man" class="date-man mb-3 col-12 form-control">
+            </div> -->
+          </div>
+          <div class="col-sm-12 height" style="height:40px;"></div>
+          <div class="col-sm-3"><a style="color: #fff;" href="cs-reg.ejs" class="btn btn-sm btn-success">حساب ثبت شده مشتریان</a></div>
+          <div class="col-sm-6">
+            <input type="submit" class="btn btn-primary rounded-pill" style="width:100%;" value="ذخیره">
+          </div>
+          <div class="col-sm-3"><a style="color: #fff; float: left;" href="cs-prof.ejs" class="btn btn-sm btn-secondary">   مشاهده نمایه مشتریان</a></div>
+          
+        </div>
+      </form>
+      
+        
+      </section>
+      </div>
+    </div>
+</body>
+<script src="assets/js/script.js"></script>
+<script src="assets/js/form-valiate.js"></script>
+
+<script>
+
+const $form = $('#form1')
+  
+  $form.on('submit', submitHandler)
+  
+  function submitHandler (e) {
+    e.preventDefault()
+    $.ajax({
+      url: '/add_customer',
+      type:'POST',
+      data: $form.serialize()
+    }).done(response => {
+      console.log(response)
+    })
+  }
+</script>
+
+</html>
+  

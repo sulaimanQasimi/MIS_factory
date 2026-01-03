@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>سیستم مدیریتی</title>
+  <!-- style -->
+  <link rel="stylesheet" href="assets/css/bootstrap.min.css" />
+  <link rel="stylesheet" href="assets/css/bootstrap-rtl.min.css" />
+  <link rel="stylesheet" href="assets/css/font-awesome.min.css" />
+  <link rel="stylesheet" href="assets/css/persian-datepicker.css">
+  <link rel="stylesheet" href="assets/css/jquery-ui.css" />
+  <link rel="stylesheet" href="assets/css/main.css" />
+  <link rel="stylesheet" href="assets/css/emp.css" />
+  <link rel="stylesheet" href="assets/css/dashboard.css" />
+  <link href="assets/css/select2.min.css" rel="stylesheet" /> 
+  <link rel="stylesheet" href="assets/css/scrollbar.css" />
+  <link rel="stylesheet" href="assets/css/responsive.css" />
+  <link rel="icon" href="assets/img/co-nav.png" />
+  <!-- script -->
+  <script src="assets/js/jquery.min.js"></script>
+  <script src="assets/js/select2.min.js"></script>
+  <script src="assets/js/jquery-ui.js"></script>
+  <script src="assets/js/popper.min.js"></script>
+  <script src="assets/js/bootstrap.min.js"></script>
+  <script src="assets/js/persian-datepicker.js"></script>
+  <script src="assets/js/append.js"></script>
+    <script>$(function(){
+        var exchangeRate = $("#currency").val();
+        if(exchangeRate == "دالر"){
+            $("#to_dollar").val(localStorage.getItem(1));
+        }
+        else if(exchangeRate == "یورو"){
+            $("#to_dollar").val(localStorage.getItem(2));
+        }
+        else if(exchangeRate == "افغانی"){
+            $("#to_dollar").val(1);
+        }
+        else if(exchangeRate == "کلدار"){
+            $("#to_dollar").val(localStorage.getItem(3));
+        }
+        else if(exchangeRate == "تومان"){
+            $("#to_dollar").val(localStorage.getItem(4));
+        }
+      });
+    </script>
+    
+</head>
+<body>
+    <div class="container">
+      <div class="row">
+      <section class="all-web" >
+
+        <h3 class="mt-5 mb-5 " style="text-align: center;">ثبت  مواد انبار شهر</h3>
+        <hr>
+        <br>
+        <form action="" method="post" class="needs-validation" id="form1">
+        <div class="row">
+          <div class="col-xs-12 col-sm-12 col-md-10 col-lg-4">
+            
+            
+
+            <div class="input-group">
+              <!-- <label class="mt-2" for="name" >نام محصول:</label>
+              <input type="text" id="name" name="name" required class="name mb-3 col-12 form-control"> -->
+              <label class="mt-2" for="name" >نام محصول:</label>
+              <select required  id="item_name" name="item_name" onchange="showUser(this.value)" style="direction: rtl;" class="js-example-basic-single  col-9 form-control">
+                <% data_02.forEach(function(item) { %>
+              <option value="<%= item.item_name %>"><%= item.item_name %></option>
+              <%  }); %>
+              </select>
+            </div>
+
+            <div class="input-group">
+              <label class="mt-2" for="name" > نوع محصول:</label>
+              <input type="text" id="item_type" name="item_type" required class="name mb-3 col-12 form-control">
+            </div>
+            
+            <div class="input-group">
+              <label class="mt-2" for="amount" >مقدار :</label>
+              <input type="text" id="amount" name="amount" required class="amount mb-3 col-12 form-control">
+            </div>
+            <div class="input-group">
+              <label class="mt-2" for="price" >قیمت (فی دانه) :</label>
+              <input type="number" id="price" name="price" required class="price mb-3 col-12 form-control">
+            </div>
+          </div>
+          <!-- second -->
+          <div class="col-xs-12 col-sm-12 col-md-10 col-lg-4">
+            <div class="input-group">
+              <label class="mt-2" for="total" >قیمت مجموعی :</label>
+              <input type="number" id="total" name="total" required class="total mb-3 col-12 form-control">
+            </div>
+            <!-- <div class="input-group">
+              <label class="mt-2" for="sale_price" > قیمت فروش:</label>
+              <input type="number" id="sale_price" name="sale_price" required class="sale_price mb-3 col-12 form-control">
+            </div> -->
+            <div class="input-group">
+              <label class="mt-2" for="sell_price" >قیمت فروش :</label>
+              <input type="number" id="sell_price" name="sell_price" required class=" mb-3 col-12 form-control">
+            </div>
+            <div class="input-group">
+              <label class="mt-2" for="to_dollar" >به دالر :</label>
+              <input type="text" id="to_dollar" name="to_dollar" required class="to_dollar mb-3 col-12 form-control">
+            </div>
+          </div>
+          <!-- third -->
+          <div class="col-xs-12 col-sm-12 col-md-10 col-lg-4">
+          <div class="input-group">
+              <label class="mt-2" for="date_man" > تاریخ :</label>
+              <input type="text" id="date_man" name="date_man" required class="date_man mb-3 col-12 form-control">
+            </div>
+      <div class="input-group">
+              <label class="mt-2" for="pro_no" >نمبر ثبت محصول:</label>
+              <input type="text" id="pro_no" name="pro_no" required class="pro_no mb-3 col-12 form-control">
+            </div>
+         <!--   <div class="input-group">
+              <label class="mt-2 " for="emp_img" > تصویر:</label>
+               <input type="file"  id="emp_img" name="emp_img" class="emp_img mb-3 col-12 form-control"> 
+              <label class="btn mb-3 mt-2 st btn-default btn-sm form-control center-block btn-file">
+                <i style="color:dodgerblue;" class="fa fa-upload fa-2x" aria-hidden="true"></i>
+                <input type="file" style="display: none;">
+              </label>
+            </div>
+            <div class="input-group">
+              <label class="mt-2" for="date-man" >تاریخ :</label>
+              <input type="text" id="date-man" name="date-man" class="date-man mb-3 col-12 form-control">
+            </div> -->
+          </div>
+          <div class="col-sm-12 height" style="height:40px;"></div>
+          <div class="col-sm-3"><a style="color: #fff;" href="city_store_reg.ejs" class="btn btn-sm btn-success">معومات ثبت شده</a></div>
+          <div class="col-sm-6">
+            <input type="submit" id="enter" class="btn btn-primary rounded-pill" style="width:100%;" value="ذخیره">
+          </div>
+          
+        </div>
+      </form>
+      
+        
+      </section>
+      </div>
+    </div>
+</body>
+<script src="assets/js/script.js"></script>
+<script src="assets/js/form-valiate.js"></script>
+<script>
+     $(document).ready(function() {
+      $('.js-example-basic-single').select2();
+    });
+
+    $(document).ready(()=>{
+  $(function() {
+  $('#date_man').datepicker({
+       changeYear: true,
+       changeMonth: true
+       
+   });
+});
+
+$('.price').keyup(()=>{
+    $('.total').val($('.price').val()*$('.amount').val());
+});
+
+$('.amount').keyup(()=>{
+    $('.total').val($('.price').val()*$('.amount').val());
+});
+    });
+</script>
+<script>
+
+      // function showUser(str)
+      // {
+      //   alert(str);
+      //   const $form = $('#item_name')
+  
+      //     $form.on('change', changeHandler)
+          
+      //     function changeHandler (e) {
+      //       e.preventDefault()
+      //       $.ajax({
+      //         url: '/market_reg1?strin='+str,
+      //         type:'POST',
+      //         data: $form.serialize()
+      //       }).done(response => {
+      //         console.log(response)
+      //       })
+      //     }
+      // }
+
+    function showUser(id){
+           
+                  
+              var data ={};
+              // data.email=$('#email').val();
+              // data.fNmame=$('#fNmame').val();
+              // data.lName=$('#lName').val();
+
+              $.ajax({
+                  type: 'POST',
+                  data: JSON.stringify(data),
+                  contentType: "application/json",
+                  dataType:'json',
+                  url: '/getUserName?param='+id,                      
+                  success: function(data) {
+                      // console.log('success');
+                      // console.log(JSON.stringify(data));  
+                     // var parsedJSON = JSON.parse(data); 
+                      var js_arr = JSON.stringify(data);
+                      var str_array = js_arr.split(',');
+
+                          // for(var i = 0; i < 1; i++) {
+                          //   str_array[i] = str_array[i].replace(/^\s*/, "").replace(/\s*$/, "");
+                          // // alert(str_array[0][7]);//ok
+                          //  // alert(JSON.parse(str_array));
+                          // //  alert(str_array[2]);
+                          //  alert(str_array["id"]);
+                          // }
+                      
+                                 
+                          //var new_str = js_arr.replace(/[{}]/g, '');
+                          var newStr = js_arr.substring(1, js_arr.length-1);
+                          var parsedJSON = JSON.parse(newStr);
+                        // var name = parsedJSON.item_name;
+                         var item_type = parsedJSON.item_type;
+                         alert("item_type");
+                     var price = parsedJSON.sell_price;
+                     var currency = parsedJSON.currency;
+                     var ex_rate = parsedJSON.ex_rate;
+                     var sell_price = parsedJSON.sell_price;
+                     var s_no = parsedJSON.serial_number;
+                     
+                     $("#price").val(price);
+                     $("#item_type").val(item_type);
+                    $("#sell_price").val(sell_price);
+                     $("#currency").val(currency);
+                     $("#to_dollar").val(ex_rate);
+                     $("#pro_no").val(s_no);
+                      
+                  },
+                  error: function(error) {
+                      console.log("some error in fetching the notifications");
+                  }
+              });
+}
+
+
+ const $form = $('#form1')
+  
+  $form.on('submit', submitHandler)
+  
+  function submitHandler (e) {
+    e.preventDefault()
+    $.ajax({
+      url: '/market_reg',
+      type:'POST',
+      data: $form.serialize()
+    }).done(response => {
+      alert(response);
+      console.log(response)
+    })
+  }
+</script>
+</html>

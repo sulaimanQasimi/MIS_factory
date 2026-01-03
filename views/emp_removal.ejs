@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>سیستم مدیریتی</title>
+  <!-- style -->
+  <link rel="stylesheet" href="assets/css/bootstrap.min.css" />
+  <link rel="stylesheet" href="assets/css/bootstrap-rtl.min.css" />
+  <link rel="stylesheet" href="assets/css/font-awesome.min.css" />
+  <link rel="stylesheet" href="assets/css/persian-datepicker.css">
+  <link rel="stylesheet" href="assets/css/jquery-ui.css" />
+  <link rel="stylesheet" href="assets/css/main.css" />
+  <link rel="stylesheet" href="assets/css/emp.css" />
+  <link rel="stylesheet" href="assets/css/dashboard.css" />
+  <link rel="stylesheet" href="assets/css/scrollbar.css" />
+  <link rel="stylesheet" href="assets/css/responsive.css" />
+  <link rel="icon" href="assets/img/co-nav.png" />
+  <!-- script -->
+  <script src="assets/js/jquery.min.js"></script>
+  <script src="assets/js/jquery-ui.js"></script>
+  <script src="assets/js/popper.min.js"></script>
+  <script src="assets/js/bootstrap.min.js"></script>
+  <script src="assets/js/persian-datepicker.js"></script>
+  <script src="assets/js/append.js"></script>
+  <script>
+    $(function(){
+      $('#data_man2').datepicker({
+       changeYear: true,
+       changeMonth: true
+       
+      });
+    });
+
+    $(function(){
+    change_c();
+  });
+  </script>
+</head>
+<body>
+    <div class="container">
+      <div class="row">
+      <section class="all-web" >
+
+        <h3 class="mt-5 mb-5 " style="text-align: center;">ثبت برداشت کارمندان شرکت</h3>
+        <hr>
+        <br>
+        <form action="" method="post" class="needs-validation" id="form1">
+        <div class="row">
+          <div class="col-xs-12 col-sm-12 col-md-10 col-lg-12">
+            <div class="input-group">
+              <label class="mt-2" for="emp_id" >آی دی کارمند :</label>
+              <!-- <input type="text" id="emp_id" name="emp_id" required class="emp_id mb-3 col-12 form-control">  -->
+              <select required  id="item_name" name="item_name" onchange="showUser(this.value)" style="direction: rtl;" class="dis_type mb-3 js-example-basic-single col-12 form-control">
+                <% data_03.forEach(function(stuff) { %>
+              <option value="<%= stuff.id %>"><%= stuff.id_number +" --- "+ stuff.name  %></option>
+              <%  }); %>
+              </select>
+            </div>
+            <div class="input-group">
+              <label class="mt-2" for="emp_name" >نام کارمند:</label>
+              <input type="text" id="emp_name" name="emp_name" required class="emp_name mb-3 col-12 form-control">
+              
+            </div>
+            <div class="input-group">
+              <label class="mt-2" for="emp_fname" >تخلص کارمند:</label>
+              <input type="text" id="emp_fname" name="emp_fname" required class="emp_fname mb-3 col-12 form-control">
+            </div>
+            
+            <div class="input-group">
+              <label class="mt-2" for="removl_aoumnt" >مقدار برداشت :</label>
+              <input type="number" id="removl_aoumnt" name="removl_aoumnt" required class="removl_aoumnt mb-3 col-12 form-control">
+            </div>
+            <!-- currency -->
+            <div class="input-group">
+              
+              <label class="mt-2" id="dynamic_ex_rate" for="to_dollar" >به افغانی :</label>
+              <input type="text" id="to_dollar" name="to_dollar" required class="to_dollar mb-3 col-12 form-control">
+            </div>
+
+            <div class="input-group">
+              <label class="mt-2" for="currency" >واحد پولی  :</label>
+              <select type="number" id="currency" name="currency" onchange="change_c()" required class="currency mb-3 col-12 form-control">
+                <option value="افغانی">افغانی</option>      
+            <option value="دالر">دالر</option>      
+            <option value="کلدار">کلدار</option>      
+            <option value="تومان">تومان</option>      
+            <option value="یورو">یورو</option>      
+            </select>
+            <!-- for making currecny visible -->
+              <script>
+                  /* function change_c(){
+                  var exchangeRate = $("#currency").val();
+                  if(exchangeRate == "دالر"){
+                      $("#to_dollar").val(localStorage.getItem(1));
+                      $("#dynamic_ex_rate").text("به دالر:");
+                  }
+                  else if(exchangeRate == "یورو"){
+                      $("#to_dollar").val(localStorage.getItem(2));
+                      $("#dynamic_ex_rate").text("به یورو:");
+                  }
+                  else if(exchangeRate == "افغانی"){
+                      $("#to_dollar").val(1);
+                      $("#dynamic_ex_rate").text("به افغانی:");
+
+                  }
+                  else if(exchangeRate == "کلدار"){
+                      $("#to_dollar").val(localStorage.getItem(3));
+                      $("#dynamic_ex_rate").text("به کلدار:");
+                  }
+                  else if(exchangeRate == "تومان"){
+                      $("#to_dollar").val(localStorage.getItem(4));
+                      $("#dynamic_ex_rate").text("به تومان:");
+                  }
+                } */
+
+                function change_c(){
+                  var exchangeRate = $("#currency").val();
+                  if(exchangeRate == "دالر"){
+                      $("#to_dollar").val(1);
+                      $("#dynamic_ex_rate").text("به دالر:");
+                  }
+                  else if(exchangeRate == "یورو"){
+                      $("#to_dollar").val(localStorage.getItem(2));
+                      $("#dynamic_ex_rate").text("به یورو:");
+                  }
+                  else if(exchangeRate == "افغانی"){
+                      $("#to_dollar").val(localStorage.getItem(1));
+                      $("#dynamic_ex_rate").text("به افغانی:");
+
+                  }
+                  else if(exchangeRate == "کلدار"){
+                      $("#to_dollar").val(localStorage.getItem(3));
+                      $("#dynamic_ex_rate").text("به کلدار:");
+                  }
+                  else if(exchangeRate == "تومان"){
+                      $("#to_dollar").val(localStorage.getItem(4));
+                      $("#dynamic_ex_rate").text("به تومان:");
+                  }
+                }
+                </script>
+           
+            </div>
+          </div>
+          <!-- second -->
+          <div class="col-xs-12 col-sm-12 col-md-10 col-lg-12">
+            <div class="input-group">
+              <label class="mt-2" for="data_man" > تاریخ :</label>
+              <input type="text" id="data_man2" name="data_man" required class="data_man mb-3 col-12 form-control">
+            </div>
+            <!--            <div class="input-group">
+              <label class="mt-2" for="emp_add" > آدرس:</label>
+              <textarea type="text" id="emp_add" name="emp_add" required class="emp_add mb-3 col-12 form-control"></textarea>
+            </div>
+            <div class="input-group">
+              <label class="mt-2" for="emp_j_area" >ساحه کاری :</label>
+              <input type="text" id="j_area" name="j_area" required class="j_area mb-3 col-12 form-control">
+            </div>
+            <div class="input-group">
+              <label class="mt-2" for="emp_j_type" >نوعیت کاری :</label>
+              <input type="text" id="emp_j_type" name="emp_j_type" required class="emp_j_type mb-3 col-12 form-control">
+            </div> -->
+          </div>
+          <!-- third -->
+          <!-- <div class="col-xs-12 col-sm-12 col-md-10 col-lg-4">
+            <div class="input-group">
+              <label class="mt-2" for="emp_salary" >معاش :</label>
+              <input type="text" id="emp_salary" name="emp_salary" required class="emp_salary mb-3 col-12 form-control">
+            </div>
+            <div class="input-group">
+              <label class="mt-2" for="emp_id_staff" >نمبر ثبت کارمند:</label>
+              <input type="text" id="emp_id_staff" name="emp_id_staff" required class="emp_id_staff mb-3 col-12 form-control">
+            </div>
+            <div class="input-group">
+              <label class="mt-2 " for="emp_img" > تصویر:</label>
+         <input type="file"  id="emp_img" name="emp_img" class="emp_img mb-3 col-12 form-control"> -->
+              <!-- <label class="btn mb-3 mt-2 st btn-default btn-sm form-control center-block btn-file">
+                <i style="color:dodgerblue;" class="fa fa-upload fa-2x" aria-hidden="true"></i>
+                <input type="file" style="display: none;">
+              </label>
+            </div>
+            <div class="input-group">
+              <label class="mt-2" for="date-man" >تاریخ :</label>
+              <input type="text" id="date-man" name="date-man" class="date-man mb-3 col-12 form-control">
+            </div>
+          </div> -->
+          <div class="col-sm-12 height" style="height:40px;"></div>
+          <div class="col-sm-3"><a style="color: #fff;" href="emp_removal_reg.ejs" class="btn btn-sm btn-success">معلومات ثبت شده</a></div>
+          <div class="col-sm-6">
+            <input type="submit" class="btn btn-primary rounded-pill" style="width:100%;" value="ذخیره">
+          </div>
+          
+        </div>
+      </form>
+      
+        
+      </section>
+      </div>
+    </div>
+</body>
+<script src="assets/js/script.js"></script>
+<script src="assets/js/form-valiate.js"></script>
+<script>
+   
+//  $(document).ready(()=>{
+  
+
+  $(function(){
+    var item_name = $("#item_name").val();
+    showUser(item_name);
+  });
+
+function showUser(id){
+var data ={};
+
+$.ajax({
+    type: 'POST',
+    data: JSON.stringify(data),
+    contentType: "application/json",
+    dataType:'json',
+    url: '/get_stuff?param='+id,                      
+    success: function(data) {
+   
+        var js_arr = JSON.stringify(data);
+        var str_array = js_arr.split(',');
+
+       var newStr = js_arr.substring(1, js_arr.length-1);
+       var parsedJSON = JSON.parse(newStr);
+       var name = parsedJSON.name;
+       var last_name = parsedJSON.last_name;
+     
+       
+       $("#emp_name").val(name);
+       $("#emp_fname").val(last_name);
+        
+    },
+    error: function(error) {
+        console.log("some error in fetching the notifications");
+    }
+});
+}
+
+
+const $form = $('#form1')
+  
+  $form.on('submit', submitHandler)
+  
+  function submitHandler (e) {
+    e.preventDefault()
+    $.ajax({
+      url: '/stuff_taken_amount',
+      type:'POST',
+      data: $form.serialize()
+    }).done(response => {
+       document.getElementById("form1").reset();
+       change_c();
+    })
+  }
+</script>
+
+</html>

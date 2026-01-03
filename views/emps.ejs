@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>سیستم مدیریتی</title>
+  <!-- style -->
+  <link rel="stylesheet" href="assets/css/bootstrap.min.css" />
+  <link rel="stylesheet" href="assets/css/bootstrap-rtl.min.css" />
+  <link rel="stylesheet" href="assets/css/font-awesome.min.css" />
+  <link rel="stylesheet" href="assets/css/persian-datepicker.css">
+  <link rel="stylesheet" href="assets/css/jquery-ui.css" />
+  <link rel="stylesheet" href="assets/css/main.css" />
+  <link rel="stylesheet" href="assets/css/emp.css" />
+  <link rel="stylesheet" href="assets/css/dashboard.css" />
+  <link rel="stylesheet" href="assets/css/scrollbar.css" />
+  <link rel="stylesheet" href="assets/css/responsive.css" />
+  <link rel="icon" href="assets/img/co-nav.png" />
+  <!-- script -->
+  <script src="assets/js/jquery.min.js"></script>
+  <script src="assets/js/jquery-ui.js"></script>
+  <script src="assets/js/popper.min.js"></script>
+  <script src="assets/js/bootstrap.min.js"></script>
+  <script src="assets/js/persian-datepicker.js"></script>
+  <script src="assets/js/append.js"></script>
+  <!-- <script src="http://code.jquery.com/jquery-1.9.1.js"></script> -->
+</head>
+<body>
+    <div class="container">
+      <div class="row">
+      <section class="all-web" >
+
+        <h3 class="mt-5 mb-5 " style="text-align: center;">ثبت معلومات  درباره کارمندان شرکت</h3>
+        <hr>
+        <br>
+        <form action="" method="POST" class="needs-validation" enctype="multipart/form-data" id="uploadForm">
+        <div class="row">
+          <div class="col-xs-12 col-sm-12 col-md-10 col-lg-4">
+            <div class="input-group">
+              <label class="mt-2" for="emp_name" >نام کارمند:</label>
+              <input type="text" id="emp_name" name="emp_name" required class="emp_name mb-3 col-12 form-control">
+              
+            </div>
+            <div class="input-group">
+              <label class="mt-2" for="emp_fname" >تخلص کارمند:</label>
+              <input type="text" id="emp_fname" name="emp_fname"  class="emp_fname mb-3 col-12 form-control">
+            </div>
+            <div class="input-group">
+              <label class="mt-2" for="emp_phone" >تیلیفون :</label>
+              <input type="text" id="emp_phone" name="emp_phone"  class="emp_phone mb-3 col-12 form-control">
+            </div>
+
+            <!-- <div class="input-group">
+              <label class="mt-2" for="emp_email" >ایمیل (اختیاری) :</label>
+              <input type="email" id="emp_email" name="emp_email" required class="emp_email mb-3 col-12 form-control">
+            </div> -->
+
+          </div>
+
+          <!-- second -->
+          <div class="col-xs-12 col-sm-12 col-md-10 col-lg-4">
+
+            <!-- <div class="input-group">
+              <label class="mt-2" for="emp_tazkira" >نمبر تذکره :</label>
+              <input type="text" id="emp_tazkira" name="emp_tazkira" required class="emp_tazkira mb-3 col-12 form-control">
+            </div> -->
+
+            <div class="input-group">
+              <label class="mt-2" for="emp_add" > آدرس:</label>
+              <textarea type="text" id="emp_add" name="emp_add" required class="emp_add mb-3 col-12 form-control"></textarea>
+            </div>
+            <div class="input-group">
+              <label class="mt-2" for="emp_j_area" >ساحه کاری :</label>
+              <input type="text" id="j_area" name="j_area" required class="j_area mb-3 col-12 form-control">
+            </div>
+            <div class="input-group">
+              <label class="mt-2" for="emp_j_type" >نوعیت کاری :</label>
+              <input type="text" id="emp_j_type" name="emp_j_type" required class="emp_j_type mb-3 col-12 form-control">
+            </div>
+          </div>
+          <!-- third -->
+          <div class="col-xs-12 col-sm-12 col-md-10 col-lg-4">
+            <div class="input-group">
+              <label class="mt-2" for="emp_salary" >معاش :</label>
+              <input type="text" id="emp_salary" name="emp_salary" required class="emp_salary mb-3 col-12 form-control">
+            </div>
+            <div class="input-group">
+              <label class="mt-2" for="emp_id_staff" >نمبر ثبت کارمند:</label>
+              <input type="text" id="emp_id_staff" name="emp_id_staff" required class="emp_id_staff mb-3 col-12 form-control">
+            </div>
+            <div class="input-group">
+              <label class="mt-2 " for="emp_img" > تصویر:</label>
+              <!-- <input type="file"  id="emp_img" name="emp_img" class="emp_img mb-3 col-12 form-control"> -->
+              <label class="btn mb-3 mt-2 st btn-default btn-sm form-control center-block btn-file">
+                <i style="color:dodgerblue;" class="fa fa-upload fa-2x" aria-hidden="true"></i>
+                <input type="file" style="display: none;" id="upload-input" name="upload">
+              </label>
+            </div>
+            <div class="input-group">
+              <label class="mt-2" for="date-man" >تاریخ :</label>
+              <input type="text" id="date-man" required name="date_man" class="date-man mb-3 col-12 form-control">
+            </div>
+          </div>
+          <div class="col-sm-12 height" style="height:40px;"></div>
+          <div class="col-sm-3"><a style="color: #fff;" href="emp-reg.ejs" class="btn btn-sm btn-success">کارمندان ثبت شده</a></div>
+          <div class="col-sm-6">
+            <input type="submit" class="btn btn-primary rounded-pill" style="width:100%;" value="ذخیره">
+          </div>
+          
+        </div>
+      </form>
+      
+        
+      </section>
+      </div>
+    </div>
+     
+ 
+</body>
+<script src="assets/js/script.js"></script>
+<script src="assets/js/form-valiate.js"></script>
+
+<script>
+
+// const $form = $('#form1')
+  
+//   $form.on('submit', submitHandler)
+  
+//   function submitHandler (e) {
+//     e.preventDefault()
+//     $.ajax({
+//       url: '/stuff_reg',
+//       type:'POST',
+//       data: $form.serialize()
+//     }).done(response => {
+//       console.log(response)
+//     })
+//   }
+    //file uploading
+//   function add_category()
+//     {
+//           var name = $('#emp_img').val();
+        
+//         if(name =='')
+//             {
+//                 alert('please enter category name');
+//             }else{
+                
+           
+        
+// $.ajax({
+     
+//     url: "add_category?emp_img="+name,
+//     type: 'POST',  
+//     dataType: "json",
+//     processData: false,
+//     beforeSend: function(){},
+//        //console.log(data);
+//     success: function(data)
+//     {
+//        //console.log(data);
+//         window.location.reload();
+          
+//     }
+     
+//    }); 
+//             }
+//     }
+
+</script>
+
+<script>
+// var data = new FormData();
+//     $.each($('#upload_input')[0].files, function(i, file) {
+//         data.append('file-'+i, file);
+//     });
+
+//     $.ajax({
+//         url: 'http://localhost:3000/file_upload',
+//         data: data,
+//         cache: false,
+//         contentType: false,
+//         processData: false,
+//         method: 'POST',
+//         type: 'POST', // For jQuery < 1.9
+//         success: function(data){
+//             alert(data);
+//         }
+//     });
+
+// $('#form1').on('submit', function (event) {
+//     event.preventDefault();
+
+//     // Get the files from input, create new FormData.
+//     var files = $('#upload-input').get(0).files,
+//         formData = new FormData();
+
+//     if (files.length === 0) {
+//         alert('Select atleast 1 file to upload.');
+//         return false;
+//     }
+
+//     if (files.length > 3) {
+//         alert('You can only upload up to 3 files.');
+//         return false;
+//     }
+
+//     // Append the files to the formData.
+//     for (var i=0; i < files.length; i++) {
+//         var file = files[i];
+//         formData.append('photos[]', file, file.name);
+//         alert(file.name);
+//     }
+
+//     // Note: We are only appending the file inputs to the FormData.
+//     uploadFiles(formData);
+// });
+
+// const handleImageUpload = event => {
+//         const files = event.target.files
+//         const formData = new FormData()
+//         formData.append('myFile', files[0])
+
+//         fetch('/saveImage', {
+//           method: 'POST',
+//           body: formData
+//         })
+//         .then(response => response.json())
+//         .then(data => {
+//           console.log(data.path)
+//         })
+//         .catch(error => {
+//           console.error(error)
+//         })
+//       }
+//       document.querySelector('#fileUpload').addEventListener('change', event => {
+//         handleImageUpload(event)
+// })
+
+
+$("#uploadForm").submit(function () {
+      var formData = new FormData(this);
+      $.ajax({
+          url: '/up_image',
+          type: 'POST',
+          data: formData,
+          async: false,
+          cache: false,
+          contentType: false,
+          processData: false,
+          success: function (data) {
+              // alert(data);
+              document.getElementById("uploadForm").reset();
+          },
+          error: function(data){
+              alert(data);
+          }
+      });
+      return false;
+  });
+    
+
+</script>
+
+</html>

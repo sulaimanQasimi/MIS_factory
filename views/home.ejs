@@ -1,0 +1,888 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Galaxy Tech</title>
+  <!-- style -->
+  <link rel="stylesheet" href="assets/css/bootstrap.min.css" />
+  <link rel="stylesheet" href="assets/css/bootstrap-rtl.min.css" />
+  <link rel="stylesheet" href="assets/css/font-awesome.min.css" />
+  <link rel="stylesheet" href="assets/css/persian-datepicker.css">
+  <link rel="stylesheet" href="assets/css/jquery-ui.css" />
+  <link rel="stylesheet" href="assets/css/main.css" />
+  <link rel="stylesheet" href="assets/css/fro.css" />
+  <!-- <link rel="stylesheet" href="assets/css/materialize.min.css" /> -->
+  <link rel="icon" href="assets/css/responsive.css" />
+  <link rel="icon" href="assets/img/co-nav.png" />
+  <!-- end for style -->
+ 
+  <!-- script -->
+  <script src="assets/js/jquery.min.js"></script>
+  <script src="assets/js/jquery-ui.js"></script>
+  <script src="assets/js/popper.min.js"></script>
+  <script src="assets/js/bootstrap.min.js"></script>
+  <script src="assets/js/persian-datepicker.js"></script>
+  <!-- <script src="assets/js/materialize.min.js"></script> -->
+  <script src="assets/js/append.js"></script>
+   <script>
+    $(function(){
+      var selected_color = localStorage.getItem(10);
+      $(".choosed_bg").css({'background-color':selected_color});
+    });
+  </script>
+  <!-- end for script -->
+  <!-- a separate script for making currency exchange rate a page reload  -->
+  <script>
+          $(function(){
+            var exchangeRate = $("#expense_type").val();
+            if(exchangeRate == "دالر"){
+                $("#nerkh").val(localStorage.getItem(1));
+            }
+            else if(exchangeRate == "یورو"){
+                $("#nerkh").val(localStorage.getItem(2));
+            }
+            else if(exchangeRate == "افغانی"){
+                $("#nerkh").val(1);
+            }
+            else if(exchangeRate == "کلدار"){
+                $("#nerkh").val(localStorage.getItem(3));
+            }
+            else if(exchangeRate == "تومان"){
+                $("#nerkh").val(localStorage.getItem(4));
+            }
+          });
+  </script>
+</head>
+<body id="body">
+  <!-- start for dialogs -->
+  <div style="display: none" class="bg-black"></div>
+  <!-- for estimat the produce -->
+  <div class="pro_estimate">
+    <div class="header">
+      <span class="close_Est"><i style="color: rgb(70, 70, 70);" class="fa fa-times"></i></span>
+      <h4 class="mb-5 mt-3 mr-4" style="padding-right: 20px;" >بخش برآورد محصول</h4>
+    </div>
+    <div class="pe_body mt-5">
+
+      <div class="row">
+        <div class="search-bar">
+       
+                <input type="search" on placeholder="جستجوی اجناس" name="item-search" list="search_list" id="item-search"  class="print item-search form-control">
+        </div>
+    </div>
+    <datalist id="search_list">
+     
+          <option value=""></option>
+          
+  </datalist>
+
+    <div class="row">
+      <form class="col-sm-12 mt-5" action="" enctype="multipart/form-data data-for-invoice" id="data-for-invoice">
+      <table class="table table-striped table-bordered" id="table-man">
+          <thead>
+              <tr>
+                  <th>شماره ثبت</th>
+                  <th>نام جنس</th>
+                  <th>مقدار</th>
+                  <th>قیمت</th>
+                  <th>مجموع</th>
+                  <th class="print">حذف</th>
+              </tr>
+          </thead>
+          <tbody id="tbody">
+              
+          </tbody>
+      </table>
+      <!-- <body ></body> -->
+      <script>
+        
+        var count = 1;
+      $("#item-search").on("search",function(){
+                var search_input = $("#item-search").val();
+          
+                        var data ={};
+                                   
+                              $.ajax({
+                                  type: 'POST',
+                                  data: JSON.stringify(data),
+                                  contentType: "application/json",
+                                  dataType:'json',
+                                  url: '/mahsol_items?param='+search_input,                      
+                                  success: function(data) {
+
+                                   //alert(data);
+                     
+                                  var js_arr = JSON.stringify(data);
+                                  var str_array = js_arr.split(',');
+
+                                  var newStr = js_arr.substring(1, js_arr.length-1);
+                                  var parsedJSON = JSON.parse(newStr);
+                                  var st_id = parsedJSON.id;
+                                 
+                                   
+                          var name = parsedJSON.item_name;
+                          var quantity= 1;
+                         // var buy_type = parsedJSON.item_type;
+                          var price = parsedJSON.price;
+                          var total = price * quantity ;
+                   
+                                   /*  $("#item-search").on("search",function()
+                                    { */
+                                        
+                                            var html_code = "<tr id='row_id_"+count+"'>";
+
+                                            html_code+=
+                                            '<td>'+count+'</td>';
+                                            html_code+=
+                                            '<td><input type="text" name="item" value="'+name+'" class="form-control item" id="item"></td>';
+                                            html_code+=
+                                            '<td><input type="number" name="quantity" value="'+quantity+'" class="form-control quantity" id="quantity_'+count+'"></td>';
+                                            html_code+=
+                                            '<td><input type="number" name="price" value="'+price+'"  class="form-control price" id="price_'+count+'"></td>';
+                                            html_code+=
+                                            '<td><input type="number" name="total" value="'+total+'" readonly class="form-control total" id="total_'+count+'"></td>';
+                                            html_code+=
+                                            '<td class="print"><span class="delete-img print"  id="'+count+'" ><img width="25px" style="cursor: pointer;" src="assets/img/mawadkham/trash.svg" alt=""></span></td>';
+                                            html_code += "</tr>";
+                                            
+                                            $("#tbody").append(html_code);
+                                            count++;
+
+                                     
+                                        },
+
+                                        error: function(error) {
+                                          
+                                            console.log("some error in fetching the notifications");
+                                        } 
+                             
+              
+                });
+         });
+      
+      </script>
+     <div class="calclus">
+      <div class="input-group">
+          <label class="mt-2" for="quantity-show">مقدار  قیمت :</label>
+          <input type="number" value="" name="quantity-show" id="quantity-show" class="quantity-show form-control ml-2 mb-2">
+         </div>
+       <div class="input-group">
+          <label class="mt-2" for="reciept-show">مقدار  رسید :</label>
+          <input type="number" value="" name="reciept-show" id="reciept-show" class="reciept-show  form-control  ml-2 mt-2 mb-2">
+       </div>
+          <div class="input-group">
+              <label class="mt-2" for="total-show">مجموعا :</label>
+          <input type="number" value="" readonly name="total-show" id="total-show" class="total-show  form-control ml-2  mt-2 mb-2">
+     </div>
+      </div>
+    <div class=" oprs">
+      <input onclick="setlocalStoage()" type="submit" id="save" name="save" class="save btn btn-success rounded-pill col-3 mx-auto ml-5 mb-5 print" value="ذخیره کردن">
+      <a class="print" onclick="javascript:window.print();"><img class="ml-5 mb-5 btn btn-primary" style="cursor: pointer;"  width="40px" src="assets/img/mawadkham/print.svg" alt="print"></a>
+    </div>
+  </form>
+  </div>
+    </div>
+  </div>
+  <div style="display: none" class="modal-box card">
+    <h3 style="margin: 60px auto">آیا می خواهید از سیستم خارج شوید؟</h3>
+    <form class="btn-logouting" action="">
+      <div class="btn-no btn-danger">خیر</div>
+      <div class="btn-yes btn-primary" onclick="log_out()">بلی</div>
+    </form>
+  </div>
+ <div  class="exchange_currency_div ">
+   <span><img src="assets/img/mawadkham/close-modal.svg" width="30px" alt="" class="closer_exc"></span>
+  <h3  class=" headr-exc mx-auto">نرخ امروز اسعار</h3>
+  <table class="table" dir="rtl">
+    <tr>
+      <td><input type="text" class="form-control " id="dollor" placeholder="افغانی"></td>
+      <td><input type="text" class="form-control " id="yoro" placeholder="یورو"></td>
+      <td><input type="text" class="form-control " id="kaldar" placeholder="کلدار"></td>
+      <td><input type="text" class="form-control " id="toman" placeholder="تومان"></td>
+    </tr>
+  </table>
+  <input type="button" onclick="set_storage();" value="ذخیره کردن" class=" rounded-pill mx-auto col-5 btnCr btn btn-primary mt-5">
+ 
+ </div>
+ <script>
+    function set_storage(){
+      var dollor = $("#dollor").val();
+    var yoro = $("#yoro").val();
+    var kaldar = $("#kaldar").val();
+    var toman = $("#toman").val();
+
+    if(dollor == ""){
+
+    }else{
+      localStorage.setItem(1,dollor);
+    }
+    if(yoro == ""){
+
+    }else{
+      localStorage.setItem(2,yoro);
+    }
+    if(kaldar == ""){
+
+    }else{
+      localStorage.setItem(3,kaldar);
+    }
+    if(toman == ""){
+
+    }else{
+      localStorage.setItem(4,toman);
+    }
+    
+    }
+  function setlocalStoage(){
+    alert(100);
+    var dollor = $("#dollor").val();
+    var yoro = $("#yoro").val();
+    var kaldar = $("#kaldar").val();
+    var toman = $("#toman").val();
+
+    if(dollor == ""){
+
+    }else{
+      localStorage.setItem(1,dollor);
+    }
+    if(yoro == ""){
+
+    }else{
+      localStorage.setItem(2,yoro);
+    }
+    if(kaldar == ""){
+
+    }else{
+      localStorage.setItem(3,kaldar);
+    }
+    if(toman == ""){
+
+    }else{
+      localStorage.setItem(4,toman);
+    }
+    
+  }
+</script>
+ <script>
+   $(document).ready(()=>{
+    $('#currency_exchange_btn').click(()=>{
+      $('.bg-black').show();
+     $('.exchange_currency_div').animate({
+       top: '25%',
+       right: '30%'
+     },600);
+     });
+   $('.bg-black').click(()=>{
+     $('.exchange_currency_div').animate({
+       right: '-80%',
+     },600);
+     $('.bg-black').hide();
+   });
+   $('.closer_exc').click(()=>{
+    $('.exchange_currency_div').animate({
+       right: '-80%',
+     },600);
+     $('.bg-black').hide();
+   });
+   });
+ </script>
+  <div style="display: none; overflow: hidden; top: 35px; border-radius: 15px !important;"  class="setting-modal">
+    <div class="card-header" style=" height: 45px; border: none; background-color: white;">
+      <img src="assets/img/mawadkham/close-modal.svg" style="width: 30px; float: left; cursor: pointer" class="close-btn-modal"
+        alt="بستن" />
+        <style>
+          .close-btn-modal{
+            transition:ease 100ms all;
+          }
+          .close-btn-modal:hover{
+            padding: 1px;
+            transition: ease 100ms all;
+          }
+        </style>
+        <script>
+
+          $(document).on('keydown', function(e) {
+            if (e.keyCode == 27)
+            {
+              $(".bg-black").hide();
+            $(".setting-modal").hide();
+            }
+             
+            
+          });
+        </script>
+      <h3 style="color: black; margin: 1px auto" class="mx-auto">
+        تنظیمات کاربری
+      </h3>
+    </div>
+    <div class="card-body">
+      <form action="" id="setting-form" enctype="multipart/form-data">
+        <label for="name">نام </label>
+        <input  name="name" id="name" type="text" class="name form-control" />
+        <input type="hidden" name="update_id" id="update_id">
+        <label for="name">تخلص </label>
+        <input id="last_name" name="last_name"  type="text" class="surename form-control" />
+
+        <label for="name">نام کاربری </label>
+        <input id="username" name="username" type="text" class="username form-control" />
+
+        <label for="name">رمز ورودی </label>
+        <input id="password" name="password" type="password" class="form-control password" />
+
+        <input type="submit" class="btn-save btn btn-primary" style="cursor: pointer; width: 49%; margin-top: 20px"
+          value="ذخیره کردن" />
+        <input type="button" class="btn-reset btn btn-danger" style="cursor: pointer; width: 49%; margin-top: 20px"
+          value=" پاک کردن" onclick="document.getElementById('setting-form').reset();" />
+        <span onclick="passShow()" class="passShow fa fa-eye"></span>
+        <style>
+          span.passShow {
+            cursor: pointer;
+            font-size: 20px;
+            position: absolute;
+            left: 50px;
+            bottom: 117px;
+          }
+        </style>
+      </form>
+    </div>
+  </div>
+
+<!-- start of modal -->
+<div style="display:none ; border:1px solid black; padding: 20px;" class="new-user-modal card col-12 col-sm-12 col-md-10 col-lg-8 mx-auto">
+      <span style="float: left; position: absolute; left: 12px; top: 5px; cursor: pointer;" ><img class="close-dialog"width="30px" src="assets/img/mawadkham/close-modal.svg" alt=""></span>
+      <h3 class="mx-auto mt-4">تعریف کاربر با صلاحیت</h3>
+      <hr>
+      <form action="" id="user-form" enctype="multipart/form-data">
+     <div class="">
+          <table class="table table-bordered table-striped">
+            <thead>
+              <th>نام کاربری </th>
+              <th>نام و تخلص </th>
+              <th>صلاحیت</th>
+              <th>رمز ورودی</th>
+              <th>عکس</th>
+            </thead>
+            <tbody>
+              <td>
+                <input style="width:100%; margin-top: 15px;" type="text" id="userrname2" name="userrname2"  class="userrname2 mb-3 form-control" name="username2">
+              </td>
+              <td>
+                <input style=" width:100%; margin-top: 15px;" type="text" id="full_name" name="full_name" class="surename mb-3 form-control" name="surename">
+              </td>
+              <td>
+                <select  id="typeofAdmin" style="margin-top: 15px;" class="typeofAdmin  mb-3 form-control" name="typeofAdmin">
+                  <option value="half">صلاحیت نیمه</option>
+                  <option value="full"> صلاحیت مکمل</option>
+                </select>
+              </td>
+              <td><input type="password" id="password2" style="margin-top: 15px;" class="password2 mb-3 form-control" name="password2">
+                <span onclick="viewPass()" class="showPass fa fa-eye"></span>
+              </td>
+              <td>
+                <div class="input-group" style="width:90px;">
+                  <label for="image_upload"  name="image" required style="width:90px; height:50px; margin-bottom: 10px;">
+                       <img id="myImage" src="image1.gif" alt="" data-img="assets/img/last-project/delete.svg" class="img img-thumbnail" style="width:100% !important; height:100% !important; " />
+                  </label>
+                  
+                  <input id="image_upload" name="image" class="photo mb-3 form-control" id="image" type="file" style="display:none;">
+              
+              </div>
+               <!--  <input type="file" id="image" class="photo mb-3 form-control" name="image"> -->
+              </td>
+            </tbody>
+          </table>
+          
+
+      </div>
+         
+         <input type="submit" id="hide_added" class="btn-save btn btn-primary" style="cursor: pointer; width: 49%; margin-top: 20px"
+          value="ذخیره کردن" />
+
+          <input type="submit" onclick="update_data()" id="update_show" class="btn-save btn btn-primary" style="cursor: pointer; width: 49%; margin-top: 20px"
+          value="ویرایش کردن" />
+
+        <input type="button" class="btn-reset btn btn-danger" style="cursor: pointer; width: 49%; margin-top: 20px"
+          value=" پاک کردن" onclick="document.getElementById('user-form').reset();" />
+        
+                                      <style>
+                                      .showPass {
+                                          cursor: pointer;
+                                          font-size: 20px;
+                                          position: absolute;
+                                          left: 147px;
+                                          top: 162px;
+                                        }
+                                      </style>
+           </form>
+           <br>        <div style="overflow-y: scroll;">
+                        <table class="table table-bordered table-striped">
+                          <thead>
+                            <tr>
+                                <th> شماره </th>
+                                <th>نام کاربری </th>
+                                <th>نام و تخلص </th>
+                                <th>صلاحیت</th>
+                                <th>رمز ورودی</th>
+                                <th>عکس</th>
+                                <th>عملیات</th>
+                          </tr>
+                          </thead>
+                          <tbody>
+                            <% var i =1; data_03.forEach(function(half_users) { if(half_users.authority == "half") { %>
+                                <tr id="parent_<%= half_users.id %>" style="text-align:center;"> 
+                                    <td><%= i %></td>
+                                    <td style="text-align:center;"><%= half_users.username %></td>
+                                    <td><%= half_users.full_name %></td>
+                                    <td><% if(half_users.authority == "half"){ %>صلاحیت نیمه  <% }%></td>
+                                    <td><%= half_users.password%></td>
+                                    <td> <img src="<%= half_users.profile %>" height="50px" width="50px" alt=""></td>
+                                    <td><a href="#" onclick="delete_user(<%= half_users.id %>)" style="color: red;">حذف </a>  <!-- <a href="#" onclick="edit_user()" style="color: green;">تغیرات </a> -->  </td>
+                              </tr>
+                          <% }  i++;  }); %>
+                          </tbody>
+                        </table></div>
+</div>
+<!-- end of modal -->
+<style>
+  label{
+    margin-right: 10px;
+    margin-bottom: 10px;
+    margin-top: 10px;
+  }
+</style>
+  <div class="user-poup-menu" id="user-poup-menu" style="z-index: 800; display: none">
+    <i class="fa fa-user" style="
+          position: absolute;
+          margin-top: 10px;
+          font-size: 17px;
+          left: 10px;
+        "></i>
+         
+    <h5 style="padding-top: 10px; padding-right: 10px"><%= user_name %></h5>
+    <hr />
+    <ul>
+      <li id="setting-menu">
+        <a href="#" onclick="user_settings(<%= us_id %>)">تنظمیات کاربری<img src="assets/img/user-menu-poupUp/settings.svg" alt="pic" /></a>
+      </li>
+      <li class="addnewuser">
+        <a href="#">افزودن کاربر جدید<img src="assets/img/user-menu-poupUp/add_user_male.svg" alt="pic" /></a>
+      </li>
+
+  
+
+      <li>
+        <a href="about.ejs" target="frame-man">درباره ما<img src="assets/img/user-menu-poupUp/about.svg" alt="pic" /></a>
+      </li>
+      <li class="logout-btn"  style="border-bottom: none">
+        <a>خروج از سیستم<img src="assets/img/user-menu-poupUp/shutdown.svg  " alt="pic" /></a>
+      </li>
+    </ul>
+  </div>
+
+<!------------------------- end Dialogs --------------------------->
+  <nav style="
+        background-color: dodgerblue;
+        color: white !important;
+        height: 60px;
+      " class="navbar navbar-expand-lg nav-man choosed_bg">
+    <div style="position: absolute; left: 0px" class="nav-icons">
+
+     
+      <div  style="margin-left: 5px; margin-top:4px ; border-radius: 100%; height: 46px; width: 46px; "><img width="40px" style="margin-left: 10px; border-radius: 7px;" class="user-pic" id="user-pic" src="<%= profile %>" alt="img" />
+      <div class="big-dot" style="width: 16px; height: 16px; border-radius: 100%; background-color: rgb(0, 255, 157); border: 3px solid white; position: absolute; bottom: 2px;"></div>
+      </div>
+      
+
+    </div>
+    <style>
+      .nav-icon{
+        /* width: 60px; */
+        padding: 19px;
+      }
+      .nav-icon img{
+        transition:all 300ms;
+        /* padding: 4px; */
+      }
+      .nav-icon:hover{
+        background-color: rgb(0, 85, 170);
+      }
+      .nav-icon:hover img{
+        padding: 3px;
+        transition:all 400ms;
+      }
+    </style>
+    <div style="float: right !important;" class="right-menus">
+      <a class="nav-icon" data-toggle="tooltip" title="نسخه پشتیبان" onclick="db_backup()" href="#">
+        <img width="30px"  src="assets/img/data_backup.svg" >
+      </a>
+      <!-- <a class="nav-icon " id="bar_mahsool" data-toggle="tooltip" title="بر آورد محصول" href="#">
+        <img width="30px" src="assets/img/user-menu-poupUp/produces.svg">
+      </a> -->
+
+      <a  id="currency_exchange_btn" class="nav-icon" data-toggle="tooltip" title="نرخ اسعار امروز" href="#">
+        <img width="30px" src="assets/img/mawadkham/currency_exchange.svg" >
+      </a>
+
+      <a  id="currency_exchange_btn" class="nav-icon" data-toggle="tooltip" title=" تغیر رنگ " href="#">
+        <span class=' btn btn-success btn-sm fa fa-check' onclick="setcolor()"></span>
+        <input type="color" name=""  id="color_input">
+      </a>
+
+        <script>
+          
+          function setcolor(){
+            var choosed_color = $("#color_input").val();
+            localStorage.setItem(10,choosed_color);
+             window.open('home','_self');
+          }
+        </script>
+      
+          <script src="dark-mode-switch.min.js"></script>
+    </div>
+    <% data_02.forEach(function(comp_name) {  %>
+    <div style="width: 400px;" class="mx-auto co-brand">
+            <div  style="float:right;overflow: hidden; border:3px solid white; background-color: white; width:40px; height:40px; border-radius: 100%;;" >
+              <img style="width:100%; height:100%;"  src="<%= comp_name.logo %>" alt="">
+            </div>
+    
+      
+        <h3 class="co-band-text" style="float:right; font-family: kolocha; font-weight: lighter; margin-right:10px !important; margin-top:5px; "> <%= comp_name.company_name %> </h3>
+ 
+    </div>
+    <%  }); %>
+  </nav>
+  <% if(authority == "half"){ %>
+
+        <style>
+           .reports,.addnewuser,#sharika_e {
+            display: none;
+          }
+          
+        </style>
+        <script>
+          $(function(){
+            $("#iframe").attr('src','fro.ejs');
+          
+          });
+        </script>
+    <% } %>
+  <div class="right-menu choosed_bg" style="background-color:red !important;" id="right_menu">
+    <a href="fro.ejs" title="فروشات" target="frame-man" data-placement="left" data-toggle="tooltip" data-placement="left" id="fro" class="menu-bg">
+      <img class="menu-ico" src="assets/img/total_sales.svg"   />
+    </a>
+    <a href="disposal.ejs" target="frame-man" title="مصارفات" data-toggle="tooltip" data-placement="left" class="menu-bg">
+      <img class="menu-ico" src="assets/img/disposal.svg"   />
+    </a>
+    <div style="display:none;" id="anbar_menu"  class="poup-right-menu anbar">
+      <ul>
+        <li>
+          <a href="raw_materials.ejs" target="frame-man" data-toggle="tooltip" id="rms" data-placement="left">مواد خام<img src="assets/img//mawadkham/deployment.svg" alt="pic" /></a>
+        </li>
+        <li>
+          <a href="readyMF.ejs" target="frame-man" data-toggle="tooltip" id="maak" data-placement="left">مواد آماده انبار کارخانه<img src="assets/img/mawadkham/amada-nabar-kharkhana.svg" alt="pic" /></a>
+        </li>
+        <li id="maa"  style="border-bottom: none;">
+          <a href="city_store.ejs" target="frame-man"> مواد آماده انبار شهر<img src="assets/img/mawadkham/mawad-ready-city.svg" alt="pic" /></a>
+        </li>
+      </ul>
+    </div>
+
+    <a style="cursor: pointer;" data-toggle="tooltip" data-placement="left" title="انبار" id="anbar_a"  class="menu-bg">
+      <img class="menu-ico" src="assets/img/online_store.svg"   />
+    </a>
+    <div style="display:none;" id="emp_menu"  class="poup-right-menu ">
+      <ul>
+        <li id="sk">
+          <a  href="emps.ejs" target="frame-man"> ثبت کارمندان<img src="assets/img/mawadkham/employee.svg" alt="pic" /></a>
+        </li>
+        <li id="bk" >
+          <a href="emp_removal.ejs" target="frame-man" data-toggle="tooltip" data-placement="left">برداشت کارمندان<img src="assets/img/mawadkham/badasht-emp.svg" alt="pic" /></a>
+        </li>
+        <li style="border-bottom: none;">
+          <a id="pmk" href="emp_salary_pay.ejs" target="frame-man">پرداخت معاش<img src="assets/img/mawadkham/maaash.svg" alt="pic" /></a>
+        </li>
+      </ul>
+    </div>
+    <a style="cursor: pointer;" data-toggle="tooltip" data-placement="left" id="emp_e" title="کارمندان" class="menu-bg">
+      <img class="menu-ico" src="assets/img/employees.svg"   />
+    </a>
+    <div style="display:none;" id="loan_menu"  class="poup-right-menu anbar">
+      <ul>
+        <li id="qw">
+          <a  href="input_loan.ejs" target="frame-man">  قرضه ورودی<img src="assets/img/input_loan.svg" alt="pic" /></a>
+        </li>
+        <li id="qk" style="border-bottom: none;">
+          <a href="out_loan.ejs" target="frame-man">قرضه خروجی<img src="assets/img/out_loan.svg" alt="pic" /></a>
+        </li>
+      </ul>
+    </div>
+    <a id="loan_e" style="cursor: pointer;" data-toggle="tooltip" data-placement="left" title="قرضه" class="menu-bg">
+      <img class="menu-ico" src="assets/img/money_pound.svg"   />
+    </a>
+    <div style="display:none;" id="item_menu"  class="poup-right-menu anbar">
+      <ul>
+        <li id="mc">
+          <a href="machinery_tools.ejs" target="frame-man">ماشینری<img src="assets/img/mawadkham/sewing_machine.svg" alt="pic" /></a>
+        </li>
+        <li id="lw" style="border-bottom: none;">
+          <a href="tool.ejs" target="frame-man">لوازم<img src="assets/img/mawadkham/full_tool_storage_box.svg" alt="pic" /></a>
+        </li>
+      </ul>
+    </div>
+    <a id="item_e" style="cursor: pointer;" data-toggle="tooltip" data-placement="left" title="ثبت اجناس" class="menu-bg">
+      <img class="menu-ico" src="assets/img/items-reg.svg"   />
+    </a>
+    <a href="customers.ejs" target="frame-man" data-toggle="tooltip" data-placement="left" title="حساب مشتریان" class="menu-bg">
+      <img class="menu-ico" src="assets/img/user-menu-poupUp/verified_account.svg"   />
+    </a>
+    <a href="reports.ejs" target="frame-man" data-toggle="tooltip" data-placement="left" title="گزارشات" class="menu-bg reports">
+      <img class="menu-ico" src="assets/img/user-menu-poupUp/report_card.svg"   />
+    </a>
+    <div style="display:none;" id="sharik_menu"  class="poup-right-menu anbar">
+      <ul class="sh2">
+        <li id="sfs">
+          <a href="share_holders.ejs" target="frame-man" class="sh1">ثبت فیصدی شریک<img src="assets/img/mawadkham/fisadi.svg" alt="pic" /></a>
+        </li>
+        <li id="bs">
+          <a href="holders_bardasht.ejs" target="frame-man" class="sh1">برداشت<img src="assets/img/mawadkham/bardasht.svg" alt="pic" /></a>
+        </li>
+        <li id="bl" style="border-bottom: none;">
+          <a href="holder_billance.ejs" target="frame-man" class="sh1">بیلانس<img src="assets/img/mawadkham/balance.svg" alt="pic" /></a>
+        </li>
+      </ul>
+    </div>
+    <a  id="sharika_e" style="cursor: pointer;" data-toggle="tooltip" data-placement="left" title="حساب شریکها" class="menu-bg">
+      <img class="menu-ico" src="assets/img/user-menu-poupUp/people.svg"   />
+    </a>
+    <a href="company.ejs" target="frame-man" data-toggle="tooltip" data-placement="left" title="ثبت معلومات شرکت" class="menu-bg">
+      <img class="menu-ico" src="assets/img/user-menu-poupUp/info.svg"/>
+    </a>
+ 
+  </div>
+  <iframe src="dashboard.ejs" id="iframe" name="frame-man" width="100%" frameborder="1">
+  </iframe>
+  <a href="#back-top" style="display: none" class="go-top"><i class="fa fa-angle-up"></i></a>
+  <script src="assets/js/script.js"></script>
+
+  <script>
+     $("#user-form").submit(function () {
+      var formData = new FormData(this);
+      $.ajax({
+          url: '/add_users',
+          type: 'POST',
+          data: formData,
+          async: false,
+          cache: false,
+          contentType: false,
+          processData: false,
+          success: function (data) {
+              window.location.href= "home";
+          },
+          error: function(data){
+              alert(data);
+          }
+      });
+      return false;
+  });
+
+  function db_backup()
+  {
+    $.ajax({
+                    url: '/system_backup',
+                    type: 'POST',
+                    //data: formData,
+                    async: false,
+                    cache: false,
+                    contentType: false,
+                    processData: false,
+                    success: function (data) {
+                     alert(data);
+                        /* $("#expens_tble").html(data); */
+                       // window.location.href= "index.ejs";
+                      //document.getElementById("form2").reset();
+                    },
+                    error: function(data){
+                        alert(data);
+                    }
+                });
+                return false;
+  }
+
+  function log_out()
+  {
+    $.ajax({
+                    url: '/logout_system',
+                    type: 'POST',
+                    //data: formData,
+                    async: false,
+                    cache: false,
+                    contentType: false,
+                    processData: false,
+                    success: function (data) {
+                    // alert("hello success ");
+                        /* $("#expens_tble").html(data); */
+                        window.location.href= "index.ejs";
+                      //document.getElementById("form2").reset();
+                    },
+                    error: function(data){
+                        alert(data);
+                    }
+                });
+                return false;
+  }
+
+
+  function user_settings(id)
+              {
+
+                var data ={};
+                    $.ajax({
+                        type: 'POST',
+                        data: JSON.stringify(data),
+                        contentType: "application/json",
+                        dataType:'json',
+                        url: '/usrs_settings?param='+id,                      
+                        success: function(data) {
+                         
+                          var js_arr = JSON.stringify(data);
+                            var str_array = js_arr.split(',');
+
+                          var newStr = js_arr.substring(1, js_arr.length-1);
+                          var parsedJSON = JSON.parse(newStr);
+                          var update_id = parsedJSON.id;
+                          
+                          var name = parsedJSON.username;
+                          var last_name = parsedJSON.full_name;
+                          var password = parsedJSON.password;
+          
+                          $("#update_id").val(update_id);
+                          $("#name").val(name);
+                          $("#last_name").val(last_name);
+                          $("#username").val(name);
+                          $("#password").val(password);
+                         
+                        },
+                        error: function(error) {
+                            console.log("some error in fetching the notifications");
+                        }
+                        });
+              }
+
+              function delete_user(id)
+              {
+                var result = confirm('are you sure ?');
+                if(result == true)
+                {
+                  var data ={};
+                    $.ajax({
+                        type: 'POST',
+                        data: JSON.stringify(data),
+                        contentType: "application/json",
+                        dataType:'json',
+                        url: '/delete_users?param='+id,                      
+                        success: function(data) {
+                           $("#parent_"+id).remove();
+                        },
+                        error: function(error) {
+                            console.log("some error in fetching the notifications");
+                        }
+                        });
+                 }
+              }
+
+              $("#update_show").css({"display":"none"});
+              function edit_user(id)
+              {
+                $("#update_show").show();
+                $("#hide_added").hide();
+                var data ={};
+                    $.ajax({
+                        type: 'POST',
+                        data: JSON.stringify(data),
+                        contentType: "application/json",
+                        dataType:'json',
+                        url: '/update_half_users?param='+id,                      
+                        success: function(data) {
+                          
+                          var js_arr = JSON.stringify(data);
+                            var str_array = js_arr.split(',');
+
+                          var newStr = js_arr.substring(1, js_arr.length-1);
+                          var parsedJSON = JSON.parse(newStr);
+
+                          var update_id = parsedJSON.id;
+                          var username = parsedJSON.username;
+                          var full_name = parsedJSON.full_name;
+                          var authority = parsedJSON.authority;
+                          var password = parsedJSON.password;
+                          var profile = parsedJSON.profile;
+              
+                          
+                           $("#expense_id").val(update_id);
+                          $("#userrname2").val(username);
+                          $("#full_name").val(full_name);
+                          $("#typeofAdmin").val(authority);//amount
+                          $("#password2").val(password);
+                          $('#myImage').attr('src',profile);
+                          
+                         
+                        },
+                        error: function(error) {
+                            console.log("some error in fetching the notifications");
+                        }
+                        });
+              }
+
+              function update_data()
+                      {
+                        var id = $("#edit_id").val();
+                        var userrname2 = $("#userrname2").val();
+                        var full_name = $("#full_name").val();
+                        var typeofAdmin = $("#typeofAdmin").val();
+                        var password2 = $("#password2").val();
+
+                        $.ajax({
+                              url: '/edit_add_type?id_val='+id+"&type="+type+"&ser_no="+ser_no,
+                              type: 'POST',
+                              //data: formData,
+                              async: false,
+                              cache: false,
+                              contentType: false,
+                              processData: false,
+                              success: function (data) {
+                              // alert("hello success ");
+                                  $("#expens_tble_01").html(data);
+                                //document.getElementById("form2").reset();
+                              },
+                              error: function(data){
+                                  alert(data);
+                              }
+                          });
+                          return false;
+                                      
+                      }
+
+
+  </script>
+  <script>
+
+const $form = $('#setting-form')
+$form.on('submit', submitHandler)
+
+function submitHandler (e) {
+  e.preventDefault()
+
+  $.ajax({
+    url: '/update_users_set',
+    type:'POST',
+    data: $form.serialize()
+  }).done(response => {
+    console.log(response)
+    window.location.href= "home";
+  })
+}
+  </script>
+  
+</body>
+</html>

@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>سیستم مدیریتی</title>
+  <!-- style -->
+  <link rel="stylesheet" href="assets/css/bootstrap.min.css" />
+  <link rel="stylesheet" href="assets/css/bootstrap-rtl.min.css" />
+  <link rel="stylesheet" href="assets/css/font-awesome.min.css" />
+  <link rel="stylesheet" href="assets/css/persian-datepicker.css">
+  <link rel="stylesheet" href="assets/css/jquery-ui.css" />
+  <link rel="stylesheet" href="assets/css/main.css" />
+  <link rel="stylesheet" href="assets/css/emp.css" />
+  <link rel="stylesheet" href="assets/css/dashboard.css" />
+  <link rel="stylesheet" href="assets/css/scrollbar.css" />
+  <link rel="stylesheet" href="assets/css/responsive.css" />
+  <link rel="icon" href="assets/img/co-nav.png" />
+  <!-- script -->
+  <script src="assets/js/jquery.min.js"></script>
+  <script src="assets/js/jquery-ui.js"></script>
+  <script src="assets/js/popper.min.js"></script>
+  <script src="assets/js/bootstrap.min.js"></script>
+  <script src="assets/js/persian-datepicker.js"></script>
+  <script src="assets/js/append.js"></script>
+  <style>
+      .cs_prof_box{
+          margin-right:10px;
+          margin-bottom: 10px;
+          height: 150px;
+
+      }
+  </style>
+</head>
+<body>
+    <div class="container">
+        
+        <section class="all-web">
+            <a href="customers.ejs">
+                
+                <div class="row">
+                    <% var i =0; data_02.forEach(function(customers) {  %>
+
+                    <div class="cs_prof_box col-sm-3 col-md-3 col-lg-3 col-xl-3 ">
+                        <div class="title"><%= customers.name %></div>
+                        <div class="content">
+                            <h5 class="total_rest"> تمام خرید</h5>
+                            <h6 class="val"><%= customers.total_amount %></h6>
+                        </div>
+                       
+                    </div>
+                    <% }); %>
+                </div>
+
+                </a>
+            </section>
+    </div>
+</body>
+<script src="assets/js/script.js"></script>
+<script src="assets/js/form-valiate.js"></script>
+
+</html>

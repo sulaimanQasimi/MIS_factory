@@ -1,0 +1,114 @@
+﻿<!DOCTYPE html>
+<html lang="fa">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ورود به سیستم</title>
+  <!-- style -->
+  <link rel="stylesheet" href="assets/css/bootstrap.min.css">
+  <link rel="stylesheet" href="assets/css/bootstrap-rtl.min.css">
+  <link rel="stylesheet" href="assets/css/font-awesome.min.css">
+  <link rel="stylesheet" href="assets/css/main.css">
+  <link rel="stylesheet" href="assets/css/login.css">
+  <link rel="stylesheet" href="assets/css/responsive.css">
+  <!-- script -->
+  <script src="assets/js/jquery.min.js"></script>
+  <script src="assets/js/bootstrap.min.js"></script>
+  <script src="assets/js/append.js"></script>
+
+</head>
+<body id="body">
+<div class="all-web">
+  <div class="login-box-bg">
+  </div>
+  <div class="login-box card col-sm-10 col-md-8 col-lg-10" style=" overflow: hidden;">
+      <div class="card-header mb  " style="background-color:rgba(255, 255, 255, 0); border: none; margin-top: 100px;">
+        <h2 style="text-align: center; color: #fff; ">ورود به سیستم </h2>
+      </div> 
+    <div class="card-bdy">
+      <form action="home.ejs" class="form-login" >
+        <img src="assets/img/username.svg" class="user-ico" alt="username">
+        <input type="text" id="username" placeholder="نام کاربری" name="username" class="col-8  mb-4 mt-5 mb-5 username form-control">
+        <img src="assets/img/lock.svg" class="pass-ico" alt="passShow-ico">
+        <input type="password" id="password" placeholder="رمز ورود" name="password" class="col-8 mb-4 password form-control">
+        <span class="passShow fa fa-eye" onclick="passShow()"></span>
+        <!-- <a href=""> -->
+          <div id="alr_message"></div>
+          <input type="button" onclick="loginValidate()" value="ورود" name="login" id="login" class="login btn col-5 btn-warning ">
+        <!-- </a> -->
+      </form>
+      <div class="mt-5"  style="color: #fff; text-align: center;" class="copy-right">کلیه حقوق برای شرکت <a target="_blank" href="https://www.galaxytechology.com">تکنالوژی گلکسی</a> محفوظ است © 1404</div>
+    </div>
+  </div>
+  
+  <div class="left-concept">
+    <!-- this division is intialy left blank -->
+  </div>
+</div>
+
+ <script src="assets/js/script.js"></script>
+  <script >
+
+
+      function loginValidate()
+      {
+        
+            var ps = document.getElementById("password").value;
+            var us = document.getElementById('username').value;
+
+            if(us == '' || ps == '')
+            {
+              
+                $("#alr_message").html('<div class="alert alert-danger alert-dismissible fade show" role="alert">لطفا نام کاربری و رمز ورودی را کامل وارد نمائید <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button></div>');
+              
+            }
+            else
+            {
+                  $.ajax({
+                        url: '/check_login?username='+us+'&password='+ps,
+                            type: 'POST',
+                            //data: formData,
+                            async: false,
+                            cache: false,
+                            contentType: false,
+                            processData: false,
+                            success: function (data) {
+                            
+                              // window.location.href= "home.ejs";
+                              var data_rel = data.trim();
+                                if(data_rel == "success")
+                                {
+                                  window.location.href= "home";
+                                }else{
+                                  window.location.href= "index";
+                                }
+                            },
+                            error: function(data){
+                                alert(data);
+                            }
+                        });
+                        return false;
+              /* first we have to send data in server then it should check  */
+            window.location.href = 'home';
+            }
+      }
+
+
+
+     function passShow(){
+  var x = document.getElementById
+  ("password");
+  if(x.type === "password"){
+    x.type = "text";
+  } else{
+    x.type = "password";
+  }
+}
+  </script>
+  <script>
+       $('.passShow').on('click',()=>{
+       $('.passShow').toggleClass('fa-eye-slash','fa-eye')
+   });
+  </script>
+</body>
+</html>

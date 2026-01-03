@@ -1,0 +1,455 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="theme-color" content="dodgerblue" />
+  <title>سیستم مدیریتی</title>
+  <!-- style -->
+  <link rel="stylesheet" href="assets/css/bootstrap.min.css" />
+  <link rel="stylesheet" href="assets/css/bootstrap-rtl.min.css" />
+  <link rel="stylesheet" href="assets/css/font-awesome.min.css" />
+  <link rel="stylesheet" href="assets/css/persian-datepicker.css">
+  <link rel="stylesheet" href="assets/css/jquery-ui.css" />
+  <link rel="stylesheet" href="assets/css/main.css" />
+  <link rel="stylesheet" href="assets/css/emp.css" />
+  <link rel="stylesheet" href="assets/css/dashboard.css" />
+  <link rel="stylesheet" href="assets/css/scrollbar.css" />
+  <link rel="stylesheet" href="assets/css/responsive.css" />
+  <link rel="icon" href="assets/img/co-nav.png" />
+  <!-- script -->
+  <script src="assets/js/jquery.min.js"></script>
+  <script src="assets/js/jquery-ui.js"></script>
+  <script src="assets/js/popper.min.js"></script>
+  <script src="assets/js/bootstrap.min.js"></script>
+  <script src="assets/js/persian-datepicker.js"></script>
+  <script src="assets/js/append.js"></script>
+    <script>
+    
+  /*   $(function(){
+        var exchangeRate = $("#currency").val();
+        if(exchangeRate == "دالر"){
+            $("#to_dollar").val(localStorage.getItem(1));
+        }
+        else if(exchangeRate == "یورو"){
+            $("#to_dollar").val(localStorage.getItem(2));
+        }
+        else if(exchangeRate == "افغانی"){
+            $("#to_dollar").val(1);
+        }
+        else if(exchangeRate == "کلدار"){
+            $("#to_dollar").val(localStorage.getItem(3));
+        }
+        else if(exchangeRate == "تومان"){
+            $("#to_dollar").val(localStorage.getItem(4));
+        }
+      }); */
+
+      $(function(){
+    change_c();
+  });
+    </script>
+    
+</head>
+<body>
+    <div class="container">
+      <div class="row">
+      <section class="all-web" >
+        <h3 class="mt-5" style="text-align: center;">  بل دریافتی</h3>
+        <hr>
+        <br>
+        <form action="" method="post" class="needs-validation"  id="form1">
+          <table class="table table-striped" id="table-adding">
+            <thead>
+              <input type="hidden" id="edit_id_1" name="edit_id_1">
+              <tr>
+                
+                <th>بل نمبر </th>
+                <th>مقدار </th>
+                <!-- <th>رسید</th> -->
+                <th>واحد پولی</th>
+                <th>نرخ</th>
+                <th>تاریخ</th>
+    
+              </tr>
+            </thead>
+            <!-- <tbody id="myTable"> -->
+              <tbody>
+              <input type="hidden" id="display_edit_id" name="display_edit_id">
+              <tr>
+              
+                <td><input type="text" name="pay_bill" id="pay_bill" class="form-control"></td>
+                <td><input type="text" name="amount" id="amount" class="form-control"></td>
+               
+                <td><!-- <input type="text" name="currency" id="currency" class="form-control"> -->
+                  <select type="number" id="currency" style="width: 120px;" name="currency" onchange="change_c()" required class="currency mb-3 col-12 form-control">
+                    <option value="افغانی">افغانی</option>      
+                    <option value="دالر">دالر</option>      
+                 
+              </select>
+             
+              <script>
+                 function change_c()
+                 {
+                    var exchangeRate = $("#currency").val();
+                    if(exchangeRate == "دالر"){
+                        $("#ex_rate").val(1);
+                        $("#dynamic_ex_rate").text("به دالر:");
+                    }
+          
+                    else if(exchangeRate == "افغانی"){
+                        $("#ex_rate").val(localStorage.getItem(1));
+                        $("#dynamic_ex_rate").text("به افغانی:");
+
+                    }
+         
+          
+                  }
+                </script></td>
+                <td> <input type="text" id="ex_rate"  readonly name="ex_rate" required class="to_dollar mb-3 col-12 form-control"></td>
+
+                <td><input type="text" name="date_man" required id="date_man" class="date-man mb-3 col-12 form-control"></td>
+
+              </tr>
+        <tr>
+          <td colspan="9">
+            
+            <button type="button" style="display: block; width: 100%;" id="add_pays1" onclick="add_payment_input()" class="btn btn-success mx-auto">ذخیره کردن</button>
+
+              
+          </td>
+        </tr>
+            </tbody>
+          </table>
+          
+      </form>
+      
+      
+        
+      </section>
+
+      
+
+
+      
+
+       
+      </div>
+    </div>
+    <div class="container">
+      <div class="row">
+        <div class="col-sm-10">
+          <form action="">
+            
+            <table class="table table-bordered table-striped" style="width:100%;">
+              <tr>
+                <th style="width: 300px;">
+                  <table class="table table-bordered table striped">
+                    <tr>
+                      <td>
+                        <input type="search" placeholder="بل نمبر را وارید کنید " name="" id="bill_nos1">
+                        <button type="button"  onclick="search_bill()" class="btn btn-primary btn-sm">search</button>
+                      </td>
+
+                     
+                    </tr>
+                    <!-- <tr> <td> 3000</td></tr> -->
+                  
+                  </table>
+
+                  <p style="text-align: center; margin-top: 20px; color: red; font-size: 20px; font-family: 'Courier New', Courier, monospace;" id="paid_append"></p>
+                </th>
+                
+                <th>
+                  <table class="table table-bordered table-striped">
+                    <tr>
+                      <td colspan="2">
+
+                        <h3>جزءیات مشتری</h3>
+                      </td>
+                    </tr>
+                      <tr>
+                        <td>نام دکان</td>
+                        <td id="expense_report1"></td>
+                      </tr>
+                      <tr>
+                        <td>مجموعه</td>
+                        <td id="expense_report2"></td>
+                      </tr>
+                      <tr>
+                        <td>مقدار پرداخت</td>
+                        <td id="expense_report3"></td>
+                      </tr>
+                      <tr>
+                        <td>باقی</td>
+                        <td id="expense_report4" style="color: red;"></td>
+                      </tr>
+                    </div>
+                  </table>
+
+                </th>
+    
+                
+              
+              </tr>
+              
+            </table>
+          </form>
+        </div>
+
+      </div>
+        <div class="row">
+          <div class="col-sm-10">
+            <table class="table table-bordered table-striped">
+              <thead>
+                <tr>
+                  <th>شماره</th>
+                  <th> مقدار  </th>
+                  <th> واحد پولی  </th>
+                  <th>نرخ</th>
+                  <th>تاریخ</th>
+                  <th>عملیات</th>
+      
+                </tr>
+              </thead>
+              <tbody id="myTable_payment">
+                <!-- <td>1</td>
+                <td>123</td>
+                <td>123</td>
+                <td>324</td>
+                <td>324</td> -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+    </div>
+</body>
+<script src="assets/js/script.js"></script>
+<script src="assets/js/form-valiate.js"></script>
+<script>
+    $(document).ready(()=>{
+  $(function() {
+  $('#date_man').datepicker({
+       changeMonth: true,
+       changeYear: true
+   });
+});
+
+$('.price').keyup(()=>{
+    $('.total').val($('.price').val()*$('.amount').val());
+});
+
+$('.amount').keyup(()=>{
+    $('.total').val($('.price').val()*$('.amount').val());
+});
+    });
+</script>
+
+<script>
+   $(function(){
+    var item_name = $("#item_name").val();
+    showUser(item_name);
+  });
+
+function showUser(id){
+var data ={};
+
+$.ajax({
+    type: 'POST',
+    data: JSON.stringify(data),
+    contentType: "application/json",
+    dataType:'json',
+    url: '/get_stuff_loan?param='+id,                      
+    success: function(data) {
+   
+        var js_arr = JSON.stringify(data);
+        var str_array = js_arr.split(',');
+
+       var newStr = js_arr.substring(1, js_arr.length-1);
+       var parsedJSON = JSON.parse(newStr);
+       var tazkira = parsedJSON.tazkira;
+       //var last_name = parsedJSON.last_name;
+     
+       
+       $("#tazkira_no").val(tazkira);
+       //$("#emp_fname").val(last_name);
+      //  $("#currency").val(currency);
+      //  $("#to_dollar").val(ex_rate);
+        
+    },
+    error: function(error) {
+        console.log("some error in fetching the notifications");
+    }
+});
+}
+
+function search_bill()
+    {
+      var bill_no2 = $("#bill_nos1").val();
+     
+            $.ajax({
+              url: '/searching_bill_no_01?param='+bill_no2,
+              type: 'POST',
+              //data: formData,
+              async: false,
+              cache: false,
+              contentType: false,
+              processData: false,
+              success: function (data) {
+               
+
+                
+                        var obj_to_staring = JSON.stringify(data);//always server data is coming in object type we have to converted in string
+                        var string_to_object = JSON.parse(obj_to_staring);//for accessing the value of key we have to convert to object
+                        var all_pays = string_to_object.payments;//our second part of data still in string type so we again convt to obj
+                          
+                           var cus_detls = string_to_object.froshat;//our second part of data still in string type so we again convt to obj
+                           
+                           var obj_to_staring22 = JSON.stringify(cus_detls);
+                          
+                           
+                           var newStr = obj_to_staring22.substring(1, obj_to_staring22.length-1);
+                           
+                           var parsedJSON = JSON.parse(newStr);
+                           var fro_id = parsedJSON.id;
+                
+                  var company_name = parsedJSON.company_name;
+                  var pay_bill = parsedJSON.bill_no;
+                  var total_amount = parsedJSON.total_amount;
+                  var paid_maount = parsedJSON.paid_amount;
+                  var remain_amount =parseFloat(total_amount -paid_maount);
+                  if(total_amount == paid_maount)
+                  {
+                    var paidddd = "پرداخت شد ";
+                    $("#paid_append").text(paidddd);
+                  }
+               
+
+                          $("#edit_id_1").val(fro_id);
+                          $("#expense_report1").text(company_name);
+                          $("#pay_bill").val(pay_bill);
+                          $("#expense_report2").text(total_amount);
+                          $("#expense_report3").text(paid_maount);
+                          $("#expense_report4").text(remain_amount);
+
+                          $("#myTable_payment").html(all_pays);
+              
+                          /* var obj_to_staring = JSON.stringify(cus_detls);
+                          var str_array = js_arr.split(',');
+
+                          var newStr = js_arr.substring(1, js_arr.length-1);
+                          var parsedJSON = JSON.parse(newStr); */
+                  
+                 
+
+               
+              
+              },
+              error: function(data){
+                  // alert(data);
+              }
+            });
+    }
+
+    function add_payment_input()
+              {
+
+                              var id = $("#edit_id_1").val();
+                              var amount =  $("#amount").val();
+                              var currency =$("#currency").val();
+                              var ex_rate = $("#ex_rate").val();
+                              var date =    $("#date_man").val();
+
+                              if(date == "" || amount =="")
+                            {
+                              alert("تاریخ و مقدار پرداخت");
+                            }else{
+
+                                  $.ajax({
+                                    url: '/new_add_output_sales?incoming_loan_id='+id+'&amount='+amount+'&currency='+currency+'&ex_rate='+ex_rate+'&date='+date,
+                                        type: 'POST',
+                                        //data: formData,
+                                        async: false,
+                                        cache: false,
+                                        contentType: false,
+                                        processData: false,
+                                        success: function (data) {
+                                        // alert("hello success ");
+                                          /*  $("#expens_tble").html(data); */
+                                          var obj_to_staring = JSON.stringify(data);//always server data is coming in object type we have to converted in string
+                                          var obj_to_staring = JSON.stringify(data);//always server data is coming in object type we have to converted in string
+                        var string_to_object = JSON.parse(obj_to_staring);//for accessing the value of key we have to convert to object
+                        var all_pays = string_to_object.payments;//our second part of data still in string type so we again convt to obj
+                          
+                           var cus_detls = string_to_object.froshat;//our second part of data still in string type so we again convt to obj
+                           
+                           var obj_to_staring22 = JSON.stringify(cus_detls);
+                          
+                           
+                           var newStr = obj_to_staring22.substring(1, obj_to_staring22.length-1);
+                           
+                           var parsedJSON = JSON.parse(newStr);
+                           var fro_id = parsedJSON.id;
+                
+                  var company_name = parsedJSON.company_name;
+                  var pay_bill = parsedJSON.bill_no;
+                  var total_amount = parsedJSON.total_amount;
+                  var paid_maount = parsedJSON.paid_amount;
+                  var remain_amount =parseFloat(total_amount -paid_maount);
+                  if(total_amount == paid_maount)
+                  {
+                    var paidddd = "پرداخت شد ";
+                    $("#paid_append").text(paidddd);
+                  }
+               
+
+                          $("#edit_id_1").val(fro_id);
+                          $("#expense_report1").text(company_name);
+                          $("#pay_bill").val(pay_bill);
+                          $("#expense_report2").text(total_amount);
+                          $("#expense_report3").text(paid_maount);
+                          $("#expense_report4").text(remain_amount);
+
+                          $("#myTable_payment").html(all_pays);
+                                         // $("#myTable_payment").html(data);
+                                        // window.location.href= "received_bills.ejs";
+                                        },
+                                        error: function(data){
+                                            alert(data);
+                                        }
+                                    });
+                                    return false;
+                              }
+              }
+
+
+              function payment_delet(id)
+                              { 
+                                
+                                var loan_id = $("#edit_id_1").val();
+                                var result = confirm('are you sure ?');
+                                    if(result == true)
+                                    {
+                                      $("#delete_row_"+id).remove();
+                                      var data ={};
+                                        $.ajax({
+                                            type: 'POST',
+                                            data: JSON.stringify(data),
+                                            contentType: "application/json",
+                                            dataType:'json',
+                                            url: '/add_payment_delete_002?param='+id+"&loan_id="+loan_id,                      
+                                            success: function(data) {
+                                              //alert(data);
+                                              //$("#myTable_payment").html(data);
+                                              //$("#myTable_payment").load(window.location.href+"#myTable_payment");
+                                            },
+                                            error: function(error) {
+                                                console.log("some error in fetching the notifications");
+                                            }
+                                            });
+                                    }
+                              }
+
+</script>
+</html>

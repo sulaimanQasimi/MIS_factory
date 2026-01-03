@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>سیستم مدیریتی</title>
+  <!-- style -->
+  <link rel="stylesheet" href="assets/css/bootstrap.min.css" />
+  <link rel="stylesheet" href="assets/css/bootstrap-rtl.min.css" />
+  <link rel="stylesheet" href="assets/css/font-awesome.min.css" />
+  <link rel="stylesheet" href="assets/css/persian-datepicker.css">
+  <link rel="stylesheet" href="assets/css/jquery-ui.css" />
+  <link rel="stylesheet" href="assets/css/main.css" />
+  <link rel="stylesheet" href="assets/css/emp.css" />
+  <link rel="stylesheet" href="assets/css/dashboard.css" />
+  <link rel="stylesheet" href="assets/css/scrollbar.css" />
+  <link rel="stylesheet" href="assets/css/responsive.css" />
+  <link rel="icon" href="assets/img/co-nav.png" />
+  <!-- script -->
+  <script src="assets/js/jquery.min.js"></script>
+  <script src="assets/js/jquery-ui.js"></script>
+  <script src="assets/js/popper.min.js"></script>
+  <script src="assets/js/bootstrap.min.js"></script>
+  <script src="assets/js/persian-datepicker.js"></script>
+  <script src="assets/js/append.js"></script>
+
+  <script>
+    $(function(){
+    change_c();
+  });
+  </script>
+
+</head>
+<body>
+    <div class="container">
+      <div class="row">
+      <section class="all-web" >
+        <h3 class="mt-5 mb-5 " style="text-align: center;">ثبت معلومات پرداخت معاش کارمندان شرکت</h3>
+        <hr>
+        <br>
+        <form action="" method="post" class="needs-validation" novalidate id="form1">
+        <div class="row">
+          <div class="col-xs-12 col-sm-12 col-md-10 col-lg-4">
+            <div class="input-group">
+              <label class="mt-2" for="emp_id" >آی دی کارمند :</label>
+              <!-- <input type="text" id="emp_id" name="emp_id" required class="emp_id mb-3 col-12 form-control">  -->
+              <select required  id="item_name" name="item_name" onchange="showUser(this.value)" style="direction: rtl;" class="dis_type mb-3 js-example-basic-single col-12 form-control">
+                <% data_04.forEach(function(stuff) { %>
+              <option value="<%= stuff.id %>"><%= stuff.id_number +" --- "+ stuff.name  %></option>
+              <%  }); %>
+              </select>
+            </div>
+            <div class="input-group">
+              <label class="mt-2" for="emp_name" >نام کارمند:</label>
+              <input type="text" id="emp_name" name="emp_name" required class="emp_name mb-3 col-12 form-control">
+              
+            </div>
+            <div class="input-group">
+              <label class="mt-2" for="emp_fname" >تخلص کارمند:</label>
+              <input type="text" id="emp_fname" name="emp_fname" required class="emp_fname mb-3 col-12 form-control">
+            </div>
+            <div class="input-group">
+              <label class="mt-2" for="salary" >معاش :</label>
+              <input type="number" id="salary" name="salary" required class="salary mb-3 col-12 form-control">
+            </div>
+            
+          </div>
+          <!-- second -->
+          <div class="col-xs-12 col-sm-12 col-md-10 col-lg-4">
+            <div class="input-group">
+              <label class="mt-2" for="extra" >اضافه کاری :</label>
+              <input type="number" id="extra" name="extra" value="0" required class="extra mb-3 col-12 form-control">
+            </div>
+            <div class="input-group">
+              <label class="mt-2" for="removal" > برداشت :</label>
+              <input type="number" id="removal" value="0" readonly name="removal" value="1" required class="removal mb-3 col-12 form-control">
+            </div>
+            <div class="input-group">
+              <label class="mt-2" for="tax" >تکس (%) :</label>
+              <input type="number" id="tax" value="0" name="tax" required class="tax mb-3 col-12 form-control">
+            </div>
+            <div class="input-group">
+              <label class="mt-2" for="after_tax" >  بعد از اجرای تکس :</label>
+              <input type="number" id="after_tax"  readonly name="after_tax" required class="after_tax mb-3 col-12 form-control">
+            </div>
+            <!-- <div class="input-group">
+              <label class="mt-2" for="payable" > قابل پرداخت :</label>
+              <input readonly type="number" id="payable" name="payable" required class="payable mb-3 col-12 form-control">
+            </div> -->
+          </div>
+          <!-- third -->
+          <div class="col-xs-12 col-sm-12 col-md-10 col-lg-4">
+            <!-- <div class="input-group">
+              <label class="mt-2" for="month" >ماه :</label>
+              <input type="text" id="month" name="month" required class="month mb-3 col-12 form-control">
+            </div>
+            <div class="input-group">
+              <label class="mt-2" for="year" >سال  :</label>
+              <input type="text" id="year" name="year" required class="year mb-3 col-12 form-control">
+            </div> -->
+            <div class="input-group">
+              <label class="mt-2" for="payable" > قابل پرداخت :</label>
+              <input readonly type="number" id="payable" name="payable" required class="payable mb-3 col-12 form-control">
+            </div>
+            
+
+            <div class="input-group">
+              <label class="mt-2" for="currency" >واحد پولی  :</label>
+              <select type="number" id="currency" name="currency" onchange="change_c()" required class="currency mb-3 col-12 form-control">
+            <option value="دالر">دالر</option>      
+                
+            <option value="افغانی">افغانی</option>      
+            </select>
+            <!-- for making currecny visible -->
+              <script>
+                  /* function change_c(){
+                  var exchangeRate = $("#currency").val();
+                  if(exchangeRate == "دالر"){
+                      $("#to_dollar").val(localStorage.getItem(1));
+                      $("#dynamic_ex_rate").text("به دالر:");
+                  }
+                  else if(exchangeRate == "یورو"){
+                      $("#to_dollar").val(localStorage.getItem(2));
+                      $("#dynamic_ex_rate").text("به یورو:");
+                  }
+                  else if(exchangeRate == "افغانی"){
+                      $("#to_dollar").val(1);
+                      $("#dynamic_ex_rate").text("به افغانی:");
+
+                  }
+                  else if(exchangeRate == "کلدار"){
+                      $("#to_dollar").val(localStorage.getItem(3));
+                      $("#dynamic_ex_rate").text("به کلدار:");
+                  }
+                  else if(exchangeRate == "تومان"){
+                      $("#to_dollar").val(localStorage.getItem(4));
+                      $("#dynamic_ex_rate").text("به تومان:");
+                  }
+                } */
+
+                function change_c(){
+                  var exchangeRate = $("#currency").val();
+                  if(exchangeRate == "دالر"){
+                      $("#to_dollar").val(1);
+                      $("#dynamic_ex_rate").text("به دالر:");
+                  }
+                  else if(exchangeRate == "یورو"){
+                      $("#to_dollar").val(localStorage.getItem(2));
+                      $("#dynamic_ex_rate").text("به یورو:");
+                  }
+                  else if(exchangeRate == "افغانی"){
+                      $("#to_dollar").val(localStorage.getItem(1));
+                      $("#dynamic_ex_rate").text("به افغانی:");
+
+                  }
+                  else if(exchangeRate == "کلدار"){
+                      $("#to_dollar").val(localStorage.getItem(3));
+                      $("#dynamic_ex_rate").text("به کلدار:");
+                  }
+                  else if(exchangeRate == "تومان"){
+                      $("#to_dollar").val(localStorage.getItem(4));
+                      $("#dynamic_ex_rate").text("به تومان:");
+                  }
+                }
+                </script>
+           
+            </div>
+
+            <div class="input-group">
+              <label class="mt-2" id="dynamic_ex_rate" for="to_dollar" >به افغانی :</label>
+              <input type="text" id="to_dollar" name="to_dollar" required class="to_dollar mb-3 col-12 form-control">
+            </div>
+            <div class="input-group">
+              <label class="mt-2 " for="date_man" > تاریخ:</label>
+            <input type="text"  id="date_man" name="date_man" class="date_man mb-3 col-12 form-control">
+            </div>
+           <!--    <div class="input-group">
+              <label class="mt-2" for="date-man" >تاریخ :</label>
+              <input type="text" id="date-man" name="date-man" class="date-man mb-3 col-12 form-control">
+            </div>     -->
+            </div>
+          <div class="col-sm-12 height" style="height:40px;"></div>
+          <div class="col-sm-3"><a style="color: #fff;" href="emp_SP_reg.ejs" class="btn btn-sm btn-success mb-3">معلومات ثبت شده</a></div>
+          <div class="col-sm-6">
+            <input type="submit" class="btn btn-primary rounded-pill" style="width:100%;" value="ذخیره">
+          </div>
+        </div>
+      </form>      
+      </section>
+      </div>
+    </div>
+</body>
+<script src="assets/js/script.js"></script>
+<script src="assets/js/form-valiate.js"></script>
+<script>
+    
+  $(document).ready(()=>{
+    $(function() {
+    $('#date_man').datepicker({
+         changeMonth: true,
+         changeYear: true
+     });
+  });
+
+var tax =  $('#tax');
+var salary =  $('#salary');
+var extra =  $('#extra');
+var removal =  $('#removal');
+var after_tax =  $('#after_tax');
+var payable =  $('#payable');
+
+function payable_calc(){
+
+
+  // code for extra salary is not included in tax
+  var taxed = (parseInt(salary.val())) - ((parseInt(salary.val()))/100)*parseInt(tax.val());
+  after_tax.val(taxed);
+  var final_pay = parseInt(after_tax.val()) -parseInt(removal.val()) +parseInt(extra.val());
+  payable.val(final_pay); 
+
+
+  // code for extra salary included in tax
+  // var taxed = parseInt(salary.val()) - (parseInt(salary.val())/100)*parseInt(tax.val());
+  // after_tax.val(taxed);
+  // var final_pay = taxed + parseInt(extra.val()) -parseInt(removal.val())  ;
+  // payable.val(final_pay); 
+
+}
+
+salary.keyup(()=>{
+  payable_calc();
+});
+
+tax.keyup(()=>{
+  payable_calc();
+});
+
+extra.keyup(()=>{
+  payable_calc();
+});
+
+removal.keyup(()=>{  
+  payable_calc();
+  });
+});
+
+$(function(){
+    var item_name = $("#item_name").val();
+    showUser(item_name);
+  });
+
+function showUser(id){
+
+var data ={};
+
+$.ajax({
+    type: 'POST',
+    data: JSON.stringify(data),
+    contentType: "application/json",
+    dataType:'json',
+    url: '/get_stuff_salary?param='+id,                      
+    success: function(data) {
+   
+        var js_arr = JSON.stringify(data);
+        var str_array = js_arr.split(',');
+      
+       
+       var newStr = js_arr.substring(1, js_arr.length-1);
+       var parsedJSON = JSON.parse(newStr);
+       var name = parsedJSON.name;
+       var last_name = parsedJSON.last_name;
+       var salary = parsedJSON.salary;
+      
+       var taken = parsedJSON.totalcount;
+       if(taken == null )
+       {
+         var taken = 0;
+        $("#removal").val(taken);
+       }
+       var payable = salary - taken;
+       //alert(payable);
+       
+       $("#emp_name").val(name);
+       $("#emp_fname").val(last_name);
+       $("#salary").val(salary);
+       $("#removal").val(taken);
+       $("#payable").val(payable);
+      //  $("#currency").val(currency);
+      //  $("#to_dollar").val(ex_rate);
+        
+    },
+    error: function(error) {
+        console.log("some error in fetching the notifications");
+    }
+});
+}
+
+const $form = $('#form1')
+  
+  $form.on('submit', submitHandler)
+  
+  function submitHandler (e) {
+    e.preventDefault()
+    $.ajax({
+      url: '/employ_salary_pay',
+      type:'POST',
+      data: $form.serialize()
+    }).done(response => {
+      alert(response);
+      document.getElementById("form1").reset();
+      change_c();
+    })
+  }
+
+</script>
+</html>

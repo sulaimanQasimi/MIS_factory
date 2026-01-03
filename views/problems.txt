@@ -1,0 +1,319 @@
+SELECT s.name,s.last_name,s.salary,p.tax,p.overtime,p.payable, SUM(t.amount) as tkn_amount
+from stuff_registration s JOIN payable_amount p on 
+s.id = p.stuff_id 
+JOIN taken_amount t on 
+t.stuff_id = p.stuff_id
+(payable_amount and stuff_registration)
+-===============================================
+router.get('/api/v1/getUserByUID', function(req, res, next) {
+    connection.query('SELECT * FROM users WHERE uid = ? AND role = ?', [req.query.uid, req.query.role], function (error, results, fields) {
+        if(error){
+            res.send(JSON.stringify({"status": 500, "error": error, "response": null})); 
+            //If there is error, we send the error in the error section with 500 status
+        } else {
+            res.send(JSON.stringify({"status": 200, "error": null, "response": results}));
+            //If there is no error, all is good and response is 200OK.
+        }
+    });
+});
+Keep@rolling
+item_name,sell_price,currency,serial_number,stack_to_ma.date,id_mahsol         
+in stack reg page id mahsole , total sould be remove
+what is to_daller mean ?
+
+in outgoing loan we have stuff name 
+stuff name of this company or another if an other then we have to save name other wise stuff_id
+
+3:partner teken amount design is wrong
+
+4:company info percentage is extra
+var x = moment('2014-11-28 16:40:00', 'YYYY-M-D HH:mm:ss').endOf('iMonth').format('iYYYY/iM/iD HH:mm:ss');
+
+stuff pay salary (tax ? overtime ?)
+company teken amount partner id in dropdown list 
+-----------------------------------------
+in incoming_loan page how we can pay installment and have we count remain loan  
+date column should be remove from company_info
+--------------------------------------------
+income of partner 
+in tools(lawazem all data will be display i want to display the data according to lawazem)
+--------------------------------------------------------------------------
+froshat does not have fro_details page ********************************
+where we should save the froshat data ?
+-----------------------------------------------------
+in stuff taken amount while we delete it should be remove from taken_amount not stuff_reg...
+-------------
+stuff_registration
+payable_amount
+--------------------
+stack_to_market(item_name,sell_price,fixed_price)
+taken_amount
+--------------------------------
+in payable_amount table we have amount and payble what is amount(taken_amount) .?
+in stuff payable amount we 
+(**** company_info , stuff_payable should be submit once )
+currency
+ex_rate
+serial_number
+--------------------------------------------------------
+monir :   20000
+husain:   30000
+ahmad :   10000
+
+----------------------------------------
+sell_price - fixed_price 
+sell_price is exist in froshat_details but fixed_price is in stack_to_market(may still does not selled from stack to customer )
+
+*************
+when the items transfer from stack_to_market into froshat_details then it should update the stack_to_market table and remove those items that transfered to froshat_details table .
+--------------------------------------------------
+BEGIN TRANSACTION [Tran1]
+
+  BEGIN TRY
+
+      INSERT INTO [Test].[dbo].[T1] ([Title], [AVG])
+      VALUES ('Tidd130', 130), ('Tidd230', 230)
+
+      UPDATE [Test].[dbo].[T1]
+      SET [Title] = N'az2' ,[AVG] = 1
+      WHERE [dbo].[T1].[Title] = N'az'
+
+      COMMIT TRANSACTION [Tran1]
+
+  END TRY
+
+  BEGIN CATCH
+
+      ROLLBACK TRANSACTION [Tran1]
+
+  END CATCH  
+
+----------------------------transaction example in node--------------------------------------------------
+const { Client } = require("pg")
+
+const client = new Client("postgres://localhost:5432/pet_shop")
+
+client.connect()
+
+client
+	.query("begin")
+	.then((res) => {
+		return client.query(
+			"INSERT INTO pets (name, species) VALUES ($1, $2), ($3, $4)",
+			["Fido", "dog", "Albert", "cat"]
+		)
+	})
+	.then((res) => {
+		return client.query("SELECT COUNT(*) FROM pets WHERE species='cat'")
+	})
+	.then((res) => {
+		// get the total count from the result of the previous query
+		const catCount = parseInt(res.rows[0].count)
+		// set the query params based on the `catCount`
+		return client.query(
+			"UPDATE food SET quantity=quantity+$1 WHERE name='Cat Food'",
+			[10 * catCount]
+		)
+	})
+	.then((res) => {
+		return client.query("commit")
+	})
+	.then((res) => {
+		console.log("transaction completed")
+	})
+	.catch((err) => {
+		console.error("error while querying:", err)
+		return client.query("rollback")
+	})
+	.catch((err) => {
+		console.error("error while rolling back transaction:", err)
+	})
+
+================================================================================
+transaction:
+https://forum.adonisjs.com/t/how-to-do-query-inside-transaction-after-initialized/2593/3
+
+---------------------------------problems-----------------------------------------------
+1:transaction:
+2:image uploading if not choose file----------------------------done
+3:how to access mysql rows outside the loop ? ------------------done 
+4:nested loop(in froshat details) ? ----------------------------done
+5:total of all record in each view .?---------------------------done
+6:sabt froshat does not have date ?----------------------------done 
+7:using if condition => if rows does not exist in all view page ?
+8:update froshat ---------------------------------------------
+9:baraword mahsol ----------------------------------------------
+10:while insertion when we chose not image it will generate error-------doon
+
+11:customer_account and froshat_details should have relation or one of that should be remove .
+
+
+==================================
+<div class="form-group mt-5">
+                    <input type="file" name="image" class="form-control-file">
+                  </div>
+ 
+
+1:list of raw material :with number sabt mahsol 
+2:it will not show benefite for stuff.
+3:update froshat:
+4:baraword mahsol:
+5:graph
+
+/////////////////////
+quantity is ok while we work with carton but when work with kg it should be in kg.--------ok
+ex_rate should be in dollor.
+in create custome all customers loan should be display.
+in froshat all customers shlould have id by id we shuld fetch the details of cus.
+
+
+bargashoti bill all remove items should be save in return bill. -------------------
+while mahsol production list all materials that use in particular mahsol.
+https://www.npmjs.com/package/mysql-backup
+
+id , raw_maer_id --fk ,item_name , item_type ,quantity , price
+
+
+
+update authorithies
+ex_rate / amount
+cs-prof
+update customer loan
+
+const cron = require('node-cron')
+const moment = require('moment')
+const fs = require('fs')
+const spawn = require('child_process').spawn
+
+// You can adjust the backup frequency as you like, this case will run once a day
+cron.schedule('0 0 * * *', () => {
+// Use moment.js or any other way to dynamically generate file name
+  const fileName = `${process.env.DB_NAME}_${moment().format('YYYY_MM_DD')}.sql`
+  const wstream = fs.createWriteStream(`/Path/You/Want/To/Save/${fileName}`)
+  console.log('---------------------')
+  console.log('Running Database Backup Cron Job')
+  const mysqldump = spawn('mysqldump', [ '-u', process.env.DB_USER, `-p${process.env.DB_PASSWORD}`, process.env.DB_NAME ])
+
+  mysqldump
+    .stdout
+    .pipe(wstream)
+    .on('finish', () => {
+      console.log('DB Backup Completed!')
+    })
+    .on('error', (err) => {
+      console.log(err)
+    })
+})
+
+=============================================
+ 1:  income(date , amount , desc )
+ 2:  outcome(date , amount , desc )
+
+category
+item 
+barcode
+
+//////////////////////////////////////////////
+bill detail acording to shop name not customer name
+
+email , lastname should not be required  in customerr accounts
+quantiy:kg , m , per 
+
+===================================
+
+incoming loan
+outgoing loan
+expense
+readMF
+
+
+1: graph name after inserting data
+
+2: esc key
+3: about us
+4: input mobile
+5: input province
+6: backup file choosing
+7:folder backup
+8:currency
+
+
+today:2021/02/18
+7:in inserting new item_name serial no should not be unique.
+8:how to get option value.
+===========================================
+introducing(myself , name , class, english level ...)
+why you are learning 
+1:solving school problems(success)
+2:solving college problems (success)
+3:solving our self problems:
+i want to go in canada i dont know where is the hospital , best hospital , school , from where i should access it , 
+school and college  problems (not only,computer, english , math , physics ...)
+ 
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+<select id = "options" style = "width:150px;">      
+    <option>Artist Name</option>
+    <option>Track Name</option>
+    <option>Date Uploaded</option>
+</select>
+$("#options").val();
+
+/////////////////////////////
+edit stack_to_market 
+delete stack_to_market 
+edit and delete bill details should be change stakc_lists and others.
+change place of existance and view of stack and other pages.
+
+
+admin'OR'1'='1
+
+
+
+
+
+
+
+
+
+
+
+
+
+ 
+
+
+
+
+
+
+
+
+
+talab dollery
+talab afghani
+baqi afghani
+baqi dollery
+
+froshat searching from date to end date.-------------done
+freez ,    -------------------------------done
+ searching according to number sabt ---------------done
+number sabt should be unique not duplicate-------------done
+
+
+function convertToDate(str)
+{
+   var dateArr = str.split("/");
+   return new Date(dateArr[2], dateArr[1], dateArr[0])
+}
+var date1 = convertToDate("1/11/2015");
+var date2 = convertToDate("15/11/2015");
+var diffInDays = (date1.getTime() - date2.getTime())/ (1000*60*60*24);
+
+alert( Math.ceil( Math.abs( diffInDays ) ) );
+
+0778619351
+
+ 
+
+ 

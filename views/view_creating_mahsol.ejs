@@ -1,0 +1,955 @@
+<!DOCTYPE html>
+<html lang="fa">
+<head>
+   <meta charset="UTF-8">
+   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+   <title>معلومات ذخیره شده درباره کارمندان</title>
+   <!-- style -->
+   <link rel="stylesheet" href="assets/css/bootstrap.min.css">
+   <link rel="stylesheet" href="assets/css/bootstrap-rtl.min.css">
+   <link rel="stylesheet" href="assets/css/font-awesome.min.css">
+   <link rel="stylesheet" href="assets/css/main.css">
+   <link rel="stylesheet" href="assets/css/emp.css">
+   <link rel="stylesheet" href="assets/css/operation.css">
+   <link rel="stylesheet" href="DataTables/datatables.min.css"/>
+   <link rel="stylesheet" href="assets/css/talabat-sabt.css">
+   <link rel="stylesheet" href="assets/css/responsive.css">
+     <!-- script -->
+  <script src="assets/js/jquery.min.js"></script>
+  <script src="assets/js/popper.min.js"></script>
+  <script src="assets/js/bootstrap.min.js"></script>
+  <script src="DataTables/datatables.min.js"></script>
+  <script src="assets/js/operations.js"></script>
+  <style>
+    .head th,.head td{
+      width: 100px;
+    }
+  </style>
+
+</head>
+<body id="back-top" >
+
+  <!-- starting test modal -->
+  <div class="modal  fade" id="basicModal" tabindex="-1" role="dialog" aria-labelledby="basicModal" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content" style="height: 200px; ">
+       
+        <div class="modal-body">
+<form action="" id="update_bill">
+                <table  class="table table-striped"  >
+                  <thead>
+                    <tr>
+                    
+                      <th>نام محصول </th>
+                      <th>واحد </th>
+                      <th> مقدار </th>
+                     <!--  <th>نمبر ثبت</th> -->
+        
+                    </tr>
+                  </thead>
+                  <tbody >
+                    <tr>
+
+                      <td><input  type="text" value="husain" disabled id="item_name"></td>
+                      <td><input  type="text" disabled id="item_type"></td>
+                      <td><input type="text" id="quantity"></td>
+                     <!--  <td><input type="text" id="price"></td> -->
+                      <!-- <input type="hidden" id="fro_id" name="fro_id"> -->
+                      <input type="hidden" id="bil_id" name="bil_id">
+                    </tr>
+                    <td colspan="4">
+                    
+                      <!-- <button type="button" onclick="update_data()" name="sabt_taghirat" id="update" class="btn btn-success rounded-pill btn-block mt-5">ذخیره تغیرات</button> -->
+                      <input type="submit" value="ذخیره کردن" onclick="update_bills()" class="btn btn-success rounded-pill btn-block mt-3">
+                    </td>
+                    
+                  </tbody>
+                  
+                </table>
+        </form>
+          <!-- </div> -->
+        </div>
+      </div>
+      
+    </div>
+  </div>
+  <!-- ending test modal -->
+   <!-- modal for operations -->
+  <!-- for add -->
+  <div class="black-bg"></div>
+  <div class="add-modal">
+    <span class="close_span"><img src="assets/img/last-project/delete.svg" width="20px" alt="close"></span>
+    <div class="modal-header"><h3>اضافه کردن</h3></div>
+    <div class="modal-body">
+      <div class="entry col-6">
+        <form action="" enctype="multipart/form-data">
+          <table class="table table-striped" id="table-adding">
+            <thead>
+              <input type="hidden" id="edit_id" name="edit_id">
+              <tr>
+                
+                <th> مقدار  </th>
+                <!-- <th>رسید</th> -->
+                <th>واحد پولی</th>
+                <th>نرخ</th>
+                <th>تاریخ</th>
+    
+              </tr>
+            </thead>
+            <tbody id="myTable">
+              <input type="hidden" id="display_edit_id" name="display_edit_id">
+              <tr>
+              
+                <td><input type="text" name="amount" id="amount" class="form-control"></td>
+               
+                <td><input type="text" name="currency" id="currency" class="form-control"></td>
+                <td><input type="text" name="ex_rate" id="ex_rate" class="form-control"></td>
+                <td><input type="text" name="date_man" required id="date_man" class="date-man mb-3 col-12 form-control"></td>
+
+              </tr>
+        <tr>
+          <td colspan="9">
+            
+            <button type="button" style="display: block; width: 100%;" id="add_pays1" onclick="add_payment_input()" class="btn btn-success mx-auto">ذخیره کردن</button>
+
+            <button type="button" onclick="update_data()" name="sabt_taghirat" id="update" class="btn btn-success rounded-pill btn-block mt-5">ذخیره تغیرات</button>
+              
+          </td>
+        </tr>
+            </tbody>
+          </table>
+        </form>
+      </div>
+      <div style="overflow-y: scroll; height: 300px;" class="reg col-6">
+
+          <table class="table table-striped" id="table-adding">
+            <thead>
+              <tr>
+                <th>شماره</th>
+                <th> مقدار  </th>
+                <th> واحد پولی  </th>
+                <th>نرخ</th>
+                <th>تاریخ</th>
+                <th>عملیات</th>
+    
+              </tr>
+            </thead>
+            <tbody id="myTable_payment">
+              <!-- <tr>
+                <td>1</td>
+                <td>132 af</td>
+                <td>832 af</td>
+                <td>1399/9/2</td>
+                <td>
+                  <button data-toggle="tooltip" title="حذف" class="edt del"><img width="15px" src="assets/img/last-project/delete.svg" alt=""></button>
+                  <button title="ویرایش" data-toggle="tooltip" class="edt edit-tbl" ><img width="15px"
+                      src="assets/img/last-project/edit.svg" alt=""></button>
+                </td>
+              </tr> -->
+            </tbody>
+          </table>
+   
+      </div>
+
+    </div>
+  </div>
+<!-- for edit -->
+<div class="edit-modal">
+  <span class="close_span"><img src="assets/img/last-project/delete.svg" width="20px" alt="close"></span>
+  <div class="modal-header"><h3>ویرایش کردن</h3></div>
+  <div class="modal-body">
+      <form action="" enctype="multipart/form-data">
+        <table class="table table-striped" id="table-adding">
+          <thead>
+            <tr>
+             
+              <th>نام مشتری </th>
+              <th>ایمیل</th>
+              <th>تیلیفون </th>
+              <th> مقدار پرداخت </th>
+              <th>باقی</th>
+              <th> واحد پولی</th>
+              <th>نرخ</th>
+              <th>تاریخ</th>
+  
+            </tr>
+          </thead>
+          <tbody id="myTable">
+            <tr>
+              <td><input type="text" name="customer_name" id="customer_name" class="form-control"></td>
+              <td><input type="text" name="email" id="email" class="form-control"></td>
+              <td><input type="text" name="contact" id="contact" class="form-control"></td>
+              <td><input type="text" name="paid_amount" id="paid_amount" class="form-control"></td>
+              <td><input type="text" name="remain" id="remain" class="form-control"></td>
+              <td><input type="text" name="currency" id="currency" class="form-control"></td>
+              <td><input type="text" name="ex_rate" id="ex_rate" class="form-control"></td>
+              <td><input type="text" name="data_man" id="data_man" class="form-control"></td>
+              
+            </tr>
+      <tr>
+        <td colspan="9">
+          
+          <button style="display: block; width: 100%;" class="btn btn-success mx-auto">ذخیره کردن</button>
+            
+        </td>
+      </tr>
+          </tbody>
+        </table>
+      </form>
+      <hr>
+      <h3>بخش های ویرایش شده</h3>
+      <hr>
+      <table class="table table-striped" >
+        <thead>
+          <tr>
+            <th>شماره</th>
+            <th>نام </th>
+            <th>تخلص</th>
+            <th>تیلیفون </th>
+            <th> ایمیل </th>
+            <th>تاریخ</th>
+            <th>نام شرکت</th>
+            <th>آدرس</th>
+            <th>تاریخ</th>
+
+          </tr>
+        </thead>
+        <tbody >
+          <tr>
+            <td>1</td>
+             <td>آهک اعلی</td>
+            <td>990</td>
+            <td>990</td>
+            <td>990</td>
+            <td>990</td>
+            <td>230</td>
+            <td  >  290000 af</td>
+            <td>2020/2/29</td>
+          </tr>
+        </tbody>
+      </table>
+  </div>
+</div>
+  <style>
+    table{
+      margin-top: 20px;
+      padding: 20px;
+    }
+    
+  </style>
+<script>
+  $(document).ready(()=>{
+    $('#table-man').dataTable({filter:false,pagination:false});
+  });
+</script>
+<body class="my-login-page">
+  <section class="h-100" style=" padding:0px !important;">
+    <div class="container-fluid h-100" style=" width:100%;">
+      <div class="card-wrapper" style="width:100%;margin-top:1%; ">
+
+        <div class="card-body">
+                <a class="print" onclick="javascript:window.print();"><img title="چاپ کردن" data-toggle="tooltip" class="ml-5 mb-5 btn btn-primary" style="cursor: pointer;"  width="40px" src="assets/img/mawadkham/print.svg" alt="print"></a>
+                <h3 style="text-align: center; margin-bottom: 20px;">جدول  بخش کارخانه</h3>
+                <div class="srch-inp">
+                  <span class="fa fa-search sh-m print"></span>
+                  <input id="myInput" class="tb-search print"  placeholder="چی را جستجو میکنی؟" type="search">
+                </div>
+         <!-- <table class="table table-striped" id="table-man">
+            <thead>
+              <tr>
+                <th>شماره</th>
+                <th> نام خریدار</th>
+                <th>شماره تماس</th>
+                <th> ایمیل </th>
+                <th> مقدار رسید</th>
+                <th>باقی</th>
+                <th> مجموعه</th>
+                <th>واحد پولی</th>
+                <th> نرخ </th>
+              
+                <th class="print">عملیات</th>
+
+              </tr>
+            </thead>
+            <tbody id="myTable">
+              <tr>
+              <td></td>
+              <td></td>
+              <td></td>
+              <td></td>
+              <td></td>
+              <td></td>
+              <td></td>
+              <td></td>
+              <td></td>
+             
+                <td class="print">
+                  <button data-toggle="tooltip" title="حذف" onclick="delete1()" class="edt del"><img width="15px" src="assets/img/last-project/delete.svg" alt=""></button>
+                  <button title="ویرایش" data-toggle="tooltip" class="edt edit-tbl" ><img width="15px"
+                      src="assets/img/last-project/edit.svg" alt=""></button>
+                  <button data-toggle="tooltip" title="اضافه کردن" class="edt add-tbl"><img width="15px"
+                      src="assets/img/last-project/add.svg  " alt=""></button>
+
+                </td>
+              </tr>
+             
+            </tbody>
+            <tfoot>
+              <tr class="bg bg-primary" style="color: white;">
+                <td colspan="15" style="text-align: center;">
+
+                  <div class="total_salaries">مجموعه معاشات : 
+                    <div>
+                      21313
+                    </div>
+                  </div>
+                  
+                </td>
+              </tr>
+            </tfoot>
+           
+          </table>
+        -->
+
+
+          
+              
+                  <div class="bs-example">
+                    <div class="accordion" id="accordionExample">
+                      <table class="table table-bordered" id="table-man">
+                        <thead>
+                          <tr class="head">
+                            <th>شماره</th>
+                            <th>نام محصول </th>
+                              <th>واحد </th>
+                              <!-- <th> مقدار </th> -->
+                              <th>نمبر ثبت</th>
+                            <th class="print">عملیات</th>
+                          </tr>
+                        </thead>
+                        <tbody id="myTable">
+                          <% var i =0; data_01.forEach(function(fro_view) { %>
+                          <tr>
+                            <th colspan="11" style=" padding: 0px;">
+                              
+                                <div class="card mb-2" style=" padding: 0px;">
+                                  <!-- starting ejs -->
+                                 
+                                  <div class="card-header " style="padding: 0px;" id="headingOne">
+                                    <table class=" mb-0 mt-0 ml-0 mr-0" style="width: 100%;">
+                                      <tr class="head">
+                                        <td><%= i+1 %></td>
+                                        <td><%= fro_view.name %></td>
+                                        <td><%= fro_view.type %></td>
+                                        
+                                       
+                                        
+                                        <td ><%= fro_view.serial_no %></td>
+                                        
+                                        
+                                        <td class="print">
+                                          <button data-toggle="tooltip" title="حذف" onclick="delete1(<%= fro_view.id %>)" class="edt del"><img width="15px" src="assets/img/last-project/delete.svg" alt=""></button>
+
+                                          
+                        
+                                        </td>
+                                      </tr>
+                                    </table>
+                                        <h2 class="mb-0">
+                                            <button type="button" class="btn btn-link" data-toggle="collapse" data-target="#collapseOne_<%= fro_view.id %>" style="float:left;"><img src="assets/img/expand_arrow_26px.png" onclick="change_icon(this.id)" id="<%= fro_view.id %>" alt=""></button>									
+                                        </h2>
+                                  </div>
+                                 
+                                  <!-- end of ejs -->     
+                                  
+                                  <div id="collapseOne_<%= fro_view.id %>" class="collapse" aria-labelledby="headingOne" data-parent="#accordionExample">
+                                      <div class="card-body">
+                                        <table class="table table-bordered">
+                                          
+                                          <thead>
+                                            <tr>
+                                              <th colspan="7">جزءیات بل فروش</th>
+                                            </tr>
+                                            <tr style="background-color: lightgray; color: black;">
+                                              <th>شماره</th>
+                                              <th>نام جنس</th>
+                                              <th> واحد</th>
+                                              <th>مقدار</th>
+                                              <th>عملیات</th>
+                                            </tr>
+                                          </thead>
+                                          <tbody id="bill_details_<%= fro_view.id %>">
+                                            <!-- <tr>
+                                              <td>1</td>
+                                              <td> سیخ</td>
+                                              <td>5 ملی</td>
+                                              <td>10</td>
+                                              <td>10000</td>
+                                              <td>100000</td>
+                                            </tr> -->
+                                          </tbody>
+                                        </table>
+                                      </div>
+                                  </div>
+                                </div>
+                                <!-- end of first froshat -->
+                                <!-- <div class="card mb-2" style=" padding: 0px;">
+                                  <div class="card-header " style="padding: 0px;" id="headingOne">
+                                    <table class=" mb-0 mt-0 ml-0 mr-0" style="width: 100%;">
+                                      <tr class="head">
+                                        <td>1</td>
+                                        <td style="width:150px;">احمد</td>
+                                        <td>0779054471</td>
+                                        <td style="width:150px;">ali@gmail.com</td>
+                                        <td>10000</td>
+                                        <td>5000</td>
+                                        <td>15000</td>
+                                        <td>افغانی</td>
+                                        <td>0.9</td>
+                                        <td>delete</td>
+                                      </tr>
+                                    </table>
+                                      <h2 class="mb-0">
+                                          <button type="button" class="btn btn-link" data-toggle="collapse" data-target="#collapseOne_2" style="float:left;"><img src="assets/img/expand_arrow_26px.png" onclick="change_icon(this.id)" id="img2" alt=""></button>									
+                                      </h2>
+                                  </div>
+                                  <div id="collapseOne_2" class="collapse" aria-labelledby="headingOne" data-parent="#accordionExample">
+                                      <div class="card-body">
+                                        <table class="table table-bordered">
+                                          
+                                          <thead>
+                                            <tr>
+                                              <th colspan="6">جزءیات بل فروش</th>
+                                            </tr>
+                                            <tr style="background-color: lightgray; color: black;">
+                                              <th>شماره</th>
+                                              <th>نام جنس</th>
+                                              <th>نوعیت جنس</th>
+                                              <th>مقدار</th>
+                                              <th>قیمت</th>
+                                              <th>مجموعه</th>
+                                            </tr>
+                                          </thead>
+                                          <tbody>
+                                            <tr>
+                                              <td>1</td>
+                                              <td> سیخ</td>
+                                              <td>5 ملی</td>
+                                              <td>10</td>
+                                              <td>10000</td>
+                                              <td>100000</td>
+                                            </tr>
+                                          </tbody>
+                                        </table>
+                                      </div>
+                                  </div>
+                                </div> -->
+                                <!-- <div class="card mb-2" style="">
+                                  <div class="card-header " style="padding: 0px;" id="headingOne">
+                                    <table class=" mb-0 mt-0 ml-0 mr-0" style="width: 100%;">
+                                      <tr class="head">
+                                        <td>1</td>
+                                        <td style="width:150px;">احمد</td>
+                                        <td>0779054471</td>
+                                        <td style="width:150px;">samer@gmail.com</td>
+                                        <td>10000</td>
+                                        <td>5000</td>
+                                        <td>15000</td>
+                                        <td>افغانی</td>
+                                        <td>0.9</td>
+                                        <td>delete</td>
+                                      </tr>
+                                    </table>
+                                      <h2 class="mb-0">
+                                          <button type="button" class="btn btn-link" data-toggle="collapse" data-target="#collapseOne_3" style="float:left;"><img src="assets/img/expand_arrow_26px.png" onclick="change_icon(this.id)" id="img3" alt=""></button>									
+                                      </h2>
+                                  </div>
+                                  <div id="collapseOne_3" class="collapse" aria-labelledby="headingOne" data-parent="#accordionExample">
+                                      <div class="card-body">
+                                        <table class="table table-bordered">
+                                          
+                                          <thead>
+                                            <tr>
+                                              <th colspan="6">جزءیات بل فروش</th>
+                                            </tr>
+                                            <tr style="background-color: lightgray; color: black;">
+                                              <th>شماره</th>
+                                              <th>نام جنس</th>
+                                              <th>نوعیت جنس</th>
+                                              <th>مقدار</th>
+                                              <th>قیمت</th>
+                                              <th>مجموعه</th>
+                                            </tr>
+                                          </thead>
+                                          <tbody>
+                                            <tr>
+                                              <td>1</td>
+                                              <td> سیخ</td>
+                                              <td>5 ملی</td>
+                                              <td>10</td>
+                                              <td>10000</td>
+                                              <td>100000</td>
+                                            </tr>
+                                          </tbody>
+                                        </table>
+                                      </div>
+                                  </div>
+                                </div> -->
+                            </th>
+                            
+                          </tr>
+                          <%  i++; }); %>
+                         </tbody>
+                        </table>
+                    </div> 
+                    
+                    
+                    </div>
+                </div>
+                <!-- end of card body -->
+
+          <a href="processing_materials.ejs" data-toggle="tooltip" title="صفحه پیشین" type="button" style="color:white" class="btn mt-5 btn-success btn-medium print">
+            صفحه
+            قبل</a>
+
+        </div>
+      </div>
+    </div>
+
+    <a href="#back-top" style="display: none;" class="go-top"><i class="fa fa-angle-up"></i></a>
+    <script src="assets/js/script.js"></script>
+    <script>
+      $(document).ready(function(){
+        $("#myInput").on("keyup", function() {
+          var value = $(this).val().toLowerCase();
+          $("#myTable tr").filter(function() {
+            $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
+          });
+        });
+      });
+      $(function () {
+  $('[data-toggle="tooltip"]').tooltip();
+});
+$(()=>{
+  $('.dataTables_length').addClass('print');
+  $('.dataTables_info').addClass('print');
+  $('.dataTables_paginate').addClass('print');
+
+  function ref(){
+    
+  }
+
+});
+
+      </script>
+        <script src="assets/js/script.js">
+        
+        const $form = $('#new_staff')
+
+$form.on('submit', submitHandler)
+
+function submitHandler (e) {
+  e.preventDefault()
+
+  $.ajax({
+    url: '/addUserFormSubmit',
+    type:'POST',
+    data: $form.serialize()
+  }).done(response => {
+    console.log(response)
+  })
+}
+
+  </script>
+  <script>
+
+
+                      function update_froshat(id)
+                          {
+                           
+                            /* var data ={};
+                                $.ajax({
+                                    type: 'POST',
+                                    data: JSON.stringify(data),
+                                    contentType: "application/json",
+                                    dataType:'json',
+                                    url: '/update_froshat_view?param='+id,                      
+                                    success: function(data) {
+                                      var obj_to_staring = JSON.stringify(data);//always server data is coming in object type we have to converted in string
+
+                                      var string_to_object = JSON.parse(obj_to_staring);//for accessing the value of key we have to convert to object
+                                      var shamsi_date = string_to_object.data;//our first part of data converted to object so we can access the value
+                                      var name1 = string_to_object.data1;//our second part of data still in string type so we again convt to obj
+
+                                      var pars2 = JSON.parse(name1);//here we have parse(convrt to obj) it again,because second parts was nested string
+
+                                      var expense_id= pars2.id;
+                                      var customer_name= pars2.customer_name;
+                                      var email = pars2.email;
+                                      var contact= pars2.contact;
+                                      
+                                      var paid_amount = pars2.paid_amount;
+                                      var total_amount= pars2.total_amount;
+                                      var remain = parseFloat(total_amount) - parseFloat(paid_amount);
+                                      var currency = pars2.currency;
+                                      var ex_rate = pars2.ex_rate;
+                                      
+                                      
+                                      $("#expense_id").val(expense_id);
+                                      $("#customer_name").val(customer_name);
+                                      $("#email").val(email);
+                                      $("#contact").val(contact);
+                                     
+                                      $("#paid_amount").val(paid_amount);
+                                      $("#remain").val(remain);
+                                      $("#currency").val(currency);
+                                      $("#ex_rate").val(ex_rate);
+                                      
+                                    
+                                      
+                                      $("#data_man").val(shamsi_date);
+                                    },
+                                    error: function(error) {
+                                        console.log("some error in fetching the notifications");
+                                    }
+                                    }); */
+              }
+                      
+                      
+  </script>
+
+<script>
+                var count = 2;
+                
+                function change_icon(id){
+                                           
+                            $.ajax({
+                                    url: '/sending_raw_material_details?param='+id,
+                                    type: 'POST',
+                                    //data: formData,
+                                    async: false,
+                                    cache: false,
+                                    contentType: false,
+                                    processData: false,
+                                    success: function (data) {
+                                    $("#bill_details_"+id).html(data);
+                                    },
+                                    error: function(data){
+                                        // alert(data);
+                                    }
+                                  });
+
+                  $("#"+id).css({"transition-duration":"1s"});
+                  if(count%2 == 0){
+                    slide_up(id);
+                  }
+                  else{
+                    slide_down(id);
+                  }
+                  count++;
+
+
+                }
+                function slide_up(id){
+                  $("#"+id).css({"transform":"rotate(180deg)"});
+                
+                }
+                function slide_down(id){
+                  $("#"+id).css({"transform":"rotate(360deg)"});
+                
+                }
+</script>
+
+<script>
+  function add_out_loan(id)
+              {
+                $("#edit_id").val(id);
+              
+                $.ajax({
+                    url: '/show_all_payment_002?each_loaner_id='+id,
+                    type: 'POST',
+                    //data: formData,
+                    async: false,
+                    cache: false,
+                    contentType: false,
+                    processData: false,
+                    success: function (data) {  
+                        $("#myTable_payment").html(data);
+                      document.getElementById("form3").reset();
+                    },
+                    error: function(data){
+                        alert(data);
+                    }
+                });
+                return false;
+              }
+
+              function add_payment_input()
+              {
+
+                              var id = $("#edit_id").val();
+                              var amount =  $("#amount").val();
+                              var currency =$("#currency").val();
+                              var ex_rate = $("#ex_rate").val();
+                              var date =    $("#date_man").val();
+
+                              if(date == "" || amount =="")
+                            {
+                              alert("تاریخ و مقدار پرداخت");
+                            }else{
+
+                                  $.ajax({
+                                    url: '/add_output_sales?incoming_loan_id='+id+'&amount='+amount+'&currency='+currency+'&ex_rate='+ex_rate+'&date='+date,
+                                        type: 'POST',
+                                        //data: formData,
+                                        async: false,
+                                        cache: false,
+                                        contentType: false,
+                                        processData: false,
+                                        success: function (data) {
+                                        // alert("hello success ");
+                                          /*  $("#expens_tble").html(data); */
+                                          $("#myTable_payment").html(data);
+                                        },
+                                        error: function(data){
+                                            alert(data);
+                                        }
+                                    });
+                                    return false;
+                              }
+              }
+
+              $("#update").css({"display":"none"});
+                    function payment_edit(id)
+                    { 
+                      
+                      $("#update").show();
+                      $("#add_pays1").hide();
+                      var data ={};
+                         $.ajax({
+                              type: 'POST',
+                              data: JSON.stringify(data),
+                              contentType: "application/json",
+                              dataType:'json',
+                              url: '/sales_payment_edit_001?param='+id,                      
+                              success: function(data) {
+                                var obj_to_staring = JSON.stringify(data);
+                                var string_to_object = JSON.parse(obj_to_staring);
+                                var shamsi_date = string_to_object.data;
+                                var name1 = string_to_object.data1;
+                                var pars2 = JSON.parse(name1);
+                                
+                                var loan_id = pars2.id;
+                                var paid = pars2.paid;
+                                
+                                var currency = pars2.currency;
+                                var ex_rate= pars2.ex_rate;
+
+                                $("#display_edit_id").val(loan_id);
+                                $("#amount").val(paid);
+                                $("#currency").val(currency);
+                                $("#ex_rate").val(ex_rate);
+                                $("#date_man").val(shamsi_date);
+                                
+                              },
+                              error: function(error) {
+                                  console.log("some error in fetching the notifications");
+                              }
+                              });
+                    }
+
+
+                    function update_data()
+                         { 
+                            var id = $("#display_edit_id").val();
+                            var amount = $("#amount").val();
+                            var currency = $("#currency").val();
+                            var ex_rate = $("#ex_rate").val();
+                            var date_man = $("#date_man").val();
+                            var loan_id = $("#edit_id").val();
+
+                            if(date_man == "" || amount =="")
+                            {
+                              alert("تاریخ و مقدار پرداخت");
+                            }else{
+
+                                    $.ajax({
+                                          url: '/update_show_edit_002?id_val='+id+"&amount="+amount+"&currency="+currency+"&ex_rate="+ex_rate+"&date_man="+date_man+"&loan_id="+loan_id,
+                                          type: 'POST',
+                                          //data: formData,
+                                          async: false,
+                                          cache: false,
+                                          contentType: false,
+                                          processData: false,
+                                          success: function (data) {
+                                          // alert("hello success ");
+                                          $("#myTable_payment").html(data);
+                                            //document.getElementById("form2").reset();
+                                          },
+                                          error: function(data){
+                                              alert(data);
+                                          }
+                                      });
+                                      return false;
+                                  }
+                         }
+
+                         function payment_delet(id)
+                              { 
+                                var loan_id = $("#edit_id").val();
+                                var result = confirm('are you sure ?');
+                                    if(result == true)
+                                    {
+                                      $("#delete_row_"+id).remove();
+                                      var data ={};
+                                        $.ajax({
+                                            type: 'POST',
+                                            data: JSON.stringify(data),
+                                            contentType: "application/json",
+                                            dataType:'json',
+                                            url: '/add_payment_delete_002?param='+id+"&loan_id="+loan_id,                      
+                                            success: function(data) {
+                                              //alert(data);
+                                              //$("#myTable_payment").html(data);
+                                              //$("#myTable_payment").load(window.location.href+"#myTable_payment");
+                                            },
+                                            error: function(error) {
+                                                console.log("some error in fetching the notifications");
+                                            }
+                                            });
+                                    }
+                              }
+
+                              
+
+
+
+                              function cat_edit(id)
+                              {
+                                  var data ={};
+                                  $.ajax({
+
+                                  type: 'POST',
+                                  data: JSON.stringify(data),
+                                  contentType: "application/json",
+                                  dataType:'json',
+                                  url: '/update_formula?param='+id,                      
+                                  success: function(data) {
+                                  var js_arr = JSON.stringify(data);
+                                  var str_array = js_arr.split(',');
+
+                                  var newStr = js_arr.substring(1, js_arr.length-1);
+                                  var parsedJSON = JSON.parse(newStr);
+                                  
+                                  var bil_id = parsedJSON.id;
+                                 // var fro_id = parsedJSON.bill_id;
+                                  var item_name = parsedJSON.item_name;
+                                  var item_type = parsedJSON.item_type;
+                                  var quantity = parsedJSON.quantity;
+                                 // var price = parsedJSON.price;
+
+                                  $("#bil_id").val(bil_id);
+                                //  $("#fro_id").val(fro_id);
+                                  $("#item_name").val(item_name);
+                                  $("#item_type").val(item_type);
+                                  $("#quantity").val(quantity);
+                                  //$("#price").val(price);
+                                
+                              },
+                              error: function(error) {
+                                  console.log("some error in fetching the notifications");
+                              }
+                              });
+                              }
+
+                     function update_bills()
+                       {
+
+                          var bil_id = $("#bil_id").val();
+                         // var fro_id = $("#fro_id").val();
+                          var item_name = $("#item_name").val();
+                          var item_type = $("#item_type").val();
+                          var quantity = $("#quantity").val();
+                          
+
+                          $.ajax({
+                            url: '/update_formula_01?bil_id='+bil_id+'&quantity='+quantity+'&item_name='+item_name+'&item_type='+item_type,
+                                type: 'POST',
+                                //data: formData,
+                                async: false,
+                                cache: false,
+                                contentType: false,
+                                processData: false,
+                                success: function (data) {
+                                 alert(data);
+                                  /*  $("#expens_tble").html(data); */
+                                //  $("#myTable_payment").html(data);
+                                },
+                                error: function(data){
+                                    alert(data);
+                                }
+                            });
+                            return false;
+                        }
+
+                              function cat_delet1(id)
+                              {
+                                
+                                var result = confirm('are you sure ?');
+                                    if(result == true)
+                                    {
+                                     
+                                      var data ={};
+                                        $.ajax({
+                                            type: 'POST',
+                                            data: JSON.stringify(data),
+                                            contentType: "application/json",
+                                            dataType:'json',
+                                            url: '/delete_mahsol_formula?bill_detail_id='+id,                      
+                                            success: function(data){
+                                              alert(data);
+                                              //$("#myTable_payment").html(data);
+                                              window.open('view_creating_mahsol.ejs','_self');
+                                            },
+                                            error: function(error) {
+                                              console.log("some error in fetching the notifications");
+                                              alert("اطلاعات موفقانه حذف گردید");
+                                              window.open('view_creating_mahsol.ejs','_self');
+                                            }
+                                            });
+                                    }
+                              }
+</script>
+
+<script>
+  
+function delete1(id)
+              {
+                
+                var result = confirm('are you sure ?');
+                if(result == true)
+                {
+                  var data ={};
+                    $.ajax({
+                        type: 'POST',
+                        data: JSON.stringify(data),
+                        contentType: "application/json",
+                        dataType:'json',
+                        url: '/delete_parent_mahsol_formula?param='+id,                    
+                        success: function(data) {
+                          alert(data);
+                           window.location.href= "view_creating_mahsol.ejs";
+                        },
+                        error: function(error) {
+                            console.log("some error in fetching the notifications");
+                           // alert("این شخص معامله دارد نمیتوانید حذف کنید! ");
+                           alert("موفقانه حذف شد");
+                           window.location.href= "view_creating_mahsol.ejs";
+                        }
+                        });
+                }
+              }
+</script>
+</body>
+
+</html>

@@ -1,0 +1,355 @@
+
+<!DOCTYPE html>
+<html lang="fa">
+<head>
+   <meta charset="UTF-8">
+   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+   <title>  سیستم مدیریتی</title>
+   <!-- style -->
+   <link rel="stylesheet" href="assets/css/bootstrap.min.css">
+   <link rel="stylesheet" href="assets/css/bootstrap-rtl.min.css">
+   <link rel="stylesheet" href="assets/css/font-awesome.min.css">
+   <link rel="stylesheet" href="assets/css/main.css">
+   <link rel="stylesheet" href="assets/css/emp.css">
+   <link rel="stylesheet" href="assets/css/operation.css">
+   <link rel="stylesheet" href="DataTables/datatables.min.css"/>
+   <link rel="stylesheet" href="assets/css/talabat-sabt.css">
+   <link rel="stylesheet" href="assets/css/responsive.css">
+     <!-- script -->
+  <script src="assets/js/jquery.min.js"></script>
+  <script src="assets/js/popper.min.js"></script>
+  <script src="assets/js/bootstrap.min.js"></script>
+  <script src="DataTables/datatables.min.js"></script>
+  <script src="assets/js/operations.js"></script>
+
+
+</head>
+<body id="back-top" >
+   <!-- modal for operations -->
+  <!-- for add -->
+  <div class="black-bg"></div>
+  <div class="add-modal">
+    <span class="close_span"><img src="assets/img/last-project/delete.svg" width="20px" alt="close"></span>
+    <div class="modal-header"><h3>اضافه کردن</h3></div>
+    <div class="modal-body">
+      <div class="entry col-6">
+        <form action="" enctype="multipart/form-data">
+          <table class="table table-striped" id="table-adding">
+            <thead>
+              <tr>
+                <th>شماره</th>
+                <th> مقدار  </th>
+                <th>رسید</th>
+                <th>تاریخ</th>
+    
+              </tr>
+            </thead>
+            <tbody id="myTable">
+              <tr>
+                <td><input type="text" name="" id="" class="form-control"></td>
+                <td><input type="text" name="" id="" class="form-control"></td>
+                <td><input type="text" name="" id="" class="form-control"></td>
+                <td><input type="text" name="" id="" class="form-control"></td>
+              </tr>
+        <tr>
+          <td colspan="9">
+            
+            <button style="display: block; width: 100%;" class="btn btn-success mx-auto">ذخیره کردن</button>
+              
+          </td>
+        </tr>
+            </tbody>
+          </table>
+        </form>
+      </div>
+      <div class="reg col-6">
+
+          <table class="table table-striped" id="table-adding">
+            <thead>
+              <tr>
+                <th>شماره</th>
+                <th> مقدار  </th>
+                <th>رسید</th>
+                <th>تاریخ</th>
+                <th>عملیات</th>
+    
+              </tr>
+            </thead>
+            <tbody id="myTable">
+              <tr>
+                <td>1</td>
+                <td>132 af</td>
+                <td>832 af</td>
+                <td>1399/9/2</td>
+                <td>
+                  <button data-toggle="tooltip" title="حذف" class="edt del"><img width="15px" src="assets/img/last-project/delete.svg" alt=""></button>
+                  <button title="ویرایش" data-toggle="tooltip" class="edt edit-tbl" ><img width="15px"
+                      src="assets/img/last-project/edit.svg" alt=""></button>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+   
+      </div>
+
+    </div>
+  </div>
+<!-- for edit -->
+<div class="edit-modal">
+  <span class="close_span"><img src="assets/img/last-project/delete.svg" width="20px" alt="close"></span>
+  <div class="modal-header"><h3>ویرایش کردن</h3></div>
+  <div class="modal-body">
+      <form action="" enctype="multipart/form-data" id="update_parts">
+        <table class="table table-striped" id="table-adding">
+          <thead>
+            <tr>
+             
+              <th>نام و تخلص </th>
+              <th>موقعیت</th>
+              <th>تیلیفون </th>
+              <th> ایمیل </th>
+              <th>آدرس</th>
+              <th>مقدار سرمایه</th>
+              <th> اسکن سند</th>
+              <th>تاریخ</th>
+  
+            </tr>
+          </thead>
+          <tbody id="myTable">
+            <tr>
+              <input type="hidden" name="expense_id" id="expense_id">
+              <td><input type="text" name="full_name" id="full_name" class="form-control"></td>
+              <td><input type="text" name="location" id="location" class="form-control"></td>
+              <td><input type="text" name="contact" id="contact" class="form-control"></td>
+              <td><input type="text" name="email" id="email" class="form-control"></td>
+              <td><input type="text" name="address" id="address" class="form-control"></td>
+              <td><input type="text" name="assets_amount" id="assets_amount" class="form-control"></td>
+              <td><div class="input-group" style="width:50px;">
+                <label for="image_upload"  name="image" required style="width:50px; height:50px;">
+                     <img id="myImage" src="image1.gif" alt="" data-img="assets/img/last-project/delete.svg" class="img img-thumbnail" style="width:100% !important; height:100% !important; " />
+                </label>
+                
+                <input id="image_upload" name="image" id="image" type="file" style="display:none;">
+            
+            </div></td>
+              <td><input type="text" name="data_man" id="data_man" class="form-control"></td>
+            </tr>
+      <tr>
+        <td colspan="9">
+          
+          <button style="display: block; width: 100%;" class="btn btn-success mx-auto">ذخیره کردن</button>
+            
+        </td>
+      </tr>
+          </tbody>
+        </table>
+      </form>
+     
+  </div>
+</div>
+
+  <style>
+    table{
+      margin-top: 20px;
+      padding: 20px;
+    }
+  </style>
+<script>
+  $(document).ready(()=>{
+    $('#table-man').dataTable({filter:false,pagination:false});
+  });
+</script>
+<body class="my-login-page">
+  <section class="h-100" style=" padding:0px !important;">
+    <div class="container-fluid h-100" style=" width:100%;">
+      <div class="card-wrapper" style="width:100%;margin-top:1%;">
+        <div class="card-body">
+          <a class="print" onclick="javascript:window.print();"><img title="چاپ کردن" data-toggle="tooltip" class="ml-5 mb-5 btn btn-primary" style="cursor: pointer;"  width="40px" src="assets/img/mawadkham/print.svg" alt="print"></a>
+          <h3 style="text-align: center; margin-bottom: 20px;">جدول ثبت  شرکا </h3>
+          <div class="srch-inp">
+            <span class="fa fa-search sh-m print"></span>
+            <input id="myInput" class="tb-search print"  placeholder="چی را جستجو میکنی؟" type="search">
+          </div>
+          <table class="table table-striped" id="table-man">
+            <thead>
+              <tr>
+                <th>شماره</th>
+                <th>نام و تخلص</th>
+                <th> موقعیت  </th>
+                <th>تیلیفون </th>
+                <th> ایمیل</th>
+                <th>آدرس</th>
+                <th>مقدار سرمایه</th>
+                <th>فیصدی</th>
+                <th> اسکن سند </th>
+                <th>تاریخ</th>
+                <th class="print">عملیات</th>
+                <!-- Number((6.688689).toFixed(1)); -->
+              </tr>
+            </thead>
+            <tbody id="myTable">
+              <% var i =0; data_04.forEach(function(partner_details) {  %>
+              <tr>
+                <td><%= i+1 %></td>
+                <td><%= partner_details.full_name %></td>
+                <td><%= partner_details.location %></td>
+                <td><%= partner_details.contact %></td>
+                <td><%= partner_details.email %></td>
+                <td><%= partner_details.address %></td>
+                <td><%= partner_details.participant_percentage %></td>
+                <td><%= asset_data[i] %>%</td>
+                <td> <img src="<%= partner_details.document %>" height="40px" width="40px" alt=""></td>
+                <td><%= data_date[i] %></td>
+                <td class="print">
+                  <button data-toggle="tooltip" title="حذف" onclick="delete1(<%= partner_details.id %>)" class="edt del"><img width="15px" src="assets/img/last-project/delete.svg" alt=""></button>
+                  <button title="ویرایش" data-toggle="tooltip" onclick="update_partners(<%= partner_details.id %>)" class="edt edit-tbl" ><img width="15px"
+                      src="assets/img/last-project/edit.svg" alt=""></button>
+                  <button data-toggle="tooltip" title="اضافه کردن" class="edt add-tbl"><img width="15px"
+                      src="assets/img/last-project/add.svg  " alt=""></button>
+
+                </td>
+              </tr>
+              <% i++; }); %>
+              
+            </tbody>
+            <tfoot>
+              <tr class="bg bg-primary" style="color: white;">
+                <td colspan="14" style="text-align: center;">
+
+                  <div class="total_salaries">مجموعه سرمایه : 
+                    <div>
+                      <%= all_money %>
+                    </div>
+                  </div>
+                  
+                </td>
+              </tr>
+            </tfoot>
+           
+          </table>
+
+          <a data-toggle="tooltip" title="صفحه پیشین" type="button" style="color:white" href="share_holders.ejs" class="btn mt-5 btn-success btn-medium print">
+            صفحه
+            قبل</a>
+
+        </div>
+      </div>
+    </div>
+
+    <a href="#back-top" style="display: none;" class="go-top"><i class="fa fa-angle-up"></i></a>
+    <script src="assets/js/script.js"></script>
+    <script>
+      $(document).ready(function(){
+        $("#myInput").on("keyup", function() {
+          var value = $(this).val().toLowerCase();
+          $("#myTable tr").filter(function() {
+            $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
+          });
+        });
+      });
+      $(function () {
+  $('[data-toggle="tooltip"]').tooltip();
+});
+$(()=>{
+  $('.dataTables_length').addClass('print');
+  $('.dataTables_info').addClass('print');
+  $('.dataTables_paginate').addClass('print');
+});
+      </script>
+        <script src="assets/js/script.js"></script>
+
+        <script>
+            $("#update_parts").submit(function () {
+                var formData = new FormData(this);
+                $.ajax({
+                    url: '/update_partners_02',
+                    type: 'POST',
+                    data: formData,
+                    async: false,
+                    cache: false,
+                    contentType: false,
+                    processData: false,
+                    success: function (data) {
+                        window.location.href= "sh_reg.ejs";
+                    },
+                    error: function(data){
+                        alert(data);
+                    }
+                });
+                return false;
+            });
+        </script>
+
+        <script>
+           function delete1(id)
+              {
+                var result = confirm('are you sure ?');
+                if(result == true)
+                {
+                  var data ={};
+                    $.ajax({
+                        type: 'POST',
+                        data: JSON.stringify(data),
+                        contentType: "application/json",
+                        dataType:'json',
+                        url: '/delete_partners?param='+id,                      
+                        success: function(data) {
+                           window.location.href= "sh_reg.ejs";
+                        },
+                        error: function(error) {
+                            console.log("some error in fetching the notifications");
+                        }
+                        });
+                }
+              }
+
+              function update_partners(id)
+              {
+                var data ={};
+                    $.ajax({
+                        type: 'POST',
+                        data: JSON.stringify(data),
+                        contentType: "application/json",
+                        dataType:'json',
+                        url: '/update_partners_01?param='+id,                      
+                        success: function(data) {
+                          var obj_to_staring = JSON.stringify(data);//always server data is coming in object type we have to converted in string
+
+                           var string_to_object = JSON.parse(obj_to_staring);//for accessing the value of key we have to convert to object
+                           var shamsi_date = string_to_object.data;//our first part of data converted to object so we can access the value
+                           var name1 = string_to_object.data1;//our second part of data still in string type so we again convt to obj
+
+                           var pars2 = JSON.parse(name1);//here we have parse(convrt to obj) it again,because second parts was nested string
+
+                          var expense_id= pars2.id;
+                          var full_name=  pars2.full_name;
+                          var location =  pars2.location;
+                          var contact=  pars2.contact;
+                          var email = pars2.email;
+                          var address = pars2.address;
+                          var assets_amount = pars2.participant_percentage;
+                          var document = pars2.document;
+                          
+
+                          $("#expense_id").val(expense_id);
+                          $("#full_name").val(full_name);
+                          $("#location").val(location);
+                          $("#contact").val(contact);
+                         
+                          $("#address").val(address);
+                          $("#email").val(email);
+                          $("#assets_amount").val(assets_amount);
+                          $('#myImage').attr('src',document);
+                           $('#myImage').attr('src','default.png');
+                          
+                          $("#data_man").val(shamsi_date);
+                        },
+                        error: function(error) {
+                            console.log("some error in fetching the notifications");
+                        }
+                        });
+              }
+        </script>
+</body>
+
+</html>

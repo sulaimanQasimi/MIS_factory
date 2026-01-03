@@ -1,0 +1,370 @@
+
+<!DOCTYPE html>
+<html lang="fa">
+<head>
+   <meta charset="UTF-8">
+   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+   <title>معلومات ذخیره شده درباره کارمندان</title>
+   <!-- style -->
+   <link rel="stylesheet" href="assets/css/bootstrap.min.css">
+   <link rel="stylesheet" href="assets/css/bootstrap-rtl.min.css">
+   <link rel="stylesheet" href="assets/css/font-awesome.min.css">
+   <link rel="stylesheet" href="assets/css/main.css">
+   <link rel="stylesheet" href="assets/css/emp.css">
+   <link rel="stylesheet" href="assets/css/operation.css">
+   <link rel="stylesheet" href="DataTables/datatables.min.css"/>
+   <link rel="stylesheet" href="assets/css/talabat-sabt.css">
+   <link rel="stylesheet" href="assets/css/responsive.css">
+     <!-- script -->
+  <script src="assets/js/jquery.min.js"></script>
+  <script src="assets/js/popper.min.js"></script>
+  <script src="assets/js/bootstrap.min.js"></script>
+  <script src="DataTables/datatables.min.js"></script>
+  <script src="assets/js/operations.js"></script>
+
+
+</head>
+<body id="back-top" >
+   <!-- modal for operations -->
+  <!-- for add -->
+  <div class="black-bg"></div>
+  <div class="add-modal">
+    <span class="close_span"><img src="assets/img/last-project/delete.svg" width="20px" alt="close"></span>
+    <div class="modal-header"><h3>اضافه کردن</h3></div>
+    <div class="modal-body">
+      <div class="entry col-6">
+        <form action="" enctype="multipart/form-data">
+          <table class="table table-striped" id="table-adding">
+            <thead>
+              <tr>
+                <th>شماره</th>
+                <th> مقدار  </th>
+                <th>رسید</th>
+                <th>تاریخ</th>
+    
+              </tr>
+            </thead>
+            <tbody id="myTable">
+              <tr>
+                <td><input type="text" name="" id="" class="form-control"></td>
+                <td><input type="text" name="" id="" class="form-control"></td>
+                <td><input type="text" name="" id="" class="form-control"></td>
+                <td><input type="text" name="" id="" class="form-control"></td>
+              </tr>
+        <tr>
+          <td colspan="9">
+            
+            <button style="display: block; width: 100%;" class="btn btn-success mx-auto">ذخیره کردن</button>
+              
+          </td>
+        </tr>
+            </tbody>
+          </table>
+        </form>
+      </div>
+      <div class="reg col-6">
+
+          <table class="table table-striped" id="table-adding">
+            <thead>
+              <tr>
+                <th>شماره</th>
+                <th> مقدار  </th>
+                <th>رسید</th>
+                <th>تاریخ</th>
+                <th>عملیات</th>
+    
+              </tr>
+            </thead>
+            <tbody id="myTable">
+              <tr>
+                <td>1</td>
+                <td>132 af</td>
+                <td>832 af</td>
+                <td>1399/9/2</td>
+                <td>
+                  <button data-toggle="tooltip" title="حذف" class="edt del"><img width="15px" src="assets/img/last-project/delete.svg" alt=""></button>
+                  <button title="ویرایش" data-toggle="tooltip" class="edt edit-tbl" ><img width="15px"
+                      src="assets/img/last-project/edit.svg" alt=""></button>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+   
+      </div>
+
+    </div>
+  </div>
+<!-- for edit -->
+<div class="edit-modal">
+  <span class="close_span"><img src="assets/img/last-project/delete.svg" width="20px" alt="close"></span>
+  <div class="modal-header"><h3>ویرایش کردن</h3></div>
+  <div class="modal-body">
+      <form action="" enctype="multipart/form-data" id="update_emp_salaries">
+        <table class="table table-striped" id="table-adding">
+          <thead>
+            <tr>
+             <!--  <th>شماره</th> -->
+              <th>معاش پرداخت شده </th>
+              <th>تکس</th>
+              <th>اضافه کاری </th>
+              <th> پرداخت </th>
+              <th>واحد پولی</th>
+              <th> نرخ</th>
+              <th>تاریخ</th>
+  
+            </tr>
+          </thead>
+          <tbody id="myTable">
+            <input type="hidden" name="expense_id" id="expense_id">
+            <tr>
+              <td><input type="text" name="payable_amount" id="payable_amount" class="form-control"></td>
+              <td><input type="text" name="tax" id="tax" class="form-control"></td>
+              <td><input type="text" name="overtime" id="overtime" class="form-control"></td>
+              <td><input type="text" name="payable" id="payable" class="form-control"></td>
+              <td><input type="text" name="currency" id="currency" class="form-control"></td>
+              <td><input type="text" name="ex_rate" id="ex_rate" class="form-control"></td>
+              <td><input type="text" name="data_man" id="data_man" class="form-control"></td>
+              <!-- <td><input type="text" name="" id="" class="form-control"></td>
+              <td><input type="text" name="" id="" class="form-control"></td> -->
+            </tr>
+      <tr>
+        <td colspan="9">
+          
+          <button style="display: block; width: 100%;" class="btn btn-success mx-auto">ذخیره کردن</button>
+            
+        </td>
+      </tr>
+          </tbody>
+        </table>
+      </form>
+     
+  </div>
+</div>
+  <style>
+    table{
+      margin-top: 20px;
+      padding: 20px;
+    }
+  </style>
+<script>
+  $(document).ready(()=>{
+    $('#table-man').dataTable({filter:false,pagination:false});
+  });
+</script>
+<body class="my-login-page">
+  <section class="h-100" style=" padding:0px !important;">
+    <div class="container-fluid h-100" style=" width:100%;">
+      <div class="card-wrapper" style="width:100%;margin-top:1%;">
+        <div class="card-body">
+          <a class="print" onclick="javascript:window.print();"><img title="چاپ کردن" data-toggle="tooltip" class="ml-5 mb-5 btn btn-primary" style="cursor: pointer;"  width="40px" src="assets/img/mawadkham/print.svg" alt="print"></a>
+          <h3 style="text-align: center; margin-bottom: 20px;">جدول ثبت پرداخت معاشات کارمندان</h3>
+
+          <!-- <div class="srch-inp">
+            <span class="fa fa-search sh-m print"></span>
+            <input id="myInput" class="tb-search print"  placeholder="چی را جستجو میکنی؟" type="search">
+          </div> -->
+          <% include custom_date.ejs %>
+          <table class="table table-striped" id="table-man">
+            <thead>
+              <tr class="tr">
+                <th>شماره</th>
+                <th>نام</th>
+                <th> تخلص کارمند </th>
+                <th>معاش </th>
+                <th>اضافه کاری</th>
+                <th>پرداخت</th>
+                <th>تکس</th>
+                <th>معاش قابل پرداخت</th>
+                <th>واحد پولی</th>
+                <th>نرخ</th>
+                <th>تاریخ</th>
+                <th class="print">عملیات</th>
+
+              </tr>
+            </thead>
+            <tbody id="myTable" class="all_data">
+              <% var i =0 ;data_02.forEach(function(paid_stuff_amoun) { %>
+              <tr>
+                <td><%= i+1 %></td>
+                <td><%= paid_stuff_amoun.name %></td>
+                <td><%= paid_stuff_amoun.last_name %></td>
+                <td><%= paid_stuff_amoun.salary %></td>
+                <td><%= paid_stuff_amoun.overtime %></td>
+                <td><%= paid_stuff_amoun.taken_amount %></td>
+                <td><%= paid_stuff_amoun.tax %></td>
+                <td><%= paid_stuff_amoun.payable %></td>
+                <td> <%= paid_stuff_amoun.currency %></td>
+                <td><%= paid_stuff_amoun.ex_rate %></td>
+                <td><%= data_date[i] %></td>
+                <td class="print">
+                  <button data-toggle="tooltip" title="حذف" onclick="delete1(<%= paid_stuff_amoun.id %>)" class="edt del"><img width="15px" src="assets/img/last-project/delete.svg" alt=""></button>
+                  <button title="ویرایش" data-toggle="tooltip" onclick="update_payable_sal(<%= paid_stuff_amoun.id %>)" class="edt edit-tbl" ><img width="15px"
+                      src="assets/img/last-project/edit.svg" alt=""></button>
+                  <!-- <button data-toggle="tooltip" title="اضافه کردن" class="edt add-tbl"><img width="15px"
+                      src="assets/img/last-project/add.svg  " alt=""></button> -->
+
+                </td>
+              </tr>
+              <% i++; }); %>
+        
+              
+            </tbody>
+            <tfoot>
+              <tr class="bg bg-primary" style="color: white;">
+                <td colspan="14" style="text-align: center;">
+
+                  <div class="total_salaries">مجموعه پرداخت : 
+                    <div>
+                      <%= all_stff_sal %>
+                    </div>
+                  </div>
+                  
+                </td>
+              </tr>
+            </tfoot>
+           
+          </table>
+
+          <a data-toggle="tooltip" title="صفحه پیشین" type="button" style="color:white" href="emp_salary_pay.ejs" class="btn mt-5 btn-success btn-medium print">
+            صفحه
+            قبل</a>
+
+        </div>
+      </div>
+    </div>
+
+    <a href="#back-top" style="display: none;" class="go-top"><i class="fa fa-angle-up"></i></a>
+    <script src="assets/js/script.js"></script>
+    <script>
+      $(document).ready(function(){
+        $("#myInput").on("keyup", function() {
+          var value = $(this).val().toLowerCase();
+          $("#myTable tr").filter(function() {
+            $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
+          });
+        });
+      });
+      $(function () {
+  $('[data-toggle="tooltip"]').tooltip();
+});
+$(()=>{
+  $('.dataTables_length').addClass('print');
+  $('.dataTables_info').addClass('print');
+  $('.dataTables_paginate').addClass('print');
+});
+      </script>
+        <script src="assets/js/script.js"></script>
+
+        <script>
+          const $form = $('#update_emp_salaries')
+      $form.on('submit', submitHandler)
+      
+      function submitHandler (e) {
+        e.preventDefault()
+      
+        $.ajax({
+          url: '/update_emp_salry',
+          type:'POST',
+          data: $form.serialize()
+        }).done(response => {
+          console.log(response)
+          window.location.href= "emp_SP_reg.ejs";
+        })
+      }
+        </script>
+        <script>
+          function delete1(id)
+              {
+                var result = confirm('are you sure ?');
+                if(result == true)
+                {
+                  var data ={};
+                    $.ajax({
+                        type: 'POST',
+                        data: JSON.stringify(data),
+                        contentType: "application/json",
+                        dataType:'json',
+                        url: '/delete_stuff_paid?param='+id,                      
+                        success: function(data) {
+                           window.location.href= "emp_SP_reg.ejs";
+                        },
+                        error: function(error) {
+                            console.log("some error in fetching the notifications");
+                        }
+                        });
+                }
+              }
+
+              function update_payable_sal(id)
+              {
+                var data ={};
+                    $.ajax({
+                        type: 'POST',
+                        data: JSON.stringify(data),
+                        contentType: "application/json",
+                        dataType:'json',
+                        url: '/update_payable_sal?param='+id,                      
+                        success: function(data) {
+                          var obj_to_staring = JSON.stringify(data);//always server data is coming in object type we have to converted in string
+
+                           var string_to_object = JSON.parse(obj_to_staring);//for accessing the value of key we have to convert to object
+                           var shamsi_date = string_to_object.data;//our first part of data converted to object so we can access the value
+                           var name1 = string_to_object.data1;//our second part of data still in string type so we again convt to obj
+
+                           var pars2 = JSON.parse(name1);//here we have parse(convrt to obj) it again,because second parts was nested string
+
+                          var expense_id= pars2.id;
+                          var taken_amount= pars2.taken_amount;
+                          var tax= pars2.tax;
+                          var overtime= pars2.overtime;
+                          var payable = pars2.payable;
+                          var currency = pars2.currency;
+                          var ex_rate = pars2.ex_rate;
+                         
+                          
+                          $("#expense_id").val(expense_id);
+                          $("#payable_amount").val(taken_amount);
+                          $("#tax").val(tax);
+                          $("#overtime").val(overtime);
+                          $("#payable").val(payable);
+                          $("#currency").val(currency);
+                          $("#ex_rate").val(ex_rate);
+                         
+                          $("#data_man").val(shamsi_date);
+                        },
+                        error: function(error) {
+                            console.log("some error in fetching the notifications");
+                        }
+                        });
+              }
+
+              function from_to_date()
+              {
+                       $("#input_laoner").hide();
+                   // var id = $("#edit_id").val();
+                    var from_date =  $("#date_man").val();
+                    var to_date =$("#date_man1").val();
+                   
+                      $.ajax({
+                        url: '/from_date_to_emp_salpay_01?from_date='+from_date+'&to_date='+to_date,
+                            type: 'POST',
+                            //data: formData,
+                            async: false,
+                            cache: false,
+                            contentType: false,
+                            processData: false,
+                            success: function (data) {
+                           //  $(".all_data").hide();
+                             $(".all_data").html(data);
+                              
+                            },
+                            error: function(data){
+                                alert(data);
+                            }
+                        });
+                        return false;
+              }
+        </script>
+</body>
+
+</html>

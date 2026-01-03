@@ -1,0 +1,506 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>سیستم مدیریتی</title>
+  <!-- style -->
+  <link rel="stylesheet" href="assets/css/bootstrap.min.css" />
+  <link rel="stylesheet" href="assets/css/bootstrap-rtl.min.css" />
+  <link rel="stylesheet" href="assets/css/font-awesome.min.css" />
+  <link rel="stylesheet" href="assets/css/persian-datepicker.css">
+  <link rel="stylesheet" href="assets/css/jquery-ui.css" />
+  <link rel="stylesheet" href="assets/css/main.css" />
+  <link rel="stylesheet" href="assets/css/emp.css" />
+  <link rel="stylesheet" href="assets/css/dashboard.css" />
+  <link rel="stylesheet" href="assets/css/scrollbar.css" />
+  <link rel="stylesheet" href="assets/css/responsive.css" />
+  <link href="assets/css/select2.min.css" rel="stylesheet" /> 
+  <link rel="icon" href="assets/img/co-nav.png" />
+  <!-- script -->
+  <script src="assets/js/jquery.min.js"></script>
+  <script src="assets/js/select2.min.js"></script>
+  <script src="assets/js/jquery-ui.js"></script>
+  <script src="assets/js/popper.min.js"></script>
+  <script src="assets/js/bootstrap.min.js"></script>
+  <script src="assets/js/persian-datepicker.js"></script>
+  <script src="assets/js/append.js"></script>
+    
+
+<script>
+  $(function(){
+    change_c();
+  });
+
+    /* $(function(){
+        var exchangeRate = $("#currency").val();
+        if(exchangeRate == "دالر"){
+            $("#to_dollar").val(localStorage.getItem(1));
+        }
+        else if(exchangeRate == "یورو"){
+            $("#to_dollar").val(localStorage.getItem(2));
+        }
+        else if(exchangeRate == "افغانی"){
+            $("#to_dollar").val(1);
+        }
+        else if(exchangeRate == "کلدار"){
+            $("#to_dollar").val(localStorage.getItem(3));
+        }
+        else if(exchangeRate == "تومان"){
+            $("#to_dollar").val(localStorage.getItem(4));
+        }
+      }); */
+    </script>
+    
+</head>
+<body>
+  <div class="modal  fade" id="basicModal" tabindex="-1" role="dialog" aria-labelledby="basicModal" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+       
+        <div class="modal-body">
+          <img class="closerSpan closer_add" src="assets/img/last-project/delete.svg" width="20px" alt="closer" >
+          <div style="padding: 30px;" >
+           <!--  <h3 class="mb-2 mt-2" style="float: right;"> </h3> -->
+            <h3 class="mb-2 mt-2 mr-5" style="margin-right: 40px !important; ">درج محصول جدید</h3>
+          </div>
+          <form action="" style="float: right;" class="col-6" id="form5" enctype="multipart/form-data" accept-charset="UTF-8">
+            
+            <div class="input-group mt-5">
+              <label for="part" class="mt-2" >  نام محصول :</label>
+              <input type="text" name="mahsol_name" id="mahsol_name" class="part form-control mt- d-block mx-auto">
+            </div>
+
+              <div class="input-group mt-5">
+                <label for="part" class="mt-2" >  واحد :</label>
+                <input type="text" name="type" id="type" class="part form-control mt- d-block mx-auto">
+              </div>
+  
+              <div class="input-group mt-5">
+                <label for="part" class="mt-2" > نمبر ثبت :</label>
+                <input type="text" name="serial_no" value="<%= data_03 %>"id="serial_no" class="part form-control mt- d-block mx-auto">
+              </div>
+
+              
+  
+              
+          <!-- <input value="افزودن" class="btn btn-success rounded-pill btn-block mt-5" type="submit"> -->
+          <button type="submit" id="add" name="add" class="btn btn-success rounded-pill btn-block mt-5">افزودن</button>
+          
+          <button type="button" onclick="update_data()" name="sabt_taghirat" id="update" class="btn btn-success rounded-pill btn-block mt-5">ذخیره تغیرات</button>
+          <input type="hidden" id="edit_id" name="edit_id">
+          </form>
+          <div style="display: block; float: left; overflow-y: scroll; height: 300px;" id="ref_div"  class="added-p col-6">
+            
+          
+          <table  class="table table-striped"  >
+            <thead>
+              <tr>
+                <th>شماره</th>
+                <th>نام محصول </th>
+                <th>واحد </th>
+                <th>نمبر ثبت </th>
+                <th>عملیات</th>
+  
+              </tr>
+            </thead>
+            <tbody id="expens_tble_01">
+              
+            
+            </tbody>
+          </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <!-- container start -->
+    <div class="container">
+      <div class="row">
+      <section class="all-web" >
+
+        <h3 class="mt-5 mb-5 " style="text-align: center;">ثبت  مواد  آماده انبار کارخانه</h3>
+        <hr>
+        <br>
+        <form action="" method="post" class="needs-validation" id="form1">
+        <div class="row">
+          <div class="col-xs-12 col-sm-12 col-md-10 col-lg-4">
+            
+           <!--  <div class="input-group">
+              <label class="mt-2" for="name" >نام محصول:</label>
+              <input type="text" id="name" name="name" required class="name mb-3 col-12 form-control">
+            </div> -->
+            <div class="input-group">
+              <label class="mt-2" for="buy_item" > نام محصول:</label>
+              <select required  id="dis_type" name="dis_type" onchange="showUser(this.value)" class="dis_type mb-3 js-example-basic-single col-12 form-control">
+                <% data_list.forEach(function(mat_type) { %>
+              <option value="<%= mat_type.id %>"><%= mat_type.name %></option>
+              <%  }); %>
+              </select>
+            </div>
+            <div class="input-group">
+              <label class="mt-2" for="name" >واحد :</label>
+              <input type="text" id="item_type" name="item_type" required class="name mb-3 col-12 form-control">
+            </div>
+            <div class="input-group">
+              <label class="mt-2" for="amount" >مقدار :</label>
+              <input type="text" id="amount" name="amount" required class="amount mb-3 col-12 form-control">
+            </div>
+            <!-- <div class="input-group">
+              <label class="mt-2" for="price" >قیمت (فی دانه) :</label>
+              <input type="text" id="price" name="price" required class="price mb-3 col-12 form-control">
+            </div> -->
+            <!-- heere -->
+            
+          </div>
+          <!-- second -->
+          <!-- <div class="col-xs-12 col-sm-12 col-md-10 col-lg-4"> -->
+            <!-- <div class="input-group">
+              <label class="mt-2" for="total" >قیمت مجموعی :</label>
+              <input type="text" id="total" name="total" required class="total mb-3 col-12 form-control">
+            </div> -->
+
+            <!-- <div class="input-group">
+              <label class="mt-2" for="sell_price" > قیمت فروش:</label>
+              <input type="number" id="sell_price" name="sell_price" required class="sale_price mb-3 col-12 form-control">
+            </div> -->
+
+            <!-- <div class="input-group">
+              <label class="mt-2" for="currency" >واحد پولی  :</label>
+              <select type="number" id="currency" name="currency" onchange="change_c()" required class="currency mb-3 col-12 form-control">
+            <option value="دالر">دالر</option>      
+             
+            <option value="افغانی">افغانی</option>      
+            </select> -->
+           
+            <script>
+                /* function change_c(){
+                  var exchangeRate = $("#currency").val();
+                  if(exchangeRate == "دالر"){
+                      $("#to_dollar").val(localStorage.getItem(1));
+                  }
+                  else if(exchangeRate == "یورو"){
+                      $("#to_dollar").val(localStorage.getItem(2));
+                  }
+                  else if(exchangeRate == "افغانی"){
+                      $("#to_dollar").val(1);
+                  }
+                  else if(exchangeRate == "کلدار"){
+                      $("#to_dollar").val(localStorage.getItem(3));
+                  }
+                  else if(exchangeRate == "تومان"){
+                      $("#to_dollar").val(localStorage.getItem(4));
+                  }
+                } */
+
+                function change_c(){
+                  var exchangeRate = $("#currency").val();
+                  if(exchangeRate == "دالر"){
+                      $("#to_dollar").val(1);
+                      $("#dynamic_ex_rate").text("به دالر:");
+                  }
+                  else if(exchangeRate == "یورو"){
+                      $("#to_dollar").val(localStorage.getItem(2));
+                      $("#dynamic_ex_rate").text("به یورو:");
+                  }
+                  else if(exchangeRate == "افغانی"){
+                      $("#to_dollar").val(localStorage.getItem(1));
+                      $("#dynamic_ex_rate").text("به افغانی:");
+
+                  }
+                  else if(exchangeRate == "کلدار"){
+                      $("#to_dollar").val(localStorage.getItem(3));
+                      $("#dynamic_ex_rate").text("به کلدار:");
+                  }
+                  else if(exchangeRate == "تومان"){
+                      $("#to_dollar").val(localStorage.getItem(4));
+                      $("#dynamic_ex_rate").text("به تومان:");
+                  }
+                }
+              </script>
+           
+           <!--  </div>
+            <div class="input-group">
+            
+              <label class="mt-2" id="dynamic_ex_rate" for="to_dollar" >به افغانی :</label>
+              <input type="text" id="to_dollar" readonly name="to_dollar" required class="to_dollar mb-3 col-12 form-control">
+            </div>
+            
+          </div> -->
+          <!-- third -->
+          <div class="col-xs-12 col-sm-12 col-md-10 col-lg-4">
+          
+          <div class="input-group">
+            <label class="mt-2" for="date_man" > تاریخ :</label>
+            <input type="text" id="date_man" name="date_man" required class="date_man mb-3 col-12 form-control">
+          </div>
+      <div class="input-group">
+              <label class="mt-2" for="pro_no" >نمبر ثبت محصول:</label>
+              <input type="text" id="pro_no" name="pro_no" required class="pro_no mb-3 col-12 form-control">
+            </div>
+         <!--   <div class="input-group">
+              <label class="mt-2 " for="emp_img" > تصویر:</label>
+               <input type="file"  id="emp_img" name="emp_img" class="emp_img mb-3 col-12 form-control"> 
+              <label class="btn mb-3 mt-2 st btn-default btn-sm form-control center-block btn-file">
+                <i style="color:dodgerblue;" class="fa fa-upload fa-2x" aria-hidden="true"></i>
+                <input type="file" style="display: none;">
+              </label>
+            </div>
+            <div class="input-group">
+              <label class="mt-2" for="date-man" >تاریخ :</label>
+              <input type="text" id="date-man" name="date-man" class="date-man mb-3 col-12 form-control">
+            </div> -->
+          </div>
+          <div class="col-sm-12 height" style="height:40px;"></div>
+          <div class="col-sm-3"><a style="color: #fff;" href="rmf_reg.ejs" class="btn btn-sm btn-success">معلومات ثبت شده</a></div>
+          <div class="col-sm-3">
+            <input type="submit" class="btn btn-primary rounded-pill" style="width:100%;" value="ذخیره">
+          </div>
+
+          <div class="col-sm-3" ><a href="processing_materials.ejs">مواد پروسیس</a></div>
+          <div class="col-sm-3" ><a href="baraword.ejs"> برآورد محصول</a></div>
+
+          <!-- <div class="col-sm-3"><button data-toggle="modal" data-target="#basicModal" type="button" style="float: left;" onclick="show_all()" data-toggle="tooltip" title="اضافه به نوعیت مواد" class="btn btn-secondary btn-sm"><img width="24px" src="assets/img/plus.svg" alt=""></button></div> -->
+          
+          
+        </div>
+      </form>
+      
+        
+      </section>
+      </div>
+    </div>
+</body>
+<script src="assets/js/script.js"></script>
+<script src="assets/js/form-valiate.js"></script>
+
+<script>
+       $(document).ready(function() {
+      $('.js-example-basic-single').select2();
+    });
+</script>
+<script>
+    $(document).ready(()=>{
+  $(function() {
+  $('#date_man').datepicker({
+       changeMonth: true,
+       changeYear: true
+   });
+});
+
+$('.price').keyup(()=>{
+    $('.total').val($('.price').val()*$('.amount').val());
+});
+
+$('.amount').keyup(()=>{
+    $('.total').val($('.price').val()*$('.amount').val());
+});
+    });
+</script>
+<script>
+
+  const $form = $('#form1')
+  
+  $form.on('submit', submitHandler)
+  
+  function submitHandler (e) {
+    e.preventDefault()
+     //var mahsole_id = $("#dis_type").val();
+     
+          var selectedText = $("#dis_type option:selected").html();
+          //alert(selectedText);
+    
+    $.ajax({
+      url: '/stack_reg?innervalue='+selectedText,
+      type:'POST',
+      data: $form.serialize()
+    }).done(response => {
+      
+      /* localStorage.setItem(10,response); */
+      alert(response);
+      document.getElementById("form1").reset();
+      change_c();
+    })
+  }
+
+  function show_all()
+  {
+    //var formData = new FormData(this);
+      $.ajax({
+          url: '/show_all_data_02',
+          type: 'POST',
+          //data: formData,
+          async: false,
+          cache: false,
+          contentType: false,
+          processData: false,
+          success: function (data) {
+           // alert("hello success ");
+              $("#expens_tble_01").html(data);
+             //document.getElementById("form2").reset();
+          },
+          error: function(data){
+              alert(data);
+          }
+      });
+      return false;
+  }
+
+  $("#form5").submit(function () {
+    var dis_type = $("#dis_type").val();
+              showUser(dis_type);
+      var formData = new FormData(this);
+      $.ajax({
+          url: '/add_new_types_01',
+          type: 'POST',
+          data: formData,
+          async: false,
+          cache: false,
+          contentType: false,
+          processData: false,
+          success: function (data) {
+              // alert(data);
+              
+            
+              $("#expens_tble_01").html(data);
+              document.getElementById("form5").reset();
+              window.location.href= "readyMF.ejs";
+              
+          },
+          error: function(data){
+              alert(data);
+          }
+      });
+      return false;
+  });
+
+  function cat_delet(id)
+  { 
+    
+           var result = confirm('are you sure ?');
+                if(result == true)
+                {
+                  var data ={};
+                    $.ajax({
+                        type: 'POST',
+                        data: JSON.stringify(data),
+                        contentType: "application/json",
+                        dataType:'json',
+                        url: '/delete_add_new_material_type?param='+id,                      
+                        success: function(data) {
+                        
+                         $("#delete_row_"+id).remove();
+                        },
+                        error: function(error) {
+                            console.log("some error in fetching the notifications");
+                        }
+                        });
+                }
+  }
+ 
+  $("#update").css({"display":"none"});
+  function cat_edit(id)
+  {
+    
+                  $("#update").show();
+                 
+                  //alert(id);
+                  var data ={};
+                    $.ajax({
+                        type: 'POST',
+                        data: JSON.stringify(data),
+                        contentType: "application/json",
+                        dataType:'json',
+                        url: '/add_new_edit_type?param='+id,                      
+                        success: function(data) {
+                          var obj_to_staring = JSON.stringify(data);
+                          var newStr = obj_to_staring.substring(1, obj_to_staring.length-1);
+                          
+                          var newStr1 = JSON.parse(newStr);
+                          var ex_id = newStr1.id;
+                          var mahsol_name = newStr1.name;
+                          var type = newStr1.type;
+                          var s_no = newStr1.serial_no;
+                          $("#edit_id").val(ex_id);
+                          $("#type").val(type);
+                          $("#mahsol_name").val(mahsol_name);
+                          $("#serial_no").val(s_no);
+                         
+                          //alert(cat);
+                        },
+                        error: function(error) {
+                            console.log("some error in fetching the notifications");
+                        }
+                        });
+               
+  }
+
+
+  function update_data()
+  {
+    var id = $("#edit_id").val();
+    var mahsol_name = $("#mahsol_name").val();
+    var type = $("#type").val();
+    var ser_no = $("#serial_no").val();
+
+    $.ajax({
+          url: '/edit_add_type_02?id_val='+id+"&mahsol_name="+mahsol_name+"&type="+type+"&ser_no="+ser_no,
+          type: 'POST',
+          //data: formData,
+          async: false,
+          cache: false,
+          contentType: false,
+          processData: false,
+          success: function (data) {
+           // alert("hello success ");
+              $("#expens_tble_01").html(data);
+              document.getElementById("form5").reset();
+          },
+          error: function(data){
+              alert(data);
+          }
+      });
+      return false;
+                   
+  }
+
+  $(function(){
+    var dis_type = $("#dis_type").val();
+    
+    showUser(dis_type);
+  });
+
+function showUser(id){
+ 
+var data ={};
+
+$.ajax({
+    type: 'POST',
+    data: JSON.stringify(data),
+    contentType: "application/json",
+    dataType:'json',
+    url: '/get_all_types_2?param='+id,                      
+    success: function(data) {
+   
+        var js_arr = JSON.stringify(data);
+        var str_array = js_arr.split(',');
+       
+
+       var newStr = js_arr.substring(1, js_arr.length-1);
+       var parsedJSON = JSON.parse(newStr);
+       
+       var serial_number = parsedJSON.serial_no;
+       //alert(serial_number);
+       var type = parsedJSON.type;
+       $("#pro_no").val(serial_number);
+       $("#item_type").val(type);
+        
+    },
+    error: function(error) {
+        console.log("some error in fetching the notifications");
+    }
+});
+}
+  </script>
+</html>

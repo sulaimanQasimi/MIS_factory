@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>سیستم مدیریتی</title>
+  <!-- style -->
+  <link rel="stylesheet" href="assets/css/bootstrap.min.css" />
+  <link rel="stylesheet" href="assets/css/bootstrap-rtl.min.css" />
+  <link rel="stylesheet" href="assets/css/font-awesome.min.css" />
+  <link rel="stylesheet" href="assets/css/persian-datepicker.css">
+  <link rel="stylesheet" href="assets/css/jquery-ui.css" />
+  <link rel="stylesheet" href="assets/css/main.css" />
+  <link rel="stylesheet" href="assets/css/emp.css" />
+  <link rel="stylesheet" href="assets/css/dashboard.css" />
+  <link rel="stylesheet" href="assets/css/scrollbar.css" />
+  <link rel="stylesheet" href="assets/css/responsive.css" />
+  <link rel="icon" href="assets/img/co-nav.png" />
+  <!-- script -->
+  <script src="assets/js/jquery.min.js"></script>
+  <script src="assets/js/jquery-ui.js"></script>
+  <script src="assets/js/popper.min.js"></script>
+  <script src="assets/js/bootstrap.min.js"></script>
+  <script src="assets/js/persian-datepicker.js"></script>
+  <script src="assets/js/append.js"></script>
+
+</head>
+<body>
+    <div class="container">
+      <div class="row">
+      <section class="all-web" >
+
+        <h3 class="mt-5 mb-5 " style="text-align: center;">ثبت  معلومات کمپنی ها</h3>
+        <hr>
+        <br>
+        <form action="" method="post" class="needs-validation" id="form1">
+        <div class="row">
+          <div class="col-xs-12 col-sm-12 col-md-10 col-lg-4">
+            <div class="input-group">
+              <label class="mt-2" for="sh_name" >نام  و  شرکت:</label>
+              <input type="text" id="sh_name" name="sh_name" required class="sh_name mb-3 col-12 form-control">
+              
+            </div>
+            <div class="input-group">
+              <label class="mt-2" for="location" >آدرس :</label>
+              <input type="text" id="location" name="location" required class="position mb-3 col-12 form-control">
+            </div>
+            <div class="input-group">
+              <label class="mt-2" for="sh_phone_no" >تیلیفون :</label>
+              <input type="text" id="sh_phone_no" name="sh_phone_no" required class="sh_phone_no mb-3 col-12 form-control">
+            </div>
+            <div class="input-group">
+              <label class="mt-2" for="emial" >ایمیل (ضروری) :</label>
+              <input type="email" id="emial" name="email" required class="emial mb-3 col-12 form-control">
+            </div>
+          </div>
+          <!-- second -->
+          <div class="col-xs-12 col-sm-12 col-md-10 col-lg-4">
+            <!-- <div class="input-group">
+              <label class="mt-2" for="percentage" >فیصدی  :</label>
+              <input type="text" id="percentage" name="percentage" required class="percentage mb-3 col-12 form-control">
+            </div> -->
+            <div class="input-group">
+              <label class="mt-2" for="address" > وبسایت:</label>
+              <input type="text" id="address" name="address" required class="address mb-3 col-12 form-control">
+            </div>
+            <div class="input-group">
+              <label class="mt-2" for="address" >  الگو/شعار شرکت:</label>
+              <input type="text" id="description" name="description" required class="address mb-3 col-12 form-control">
+            </div>
+            <div class="input-group">
+                <label class="mt-2 " for="doc_scan" > عکس:</label>
+              <!-- <input type="file"  id="emp_img" name="emp_img" class="emp_img mb-3 col-12 form-control">  -->
+                <label class="btn mb-3 st  btn-sm form-control d-block btn-file-img">
+
+                  <input type="file" class="doc_scan" name="doc_scan" style="display: none;" id="profile-img">
+                  <img src="assets/img/upload.svg" id="profile-img-tag" class="img-showing" />
+                  
+
+                </label>
+              </div>
+              <script type="text/javascript">
+                function readURL(input) {
+                    if (input.files && input.files[0]) {
+                        var reader = new FileReader();
+                        
+                        reader.onload = function (e) {
+                            $('#profile-img-tag').attr('src', e.target.result);
+                        }
+                        reader.readAsDataURL(input.files[0]);
+                    }
+                }
+                $("#profile-img").change(function(){
+                    readURL(this);
+                });
+            </script>
+            
+          </div>
+          <!-- third -->
+          <div class="col-xs-12 col-sm-12 col-md-10 col-lg-4">
+            <div class="input-group">
+                <label class="mt-2" for="date-man" > تاریخ قرار داد :</label>
+                <input type="text" id="date-man" name="date_man" class="date-man mb-3 col-12 form-control">
+              </div>
+               <div class="input-group">
+                <label class="mt-2" for="date-man-2" > تاریخ   :</label>
+                <input type="text" id="date-man-2" name="date_man_2" class="date-man-2 mb-3 col-12 form-control">
+              </div>
+<hr>
+<hr>
+              <!-- for currency and backup url -->
+              <div class="input-group">
+                <label class="mt-2" for="date-man-2" > فولدر بک آب    :</label>
+                <textarea type="text" id="date-man-2" name="backup_folder" class="date-man-2 mb-3 col-12 form-control"></textarea>
+              </div>
+
+              <div class="input-group">
+                <label class="mt-2" for="currency" >واحد پولی  :</label>
+                <select type="number" id="currency" name="currency" required class="currency mb-3 col-12 form-control">
+                  <option value="افغانی">افغانی</option>      
+                  <option value="دالر">دالر</option>     
+                 
+              </select>
+              <!-- for making currecny visible -->
+              
+             
+              </div>
+
+              
+              <!-- for currency and backup url -->
+          </div>
+          <div class="col-sm-12 height" style="height:40px;"></div>
+          <div class="col-sm-3"><a style="color: #fff;" href="company-reg.ejs" class="btn btn-sm btn-success">معلومات ثبت شده شرکتها </a></div>
+          <div class="col-sm-6">
+            <input type="submit" class="btn btn-primary rounded-pill" style="width:100%;" value="ذخیره">
+          </div>
+          
+        </div>
+      </form>
+      
+        
+      </section>
+      </div>
+    </div>
+</body>
+<script src="assets/js/script.js"></script>
+<script src="assets/js/form-valiate.js"></script>
+
+<script>
+
+$("#form1").submit(function () {
+      var formData = new FormData(this);
+      $.ajax({
+          url: '/add_company_info',
+          type: 'POST',
+          data: formData,
+          async: false,
+          cache: false,
+          contentType: false,
+          processData: false,
+          success: function (data) {
+              // alert(data);
+              document.getElementById("form1").reset();
+          },
+          error: function(data){
+              alert(data);
+          }
+      });
+      return false;
+  });
+</script>
+
+</html>

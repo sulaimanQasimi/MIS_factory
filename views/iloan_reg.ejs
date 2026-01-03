@@ -1,0 +1,639 @@
+<!DOCTYPE html>
+<html lang="fa">
+<head>
+   <meta charset="UTF-8">
+   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+   <title>معلومات ذخیره شده درباره کارمندان</title>
+   <!-- style -->
+   <link rel="stylesheet" href="assets/css/bootstrap.min.css">
+   <link rel="stylesheet" href="assets/css/bootstrap-rtl.min.css">
+   <link rel="stylesheet" href="assets/css/font-awesome.min.css">
+   <link rel="stylesheet" href="assets/css/main.css">
+   <link rel="stylesheet" href="assets/css/emp.css">
+   <link rel="stylesheet" href="assets/css/persian-datepicker.css">
+   <link rel="stylesheet" href="assets/css/operation.css">
+   <link rel="stylesheet" href="DataTables/datatables.min.css"/>
+   <link rel="stylesheet" href="assets/css/talabat-sabt.css">
+   <link rel="stylesheet" href="assets/css/responsive.css">
+     <!-- script -->
+  <script src="assets/js/jquery.min.js"></script>
+  <script src="assets/js/popper.min.js"></script>
+  <script src="assets/js/persian-datepicker.js"></script>
+  <script src="assets/js/bootstrap.min.js"></script>
+  <script src="DataTables/datatables.min.js"></script>
+  <script src="assets/js/operations.js"></script>
+
+  <script>
+    $(function(){
+  change_c();
+  });
+  </script>
+
+
+</head>
+<body id="back-top" >
+ <!-- modal for operations -->
+  <!-- for add -->
+  <div class="black-bg"></div>
+  <div class="add-modal">
+    <span class="close_span"><img src="assets/img/last-project/delete.svg" width="20px" alt="close"></span>
+    <div class="modal-header"><h3> پرداخت اقساط</h3></div>
+    <div class="modal-body">
+      <div class="entry col-6">
+        <form action="" enctype="multipart/form-data">
+          <table class="table table-striped" id="table-adding">
+            <thead>
+              <input type="hidden" id="edit_id" name="edit_id">
+              <tr>
+                
+                <th> مقدار  </th>
+                <!-- <th>رسید</th> -->
+                <th>واحد پولی</th>
+                <th>نرخ</th>
+                <th>تاریخ</th>
+    
+              </tr>
+            </thead>
+            <tbody id="myTable">
+              <input type="hidden" id="display_edit_id" name="display_edit_id">
+              <tr>
+               <!-- <td><input type="text" name="" id="" class="form-control"></td> -->
+                <td><input type="text" name="amount" id="amount" class="form-control"></td>
+                <!-- <td><input type="text" name="received" id="received" class="form-control"></td> -->
+                <td><!-- <input type="text" name="currency" value="" id="currency" class="form-control"> --><select type="number" id="currency" style="width: 120px;" name="currency" onchange="change_c()" required class="currency mb-3 col-12 form-control">
+                  <option value="دالر">دالر</option>      
+                  <option value="افغانی">افغانی</option>      
+               
+            </select>
+           
+            <script>
+               function change_c()
+               {
+                  var exchangeRate = $("#currency").val();
+                  if(exchangeRate == "دالر"){
+                      $("#ex_rate").val(1);
+                      $("#dynamic_ex_rate").text("به دالر:");
+                  }
+        
+                  else if(exchangeRate == "افغانی"){
+                      $("#ex_rate").val(localStorage.getItem(1));
+                      $("#dynamic_ex_rate").text("به افغانی:");
+
+                  }
+       
+        
+                }
+              </script></td>
+              <td> <input type="text" id="ex_rate" readonly  name="ex_rate" required class="to_dollar mb-3 col-12 form-control"></td>
+                <td><input type="text" name="date_man" id="date_man" class="date-man mb-3 col-12 form-control date_man"></td>
+
+                
+                  
+                  
+                
+              </tr>
+        <tr>
+          <td colspan="9">
+            
+            <button type="button" style="display: block; width: 100%;" onclick="add_payment_input()" class="btn btn-success mx-auto">ذخیره کردن</button>
+
+            <button type="button" onclick="update_data()" name="sabt_taghirat" id="update" class="btn btn-success rounded-pill btn-block mt-5">ذخیره تغیرات</button>
+              
+          </td>
+        </tr>
+            </tbody>
+          </table>
+        </form>
+      </div>
+      <div style="overflow-y: scroll; height: 300px;" class="reg col-6">
+
+          <table class="table table-striped" id="table-adding">
+            <thead>
+              <tr>
+                <th>شماره</th>
+                <th> مقدار  </th>
+                <th> واحد پولی  </th>
+                <th>نرخ</th>
+                <th>تاریخ</th>
+                <th>عملیات</th>
+    
+              </tr>
+            </thead>
+            <tbody id="myTable_payment">
+              <!-- <tr>
+                <td>1</td>
+                <td>132 af</td>
+                <td>832 af</td>
+                <td>1399/9/2</td>
+                <td>
+                  <button data-toggle="tooltip" title="حذف" class="edt del"><img width="15px" src="assets/img/last-project/delete.svg" alt=""></button>
+                  <button title="ویرایش" data-toggle="tooltip" class="edt edit-tbl" ><img width="15px"
+                      src="assets/img/last-project/edit.svg" alt=""></button>
+                </td>
+              </tr> -->
+            </tbody>
+          </table>
+   
+      </div>
+
+    </div>
+  </div>
+<!-- for edit -->
+<div class="edit-modal">
+  <span class="close_span"><img src="assets/img/last-project/delete.svg" width="20px" alt="close"></span>
+  <div class="modal-header"><h3>ویرایش کردن</h3></div>
+  <div class="modal-body">
+      <form action="" enctype="multipart/form-data" class="needs-validation" id="update_iloan_reg1">
+        <table class="table table-striped" id="table-adding">
+          <thead>
+            <tr>
+              
+              <th>قرض دهنده </th>
+              <th>قرض گیرنده</th>
+              <th>مقدار </th>
+              <th> اقصاد </th>
+              <th>شماره قرض گیرنده</th>
+              <!-- <th>نام شرکت</th> -->
+              <th>آدرس</th>
+              <th>فایده</th>
+              <th>واحد پولی</th>
+              <th>نرخ</th>
+              <th>تاریخ</th>
+  
+            </tr>
+          </thead>
+          <tbody id="myTable">
+            <input type="hidden" name="expense_id" id="expense_id">
+            <tr>
+              <td><input type="text" name="borrower" required id="borrower" class="form-control"></td>
+              <td><input type="text" name="lender" required id="lender" class="form-control"></td>
+              <td><input type="text" name="loan_amount" required id="loan_amount" class="form-control"></td>
+              <td><input type="text" name="installment_no" required id="installment_no" class="form-control"></td>
+              <td><input type="text" name="lender_contact" required id="lender_contact" class="form-control"></td>
+              <td><input type="text" name="address" id="address" required class="form-control"></td>
+              <td><input type="text" name="benefit" id="benefit" required class="form-control"></td>
+              <td><input type="text" name="loan_currency" required id="loan_currency" class="form-control"></td>
+              <td><input type="text" name="loan_ex_rate" required id="loan_ex_rate" class="form-control"></td>
+              <td><input type="text" name="data_man" required id="data_man" class="form-control"></td>
+              <!-- <td><input type="text" name="" id="" class="form-control"></td> -->
+            </tr>
+      <tr>
+        <td colspan="11">
+          
+          <button style="display: block; width: 100%;" class="btn btn-success mx-auto">ذخیره کردن</button>
+            
+        </td>
+      </tr>
+          </tbody>
+        </table>
+      </form>
+     
+  </div>
+</div>
+  
+  <style>
+    table{
+      margin-top: 20px;
+      padding: 20px;
+    }
+  </style>
+<script>
+  $(document).ready(()=>{
+    $('#table-man').dataTable({filter:false,pagination:false});
+  });
+</script>
+<body class="my-login-page">
+  <section class="h-100" style=" padding:0px !important;">
+    <div class="container-fluid h-100" style=" width:100%;">
+      <div class="card-wrapper" style="width:100%;margin-top:1%; ">
+
+        <div class="card-body">
+          <a class="print" onclick="javascript:window.print();"><img title="چاپ کردن" data-toggle="tooltip" class="ml-5 mb-5 btn btn-primary" style="cursor: pointer;"  width="40px" src="assets/img/mawadkham/print.svg" alt="print"></a>
+          <h3 style="text-align: center; margin-bottom: 20px;">جدول ثبت قروض   ورودی  </h3>
+
+          <!-- <div class="srch-inp">
+            <span class="fa fa-search sh-m print"></span>
+            <input id="myInput" class="tb-search print"  placeholder="چی را جستجو میکنی؟" type="search">
+          </div> -->
+          <br>
+<br>
+<br>
+<form action="" method="post" class="needs-validation" id="form1">
+<div class="row" style="width:100%;">
+    <div class="col-xs-12 col-sm-3 col-md-2 col-lg-3">
+      <span class="fa fa-search sh-m print"></span>
+  <input id="myInput" class="tb-search print"  placeholder="چی را جستجو میکنی؟" type="search">
+
+    </div>
+
+        <div class="col-xs-12 col-sm-2 col-md-2 col-lg-3">
+          <input type="text" id="date_manf" name="from_date" class="form-control rounded-pill rp-inp az_tarikh date_man" placeholder="از تاریخ">
+        </div>
+  
+        <div class="col-xs-12 col-sm-2 col-md-2 col-lg-3">
+          <input type="text" id="date_man1" name="to_date" class="form-control rounded-pill rp-inp ta_tarikh date_man" placeholder="تا تاریخ">
+        </div>
+ 
+      <div class="col-xs-12 col-sm-2 col-md-2 col-lg-2 ">
+        <input type="button" onclick="from_to_date()" class="btn btn-primary col-8  rounded-pill print" value="جستجو">
+      </div>
+      <div class="col-xs-2 col-sm-1 col-md-2 col-lg-1">
+        <button type="button" class="btn btn-primary rounded-pill print" ><img width="18px" src="assets/img/filter.svg" class="print" alt="filter"></button>
+      </div>
+</div>
+</form>
+
+          <table class="table table-striped" id="table-man">
+            <thead>
+              <tr class="tr">
+                <th>شماره</th>
+                <th>قرضه دهنده </th>
+                <th>گیرنده</th>
+                <th>مقدار </th>
+                <th>تعداد قسط </th>
+                <th>شماره تلفن قرصه دهنده  </th>
+                <th>واحد پولی</th>
+                <th>نرخ</th>
+                <th>مفاد</th>
+                <th>مجموع</th>
+                <th>مقدار پرداخت شده</th>
+                <th>  باقی مانده</th>
+                <th>آدرس</th>
+                <th>تاریخ</th>
+                <th class="print">عملیات</th>
+
+              </tr>
+            </thead>
+            <tbody id="myTable" class="all_data">
+              <% var i =0; data_02.forEach(function(incom_loan) { var total = parseFloat(incom_loan.amount) + parseFloat(incom_loan.benefit)  %>
+              <tr>
+                <td><%= i+1 %></td>
+                 <td><%= incom_loan.borrower %></td>
+                <td><%= incom_loan.lender %></td>
+                <td><%= incom_loan.amount %></td>
+                <td>   <%= incom_loan.installment_no %></td>
+                <td><%= incom_loan.lender_contact %></td>
+                <td><%= incom_loan.currency %></td>
+                <td><%= incom_loan.ex_rate %></td>
+                <td><%= incom_loan.benefit %></td>
+                <td><%= total %></td>
+                <td><%= incom_loan.totalcount %></td>
+                <td class="text text-danger" ><%= parseFloat(total) - parseFloat(incom_loan.totalcount) %></td>
+                <td><%= incom_loan.address %></td>
+                <td><%= data_date[i] %></td>
+                <td class="print">
+                  <button data-toggle="tooltip" title="حذف" onclick="delete1(<%= incom_loan.id %>)" class="edt del"><img width="15px" src="assets/img/last-project/delete.svg" alt=""></button>
+                  <button title="ویرایش" data-toggle="tooltip" onclick="update_incom_loan(<%= incom_loan.id %>)" class="edt edit-tbl" ><img width="15px"
+                      src="assets/img/last-project/edit.svg" alt=""></button>
+                  <button data-toggle="tooltip" title="اضافه کردن" onclick="add_input_loan(<%= incom_loan.id %>)" class="edt add-tbl"><img width="15px"
+                      src="assets/img/last-project/add.svg  " alt=""></button>
+
+                </td>
+              </tr>  
+              <% i++; }); %>
+            </tbody>
+            <tfoot>
+              <tr class="bg bg-primary" style="color: white;">
+                <td colspan="15" style="text-align: center;">
+
+                  <div class="total_salaries">مجموعه قروض : 
+                    <span>
+                      <span style="color: greenyellow; font-style: italic;">$</span> <%= all_in_dollor %> --- <span style="color: rgb(51, 255, 0);">افغانی</span> <%= all_in_afghani %> 
+                    </span>
+                  </div>
+                  
+                </td>
+                
+                
+              </tr>
+            </tfoot>
+           
+          </table>
+
+          <a href="input_loan.ejs" data-toggle="tooltip" title="صفحه پیشین" type="button" style="color:white" class="btn mt-5 btn-success btn-medium print">
+            صفحه
+            قبل</a>
+        </div>
+      </div>
+    </div>
+
+    <a href="#back-top" style="display: none;" class="go-top"><i class="fa fa-angle-up"></i></a>
+    <script src="assets/js/script.js"></script>
+    <script>
+        $(document).ready(()=>{
+              $(function() {
+              $('.date_man').datepicker({
+                  changeMonth: true,
+                  changeYear: true
+              });
+            });
+        });
+    </script>
+    <script>
+      $(document).ready(function(){
+        $("#myInput").on("keyup", function() {
+          var value = $(this).val().toLowerCase();
+          $("#myTable tr").filter(function() {
+            $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
+          });
+        });
+      });
+      $(function () {
+  $('[data-toggle="tooltip"]').tooltip();
+});
+$(()=>{
+  $('.dataTables_length').addClass('print');
+  $('.dataTables_info').addClass('print');
+  $('.dataTables_paginate').addClass('print');
+
+  function ref(){
+    
+  }
+
+});
+
+      </script>
+        <script src="assets/js/script.js"></script>
+        <script>
+
+const $form = $('#update_iloan_reg1')
+      $form.on('submit', submitHandler)
+      
+      function submitHandler (e) {
+        e.preventDefault()
+      
+        $.ajax({
+          url: '/update_inloan_reg',
+          type:'POST',
+          data: $form.serialize()
+        }).done(response => {
+          console.log(response)
+          window.location.href= "iloan_reg.ejs";
+        })
+      }
+        </script>
+        <script>
+
+function delete1(id)
+              {
+                var result = confirm('are you sure ?');
+                if(result == true)
+                {
+                  var data ={};
+                    $.ajax({
+                        type: 'POST',
+                        data: JSON.stringify(data),
+                        contentType: "application/json",
+                        dataType:'json',
+                        url: '/delete_income_loans?param='+id,                      
+                        success: function(data) {
+                           window.location.href= "iloan_reg.ejs";
+                        },
+                        error: function(error) {
+                            console.log("some error in fetching the notifications");
+                        }
+                        });
+                 }
+              }
+
+              function add_input_loan(id)
+              {
+                
+                $("#edit_id").val(id);
+              
+                $.ajax({
+                    url: '/show_all_payment?each_loaner_id='+id,
+                    type: 'POST',
+                    //data: formData,
+                    async: false,
+                    cache: false,
+                    contentType: false,
+                    processData: false,
+                    success: function (data) {
+                    // alert("hello success ");
+                        /* $("#expens_tble").html(data); */
+                        $("#myTable_payment").html(data);
+                      //document.getElementById("form2").reset();
+                    },
+                    error: function(data){
+                        alert(data);
+                    }
+                });
+                return false;
+              }
+              
+
+              function add_payment_input()
+              {
+
+                    var id = $("#edit_id").val();
+                    var amount =  $("#amount").val();
+                    var currency =$("#currency").val();
+                    var ex_rate = $("#ex_rate").val();
+                    var date =    $("#date_man").val();
+                    if(date == "" || amount =="")
+                    {
+                      alert("تاریخ و مقدار پرداخت");
+                    }else{
+
+                            $.ajax({
+                              url: '/add_input_loan?incoming_loan_id='+id+'&amount='+amount+'&currency='+currency+'&ex_rate='+ex_rate+'&date='+date,
+                                  type: 'POST',
+                                  //data: formData,
+                                  async: false,
+                                  cache: false,
+                                  contentType: false,
+                                  processData: false,
+                                  success: function (data) {
+                                  // alert("hello success ");
+                                    /*  $("#expens_tble").html(data); */
+                                    $("#myTable_payment").html(data);
+                                    window.location.href= "iloan_reg.ejs";
+                                  },
+                                  error: function(data){
+                                      alert(data);
+                                  }
+                              });
+                              return false;
+                          }
+              }
+
+              function update_incom_loan(id)
+              {
+                var data ={};
+                    $.ajax({
+                        type: 'POST',
+                        data: JSON.stringify(data),
+                        contentType: "application/json",
+                        dataType:'json',
+                        url: '/update_income_loan?param='+id,                      
+                        success: function(data) {
+                          var obj_to_staring = JSON.stringify(data);//always server data is coming in object type we have to converted in string
+
+                           var string_to_object = JSON.parse(obj_to_staring);//for accessing the value of key we have to convert to object
+                           var shamsi_date = string_to_object.data;//our first part of data converted to object so we can access the value
+                           var name1 = string_to_object.data1;//our second part of data still in string type so we again convt to obj
+
+                           var pars2 = JSON.parse(name1);//here we have parse(convrt to obj) it again,because second parts was nested string
+
+                          var expense_id= pars2.id;
+                          var borrower= pars2.borrower;
+                          var lender =  pars2.lender;
+                          var amount= pars2.amount;
+                          var installment_no = pars2.installment_no;
+                          var lender_contact = pars2.lender_contact;
+                          var address = pars2.address;
+                          
+                          var currency = pars2.currency;
+                          var ex_rate = pars2.ex_rate;
+                          var benefit = pars2.benefit;
+                         
+                          
+                          $("#expense_id").val(expense_id);
+                          $("#borrower").val(borrower);
+                          $("#lender").val(lender);
+                          $("#loan_amount").val(amount);//amount
+                          $("#installment_no").val(installment_no);
+                          $("#lender_contact").val(lender_contact);
+                          $("#address").val(address);
+                          $("#loan_currency").val(currency);
+                          $("#loan_ex_rate").val(ex_rate);
+                          $("#benefit").val(benefit);
+                         
+                          $("#data_man").val(shamsi_date);
+                        },
+                        error: function(error) {
+                            console.log("some error in fetching the notifications");
+                        }
+                        });
+              }
+
+              function payment_delet(id)
+                    { 
+                      var loan_id = $("#edit_id").val();
+                      var result = confirm('are you sureh ?');
+                          if(result == true)
+                          {
+                            $("#delete_row_"+id).hide();
+                            var data ={};
+                              $.ajax({
+                                  type: 'POST',
+                                  data: JSON.stringify(data),
+                                  contentType: "application/json",
+                                  dataType:'json',
+                                  url: '/add_payment_delete?param='+id+"&loan_id="+loan_id,                      
+                                  success: function(data) {
+                                    alert(data);
+                                    //$("#myTable_payment").html(data);
+                                    //$("#myTable_payment").load(window.location.href+"#myTable_payment");
+                                  },
+                                  error: function(error) {
+                                      console.log("some error in fetching the notifications");
+                                  }
+                                  });
+                          }
+                    }
+                    $("#update").css({"display":"none"});
+                    function payment_edit(id)
+                    { 
+                      
+                      $("#update").show();
+                      var data ={};
+                         $.ajax({
+                              type: 'POST',
+                              data: JSON.stringify(data),
+                              contentType: "application/json",
+                              dataType:'json',
+                              url: '/iloan_payment_edit1?param='+id,                      
+                              success: function(data) {
+                                var obj_to_staring = JSON.stringify(data);
+                                var string_to_object = JSON.parse(obj_to_staring);
+                                var shamsi_date = string_to_object.data;
+                                var name1 = string_to_object.data1;
+                                var pars2 = JSON.parse(name1);
+                                
+                                var loan_id = pars2.id;
+                                var paid = pars2.paid;
+                                
+                                var currency = pars2.currency;
+                                var ex_rate= pars2.ex_rate;
+
+                                $("#display_edit_id").val(loan_id);
+                                $("#amount").val(paid);
+                                $("#currency").val(currency);
+                                $("#ex_rate").val(ex_rate);
+                                $("#date_man").val(shamsi_date);
+                                
+                              },
+                              error: function(error) {
+                                  console.log("some error in fetching the notifications");
+                              }
+                              });
+                    }
+
+                    function update_data()
+                         { 
+                            var id = $("#display_edit_id").val();
+                            var amount = $("#amount").val();
+                            var currency = $("#currency").val();
+                            var ex_rate = $("#ex_rate").val();
+                            var date_man = $("#date_man").val();
+                            var loan_id = $("#edit_id").val();
+
+                            if(date_man == "" || amount =="")
+                            {
+                            alert("تاریخ و مقدار پرداخت");
+                            }else{
+
+                                    $.ajax({
+                                          url: '/update_show_edit1?id_val='+id+"&amount="+amount+"&currency="+currency+"&ex_rate="+ex_rate+"&date_man="+date_man+"&loan_id="+loan_id,
+                                          type: 'POST',
+                                          //data: formData,
+                                          async: false,
+                                          cache: false,
+                                          contentType: false,
+                                          processData: false,
+                                          success: function (data) {
+                                          // alert("hello success ");
+                                          $("#myTable_payment").html(data);
+                                          window.location.href= "iloan_reg.ejs";
+                                            //document.getElementById("form2").reset();
+                                          },
+                                          error: function(data){
+                                              alert(data);
+                                          }
+                                      });
+                                      return false;
+                                 }
+                         }
+
+                    function from_to_date()
+                        {
+                            $("#input_laoner").hide();
+                        // var id = $("#edit_id").val();
+                          var from_date =  $("#date_manf").val();
+                          var to_date =$("#date_man1").val();
+                        
+                            $.ajax({
+                              url: '/from_date_to_iloan_reg_01?from_date='+from_date+'&to_date='+to_date,
+                                  type: 'POST',
+                                  //data: formData,
+                                  async: false,
+                                  cache: false,
+                                  contentType: false,
+                                  processData: false,
+                                  success: function (data) {
+                                //  $(".all_data").hide();
+                                  $(".all_data").html(data);
+                                    
+                                  },
+                                  error: function(data){
+                                      alert(data);
+                                  }
+                              });
+                              return false;
+                        }  
+        </script>
+</body>
+
+</html>

@@ -1,0 +1,394 @@
+<!DOCTYPE html>
+<html lang="fa">
+<head>
+   <meta charset="UTF-8">
+   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+   <title>معلومات ذخیره شده درباره کارمندان</title>
+   <!-- style -->
+   <link rel="stylesheet" href="assets/css/bootstrap.min.css">
+   <link rel="stylesheet" href="assets/css/bootstrap-rtl.min.css">
+   <link rel="stylesheet" href="assets/css/font-awesome.min.css">
+   <link rel="stylesheet" href="assets/css/main.css">
+   <link rel="stylesheet" href="assets/css/emp.css">
+   <link rel="stylesheet" href="assets/css/operation.css">
+   <link rel="stylesheet" href="DataTables/datatables.min.css"/>
+   <link rel="stylesheet" href="assets/css/talabat-sabt.css">
+   <link rel="stylesheet" href="assets/css/responsive.css">
+     <!-- script -->
+  <script src="assets/js/jquery.min.js"></script>
+  <script src="assets/js/popper.min.js"></script>
+  <script src="assets/js/bootstrap.min.js"></script>
+  <script src="DataTables/datatables.min.js"></script>
+  <script src="assets/js/operations.js"></script>
+
+
+</head>
+<body id="back-top" >
+   <!-- modal for operations -->
+  <!-- for add -->
+  <div class="black-bg"></div>
+  <div class="add-modal">
+    <span class="close_span"><img src="assets/img/last-project/delete.svg" width="20px" alt="close"></span>
+    <div class="modal-header"><h3>اضافه کردن</h3></div>
+    <div class="modal-body">
+        <form action="" enctype="multipart/form-data">
+          <table class="table table-striped" id="table-adding">
+            <thead>
+              <tr>
+                <th>شماره</th>
+                <th>نام </th>
+                <th>تخلص</th>
+                <th>تیلیفون </th>
+                <th> ایمیل </th>
+                <th>تاریخ</th>
+                <th>نام شرکت</th>
+                <th>آدرس</th>
+                <th>تاریخ</th>
+    
+              </tr>
+            </thead>
+            <tbody id="myTable">
+              <tr>
+                <td><input type="text" name="" id="" class="form-control"></td>
+                <td><input type="text" name="" id="" class="form-control"></td>
+                <td><input type="text" name="" id="" class="form-control"></td>
+                <td><input type="text" name="" id="" class="form-control"></td>
+                <td><input type="text" name="" id="" class="form-control"></td>
+                <td><input type="text" name="" id="" class="form-control"></td>
+                <td><input type="text" name="" id="" class="form-control"></td>
+                <td><input type="text" name="" id="" class="form-control"></td>
+                <td><input type="text" name="" id="" class="form-control"></td>
+              </tr>
+        <tr>
+          <td colspan="9">
+            
+            <button style="display: block; width: 100%;" class="btn btn-success mx-auto">ذخیره کردن</button>
+              
+          </td>
+        </tr>
+            </tbody>
+          </table>
+        </form>
+
+    </div>
+  </div>
+<!-- for edit -->
+<div class="edit-modal">
+  <span class="close_span"><img src="assets/img/last-project/delete.svg" width="20px" alt="close"></span>
+  <div class="modal-header"><h3>ویرایش کردن</h3></div>
+  <div class="modal-body">
+      <form action="" enctype="multipart/form-data" id="raw_material_edit">
+        <table class="table table-striped" id="table-adding">
+          <thead>
+            <tr>
+              <th>نوعیت</th>
+              <th>نام شرکت </th>
+              <th>تیلیفون </th>
+              <th>نمبر بل</th>
+              <th> نام جنس</th>
+             
+              <th>محل خرید</th>
+              <th> جزئیات </th>
+              <th>قیمت فی دانه</th>
+              <th> تعداد</th>
+             <!--  <th>مفاد فی دانه</th> -->
+              <th>رسید</th>
+              <th>تاریخ</th>
+  
+            </tr>
+          </thead>
+          <tbody id="myTable">
+            <input type="hidden" name="expense_id" id="expense_id">
+            <tr>
+              <input type="hidden" name="expense_id" id="expense_id">
+              <td><input type="text" name="item_type" readonly id="item_type" class="form-control"></td>
+              <td><input type="text" name="company_name" readonly id="company_name" class="form-control"></td>
+              <td><input type="text" name="contact" id="contact" class="form-control"></td>
+              <td><input type="text" name="bill_no" readonly id="bill_no" class="form-control"></td>
+              <td><input type="text" name="item_name" readonly id="item_name" class="form-control"></td>
+             
+              <td><input type="text" name="buy_place" id="buy_place" class="form-control"></td>
+              <td><input type="text" name="description" id="description" class="form-control"></td>
+              <td><input type="text" name="price" id="price" class="form-control"></td>
+              <td><input type="text" name="quantity" id="quantity" class="form-control"></td>
+              <!-- <td><input type="text" name="benefit" id="benefit" class="form-control"></td> -->
+              <td><input type="text" name="recieved" id="recieved" class="form-control"></td>
+              <td><input type="text" name="data_man" id="data_man" class="form-control"></td>
+            </tr>
+      <tr>
+        <td colspan="13">
+          
+          <button style="display: block; width: 100%;" class="btn btn-success mx-auto">ذخیره کردن</button>
+            
+        </td>
+      </tr>
+          </tbody>
+        </table>
+      </form>
+      <hr>
+     <!--  <h3>بخش های ویرایش شده</h3>
+      <hr>
+      <table class="table table-striped" >
+        <thead>
+          <tr>
+            <th>شماره</th>
+            <th>نام </th>
+            <th>تخلص</th>
+            <th>تیلیفون </th>
+            <th> ایمیل </th>
+            <th>تاریخ</th>
+            <th>نام شرکت</th>
+            <th>آدرس</th>
+            <th>تاریخ</th>
+
+          </tr>
+        </thead>
+        <tbody >
+          <tr>
+            <td>1</td>
+             <td>آهک اعلی</td>
+            <td>990</td>
+            <td>990</td>
+            <td>990</td>
+            <td>990</td>
+            <td>230</td>
+            <td  >  290000 af</td>
+            <td>2020/2/29</td>
+          </tr>
+        </tbody>
+      </table> -->
+  </div>
+</div>
+  <style>
+    table{
+      margin-top: 20px;
+      padding: 20px;
+    }
+  </style>
+<script>
+  $(document).ready(()=>{
+    $('#table-man').dataTable({filter:false,pagination:false});
+  });
+</script>
+<body class="my-login-page">
+  <section class="h-100" style=" padding:0px !important;">
+    <div class="container-fluid h-100" style=" width:100%;">
+      <div class="card-wrapper" style="width:100%;margin-top:1%; ">
+
+        <div class="card-body">
+          <a class="print" onclick="javascript:window.print();"><img title="چاپ کردن" data-toggle="tooltip" class="ml-5 btn btn-primary" style="cursor: pointer;"  width="40px" src="assets/img/mawadkham/print.svg" alt="print"></a>
+          <h3 style="text-align: center; margin-bottom: 20px;">جدول موجودی گدام شهر </h3>
+
+          <a href="stack_view.ejs" data-toggle="tooltip" title=" انبار مواد خام" type="button" style="color:white" class="btn btn-success btn-medium print"> جدول ثبت محصول در بل</a>
+
+          <a href="city_store_reg.ejs" data-toggle="tooltip" title=" انبار مواد خام" type="button" style="color:white" class="btn btn-success btn-medium print"> جدول ثبت مواد انبار شهری  </a>
+          <div class="srch-inp mt-5" >
+            <span class="fa fa-search sh-m print"></span>
+            <input id="myInput" class="tb-search print"  placeholder="چی را جستجو میکنی؟" type="search">
+          </div>
+          <table class="table table-striped" id="table-man">
+            <thead>
+              <tr class="tr">
+                <th>شماره</th>
+                <th>نام جنس</th>
+                <th>واحد</th>
+                <th> نمبر ثبت</th>
+                <th>تعداد</th>
+               
+
+              </tr>
+            </thead>
+            <tbody id="myTable">
+              <%var i =0; data_01.forEach(function(raw_material) { %>
+              <tr>
+                <td><%= i+1 %></td>
+                <td><%= raw_material.item_name %></td>
+                <td><%= raw_material.item_type %></td>
+                <td><%= raw_material.sell_price %></td>
+                <td><%= raw_material.quantity %></td>
+                 
+                
+                
+               
+               
+                <!-- <td><%= raw_material.status %></td> -->
+               
+                
+              </tr>
+              <% i++; }); %>
+              
+            </tbody>
+            <tfoot>
+              <tr class="bg bg-primary" style="color: white;">
+                <td colspan="15" style="text-align: center;">
+
+                  <div class="total_salaries">مجموعه خریداد : 
+                    <div>
+                     
+                    </div>
+                  </div>
+                  
+                </td>
+              </tr>
+            </tfoot>
+           
+          </table>
+
+         
+
+
+          <a href="city_store_reg.ejs" data-toggle="tooltip" title="صفحه پیشین" type="button" style="color:white" class="btn mt-5 btn-success btn-medium print">
+            صفحه
+            قبل</a>
+
+        </div>
+      </div>
+    </div>
+
+    <a href="#back-top" style="display: none;" class="go-top"><i class="fa fa-angle-up"></i></a>
+    <script src="assets/js/script.js"></script>
+    <script>
+      $(document).ready(function(){
+        $("#myInput").on("keyup", function() {
+          var value = $(this).val().toLowerCase();
+          $("#myTable tr").filter(function() {
+            $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
+          });
+        });
+      });
+      $(function () {
+  $('[data-toggle="tooltip"]').tooltip();
+});
+$(()=>{
+  $('.dataTables_length').addClass('print');
+  $('.dataTables_info').addClass('print');
+  $('.dataTables_paginate').addClass('print');
+
+  function ref(){
+    
+  }
+
+});
+
+      </script>
+        <script src="assets/js/script.js">
+        
+//         const $form = $('#new_staff')
+
+// $form.on('submit', submitHandler)
+
+// function submitHandler (e) {
+//   e.preventDefault()
+
+//   $.ajax({
+//     url: '/addUserFormSubmit',
+//     type:'POST',
+//     data: $form.serialize()
+//   }).done(response => {
+//     console.log(response)
+//   })
+// }
+
+  </script>
+  <script>
+    const $form = $('#raw_material_edit')
+$form.on('submit', submitHandler)
+
+function submitHandler (e) {
+  e.preventDefault()
+
+  $.ajax({
+    url: '/update_raw_material_01',
+    type:'POST',
+    data: $form.serialize()
+  }).done(response => {
+    console.log(response)
+    window.location.href= "raw_material_store.ejs";
+  })
+}
+  </script>
+  <script>
+
+function delete1(id)
+              {
+                var result = confirm('are you sure ?');
+                if(result == true)
+                {
+                  var data ={};
+                    $.ajax({
+                        type: 'POST',
+                        data: JSON.stringify(data),
+                        contentType: "application/json",
+                        dataType:'json',
+                        url: '/material_delete?param='+id,                      
+                        success: function(data) {
+                           window.location.href= "raw_material_store.ejs";
+                        },
+                        error: function(error) {
+                            console.log("some error in fetching the notifications");
+                        }
+                        });
+                }
+              }
+
+              function update_material(id)
+              {
+               // alert(id)
+                var data ={};
+                    $.ajax({
+                        type: 'POST',
+                        data: JSON.stringify(data),
+                        contentType: "application/json",
+                        dataType:'json',
+                        url: '/update_materials?param='+id,                      
+                        success: function(data) {
+                          var obj_to_staring = JSON.stringify(data);//always server data is coming in object type we have to converted in string
+
+                           var string_to_object = JSON.parse(obj_to_staring);//for accessing the value of key we have to convert to object
+                           var shamsi_date = string_to_object.data;//our first part of data converted to object so we can access the value
+                           var name1 = string_to_object.data1;//our second part of data still in string type so we again convt to obj
+
+                           var pars2 = JSON.parse(name1);//here we have parse(convrt to obj) it again,because second parts was nested string
+
+                          var material_id= pars2.id;
+                          
+                          var buy_type= pars2.item_type;//now second part converted in obj so by using key we can access it's value
+                          var company_name= pars2.company_name;
+                          var contact= pars2.contact;
+                          var bill_no= pars2.bill_no;
+                          var item_name= pars2.item_name;
+                          var item_type= pars2.item_type;
+                          var buy_place= pars2.buy_place;
+                          var desc = pars2.description;
+                          var quantity = pars2.quantity;
+                          var price = pars2.price;
+                          var paid_amount = pars2.price * pars2.quantity;
+                          var profit_per_one = pars2.profit_per_one;
+                         // var paid_amount= pars2.paid_amount;
+                         // var desc = pars2.profit_per_one;
+                          var date = string_to_object.date;//string_to_object
+                          //alert(shamsi_date)
+                          $("#expense_id").val(material_id);
+                          $("#item_type").val(buy_type);
+                          $("#company_name").val(company_name);
+                          $("#contact").val(contact);
+                          $("#bill_no").val(bill_no);
+                          $("#item_name").val(item_name);
+                          $("#inch").val(buy_place);
+                          $("#buy_place").val(buy_place);
+                          $("#description").val(desc);
+                          $("#price").val(price);
+                          $("#quantity").val(quantity);
+                          $("#benefit").val(profit_per_one);
+                          $("#recieved").val(paid_amount);
+                          $("#data_man").val(shamsi_date);
+                        },
+                        error: function(error) {
+                            console.log("some error in fetching the notifications");
+                        }
+                        });
+              }
+  </script>
+</body>
+
+</html>

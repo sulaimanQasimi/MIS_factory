@@ -1,0 +1,550 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>سیستم مدیریتی</title>
+  <!-- style -->
+  <link rel="stylesheet" href="assets/css/bootstrap.min.css" />
+  <link rel="stylesheet" href="assets/css/bootstrap-rtl.min.css" />
+  <link rel="stylesheet" href="assets/css/font-awesome.min.css" />
+  <link rel="stylesheet" href="assets/css/persian-datepicker.css">
+
+  <link rel="stylesheet" href="assets/css/jquery-ui.css" />
+  <link rel="stylesheet" href="assets/css/main.css" />
+  <link rel="stylesheet" href="assets/css/fro.css" />
+  <link rel="stylesheet" href="assets/css/dashboard.css" />
+  <link rel="stylesheet" href="assets/css/scrollbar.css" />
+  <link rel="stylesheet" href="assets/css/responsive.css" />
+  <link rel="icon" href="assets/img/co-nav.png" />
+  <link href="assets/css/select2.min.css" rel="stylesheet" /> 
+  <!-- script -->
+  <script src="assets/js/jquery.min.js"></script>
+  <script src="assets/js/jquery-ui.js"></script>
+  <script src="assets/js/popper.min.js"></script>
+  <script src="assets/js/bootstrap.min.js"></script>
+  <script src="assets/js/persian-datepicker.js"></script>
+  <script src="assets/js/append.js"></script>
+  <script src="assets/js/select2.min.js"></script>
+
+  <script>
+       $(function(){
+    change_c();
+  });
+  </script>
+
+</head>
+<body>
+<!-- start all web -->
+<section class="all-web">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="fro-entry col-11 mx-auto print">
+                <h3 style="color: white; text-align: center; margin-top:40px ;">بل فروشات</h3>
+                
+                <% data_02.forEach(function(fro_details) {  %>
+                <div class="company-brand" style="width: 40%;">
+                    <div class="logo">
+                        <img width="100%" src="<%= fro_details.logo %>" alt="logo">
+                    </div>
+                    <div class="title">
+                        <h3 style="color: white;"> <%= fro_details.company_name %></h3>
+                        <h6 style="color: lightgray;"><%= fro_details.description %></h6>
+                    </div>
+                </div>
+                <% }); %>
+                        
+                       <div style="color: white;" class="invoice-number">
+                           نمبر بل: <input type="text" value="<%= data_04 +1 %>" form="data_for_invoice" name="bill_no2" id="bill_no2" style="width: 50px;">
+                       </div>
+                      
+            </div>
+      </div>
+        </div>
+</section>
+ <!-- end section all web -->
+ <!-- invoice start -->
+ <div id="all-invoice" class="all-invoice col-11 mx-auto">
+    <div class="container-fluid">
+        <!-- <form class="col-sm-12 mt-5" action="" enctype="multipart/form-data" id="data_for_invoice">  -->
+        <div class="row">
+            <div class="company-brand">
+                <div class="">
+                    
+                </div>
+                <div class="title">
+                    <!-- <h3>عصر پویا</h3>
+                    <h6>پیشتاز در عرصه تولیدات صنعتی</h6> -->
+                </div>
+            </div>
+                   <div class="invoice-number">
+                       <!-- نمبر بیل: 12288 -->
+                   </div>
+                   <div class="blank-spce"></div>
+                   <div class="detail">
+                    <% data_02.forEach(function(fro_details) {  %>
+                       <div class="owner">
+                           <div class="input-group">
+                            <label class="mt-2" for="owner_name">نام فروشنده :</label>
+                            <span><%= fro_details.company_name %></span>
+                           </div>
+                            <div class="input-group">
+                                <label class="mt-2" for="owner_detail1">تیلیفون  :</label>
+                           <span><%= fro_details.contact %></span>
+                            </div>
+                          <div class="input-group">
+                            <label class="mt-2" for="owner_detail2">ایمیل  :</label>
+                            <span><%= fro_details.email %></span>
+                          </div>
+                        </div>
+                        <% }); %>
+                       <div class="customer">
+                            <!-- <div class="input-group">
+                                    <label class="mt-2" for="customer-name">نام خریدار :</label>
+                                    <input type="text" form="data_for_invoice" id="customer-name" name="customer_name" class="ml-2 form-control customer-name">
+                           </div> -->
+
+                           <div class="input-group">
+                            <label class="mt-2" for="dis_type" > نام دکان:</label>
+                            <select required  id="dis_type" form="data_for_invoice" onchange="showUser(this.value)" name="dis_type" class="dis_type mb-3 js-example-basic-single col-12 form-control">
+                              <% data_05.forEach(function(cus_det) { %>
+                            <option value="<%= cus_det.id %>"><%= cus_det.company_name %>--<%=cus_det.id %></option>
+                            <%  }); %>
+                            </select>
+                          </div>
+                           
+                            <div class="input-group">
+                                <label class="mt-2" for="customer-detail1">تیلیفون  :</label>
+                           <input type="text" form="data_for_invoice" id="customer-detail1" name="customer_contact" class="ml-2 form-control customer-detail1">
+                            </div>
+
+                         <div class="input-group">
+                            <label class="mt-2" for="data_man" >تاریخ :</label>
+                            <input required form="data_for_invoice" type="text" id="data_man" name="data_man" class="data_man mb-3 col-12 form-control">
+                         </div>
+
+                        </div>
+                    </div>
+            </div>
+            <div class="row">
+                <div class="search-bar print">
+               
+                        <input type="search"  placeholder="جستجوی اجناس" list="search_list" id="myinput" name="item-search"  class=" item-search form-control">
+                </div>
+            </div>
+            <datalist id="search_list">
+                <% data_03.forEach(function(item_reg) {  %>
+                    <option value="<%= item_reg.sell_price %>"><%= item_reg.item_name %> --<%= item_reg.sell_price %> </option>
+                    <% }); %>
+            </datalist>
+            <div class="row">
+                <form class="col-sm-12 mt-5" action="" class="needs-validation" enctype="multipart/form-data" id="data_for_invoice" autocomplete="off">
+                    
+                <table class="table table-striped table-bordered" id="table-man">
+                    <thead>
+                        <tr>
+                            <th>شماره ثبت</th>
+                            <th>نام جنس</th>
+                            <th>واحد</th>
+                            <th>مقدار</th>
+                            <th>قیمت</th>
+                            <th>مجموع</th>
+                            <th class="print">حذف</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tbody">
+                        
+                    </tbody>
+                </table>
+               <div class="calclus">
+                <div class="input-group">
+                    <label class="mt-2" for="quantity-show">مجموعه  :</label>
+                    <input type="number" value="" readonly name="total_show" id="quantity-show" class="quantity-show form-control ml-2 mb-2">
+                   </div>
+    
+                 <div class="input-group">
+                    <label class="mt-2" for="reciept-show">مقدار  رسید :</label>
+                    <input type="number" value="" name="reciept_show" id="reciept-show" class="reciept-show  form-control  ml-2 mt-2 mb-2">
+                 </div>
+                      <!--  <input type="hidden" value="= data_04 +1 >" id="bill_no" name="bill_no"> -->
+                    <div class="input-group">
+                        <label class="mt-2" for="total-show">باقی :</label>
+                    <input type="number" value="" readonly name="remain_show" id="total-show" class="total-show  form-control ml-2  mt-2 mb-2">
+                     </div>
+                     <div class="input-group">
+                        <label class="mt-2" for="currency" >واحد پولی  :</label>
+                        <select type="number" id="currency" name="currency" onchange="change_c()" required class="currency mb-3 col-12 form-control">
+                            <option value="افغانی">افغانی</option>      
+                            <option value="دالر">دالر</option>      
+                         
+                      </select>
+                      <!-- for making currecny visible -->
+                      <script>
+                         function change_c(){
+                  var exchangeRate = $("#currency").val();
+                  if(exchangeRate == "دالر"){
+                      $("#to_dollar").val(1);
+                      $("#dynamic_ex_rate").text("به دالر:");
+                  }
+                  else if(exchangeRate == "یورو"){
+                      $("#to_dollar").val(localStorage.getItem(2));
+                      $("#dynamic_ex_rate").text("به یورو:");
+                  }
+                  else if(exchangeRate == "افغانی"){
+                      $("#to_dollar").val(localStorage.getItem(1));
+                      $("#dynamic_ex_rate").text("به افغانی:");
+
+                  }
+                  else if(exchangeRate == "کلدار"){
+                      $("#to_dollar").val(localStorage.getItem(3));
+                      $("#dynamic_ex_rate").text("به کلدار:");
+                  }
+                  else if(exchangeRate == "تومان"){
+                      $("#to_dollar").val(localStorage.getItem(4));
+                      $("#dynamic_ex_rate").text("به تومان:");
+                  }
+                }
+                        </script>
+                     
+                      </div>
+                     <div class="input-group">
+                        <label class="mt-2" id="dynamic_ex_rate" for="to_dollar" >به دالر :</label>
+                        <input type="text" id="to_dollar" readonly name="to_dollar" required class="to_dollar mb-3 col-12 form-control">
+                      </div>
+
+                </div>
+              <div class=" oprs">
+                <input onclick="setlocalStoage()" type="submit" id="save" name="save" class="save btn btn-success rounded-pill col-3 mx-auto ml-5 mb-5 print" value="ذخیره کردن">
+                <a class="print" onclick="javascript:window.print();"><img class="ml-5 mb-5 btn btn-primary" style="cursor: pointer;"  width="40px" src="assets/img/mawadkham/print.svg" alt="print"></a>
+              </div>
+            <!-- </form> -->
+            <div class="col-sm-3"><a style="color: #fff;" href="froshat_view.ejs" class="btn btn-sm btn-success print">معلومات ثبت شده</a></div>
+
+            </div>
+
+        </form>
+            <script>
+
+$('#data_man').datepicker({
+       changeMonth: true,
+       changeYear: true
+   });
+
+                function setlocalStoage(){
+      var owner_name = $("#owner_name").val();
+      var owner_detail1 = $("#owner_detail1").val();
+      var owner_detail2 = $("#owner_detail2").val();
+      localStorage.setItem(5,owner_name);
+      localStorage.setItem(6,owner_detail1);
+      localStorage.setItem(7,owner_detail2);
+
+                }
+                $('#owner_name').val(localStorage.getItem(5));
+                $('#owner_detail1').val(localStorage.getItem(6));
+                $('#owner_detail2').val(localStorage.getItem(7));
+                // alert(localStorage.getItem(7));
+                $('#total-show').val();
+                $('#quantity-show').on('keyup',()=>{
+                    $('#total-show').val($('#quantity-show').val()-$('#reciept-show').val()); 
+                });
+                $('#reciept-show').on('keyup',()=>{
+                    $('#total-show').val($('#quantity-show').val()-$('#reciept-show').val()); 
+                });
+                
+                //for remain update
+                // $('#total-show').val();
+                // $('#quantity-show').on('keyup',()=>{
+                //     $('#total-show').val($('#quantity-show').val()-$('#reciept-show').val()); 
+                // });
+                // $('#reciept-show').on('keyup',()=>{
+                //     $('#total-show').val($('#quantity-show').val()-$('#reciept-show').val()); 
+                // });
+
+            </script>
+            <!-- </form> -->
+    </div>
+ </div>
+ 
+ <!-- invoice end -->
+</body>
+   <!--common script for all pages-->
+    <script src="assets/js/script.js"></script>
+    <script src="assets/js/common-scripts.js"></script>
+    <!--script for this page-->
+    <script src="assets/js/sparkline-chart.js"></script>
+    <script src="assets/js/easy-pie-chart.js"></script>
+    <script src="assets/js/all-chartjs.js"></script>
+  <script>
+// alert('hello')
+      //owl carousel
+      $(document).ready(function() {
+          $("#owl-demo").owlCarousel({
+              navigation : true,
+              slideSpeed : 300,
+              paginationSpeed : 400,
+              singleItem : true
+
+          });
+      });
+
+      $(document).ready(function() {
+      $('.js-example-basic-single').select2();
+    });
+      //custom select box
+      $(function(){
+          $('select.styled').customSelect();
+      });
+  </script>
+  <script>
+      var count = 1;
+      $("#myinput").on("search",function(){
+          var search_input = $("#myinput").val();
+         
+          var data ={};
+
+                $.ajax({
+                    type: 'POST',
+                    data: JSON.stringify(data),
+                    contentType: "application/json",
+                    dataType:'json',
+                    url: '/forsh_items?param='+search_input,                      
+                    success: function(data) {
+                
+                        var js_arr = JSON.stringify(data);
+                        var str_array = js_arr.split(',');
+
+                        var newStr = js_arr.substring(1, js_arr.length-1);
+                        var parsedJSON = JSON.parse(newStr);
+                        var st_id = parsedJSON.id;
+                    //alert(st_id);
+                   //$("#stak_to_market_id").val(st_id);
+                    var name = parsedJSON.item_name;
+                    // alert(name)
+                    var quantity= 1;
+                    
+                    var buy_type = parsedJSON.item_type;
+                    var price = parsedJSON.fixed_price;
+                    
+                    var total = price * quantity ;
+                    //alert(total);
+                   
+                    var html_code = "<tr id='row_id_"+count+"'>";
+
+                    html_code+=
+                    '<td>'+count+'</td>';
+                    html_code+=
+                    '<td><input type="text" name="item" readonly value="'+name+'" class="form-control item" id="'+count+'"></td>';
+                    html_code+=
+                    '<input type="hidden" name="stak_to_market" value="'+st_id+'" id="'+count+'" class="form-control item">';
+                    html_code+=
+                    '<td><input type="text" name="type" readonly value="'+buy_type+'" class="form-control item" id="'+count+'"></td>';
+                    html_code+=
+                    '<td><input type="text" name="quantity" value="'+quantity+'" class="form-control quantity" id="quantity_'+count+'"></td>';
+                    html_code+=
+                    '<td><input type="text" name="price" value="'+price+'" class="form-control price" id="price_'+count+'"></td>';
+                    html_code+=
+                    '<td><input type="number" name="total" value="'+total+'" readonly class="form-control total" id="total_'+count+'"></td>';
+                    html_code+=
+                    '<td class="print"><span class="delete-img print"  id="'+count+'" ><img width="25px" style="cursor: pointer;" src="assets/img/mawadkham/trash.svg" alt=""></span></td>';
+                    html_code += "</tr>";
+                    
+                    $("#tbody").append(html_code);
+                    cal_final_total(count);
+                    count++;
+
+                    $("#myinput").val("");
+
+                    // $("#item").val(name);
+                    // $("#emp_fname").val(last_name);
+                        
+                    },
+                    error: function(error) {
+                        console.log("some error in fetching the notifications");
+                    }
+                });
+          //////
+
+          function cal_final_total(count) {
+                var total_amount = 0;
+                for (var x = 1; x <= count; x++) {
+                    var order_item_quantity = $("#quantity_" + x).val();
+                    if (order_item_quantity > 0) {
+                        var order_item_price = $("#price_" + x).val();
+                        var actual_amount = parseFloat(order_item_quantity) * parseFloat(order_item_price);
+                        $("#total_" + x).val(actual_amount);
+                        var total_amount = parseFloat(total_amount) + parseFloat(actual_amount);
+                        $("#quantity-show").val(total_amount.toFixed(0));
+
+                        var total__ = $("#quantity-show").val();
+                        var reciept_show = $("#reciept-show").val();
+                        $("#total-show").val(total__-reciept_show);
+                    }
+
+
+                }
+            }
+
+            $(document).on('keyup', '.quantity', function() {
+                cal_final_total(count);
+            });
+
+            $(document).on('keyup', '.price', function() {
+                cal_final_total(count);
+            });
+
+            // $(document).on('keyup', '#reciept-show', function() {
+            //     cal_final_total(count);
+            // });
+
+            // $(document).on('keyup', '#total-show', function() {
+            //     cal_final_total(count);
+            // });
+
+            // $(document).on('keyup', '#quantity-show', function() {
+            //     cal_final_total(count);
+            // });
+
+           
+      });
+  </script>
+  <script>
+      $(()=>{
+        //   $('.item-search').on('keyup',(e)=>{
+        //   });
+        price.on('keyup',()=>{
+
+      total.val(price.val() + quantity.val());
+        });
+        quantity.on('keyup',()=>{
+          
+            total.val(price.val() + quantity.val());
+        });
+      });
+      $(document).on('click','.delete-img',function(){
+          var row_id = $(this).attr("id");
+          var row_total_amount = $("#total_"+row_id).val();
+          var quantity_show_2 = $("#quantity-show").val();
+          var remain_amount_show = parseFloat(quantity_show_2) - parseFloat(row_total_amount);
+          $("#quantity-show").val(remain_amount_show);
+          $("#row_id_"+row_id).remove();
+        //   alert(remain_amount_show);
+          
+          //total_cal(count);
+      });
+      $(document).on('keyup','.quantity',function(){
+        total_cal(count);
+      });
+       function total_cal(count){
+        var total_price =0;
+        for(var x=1;x<=count;x++){
+            var row_id_quantity = $('#quantity_'+x).val();
+            if(row_id_quantity > 0){    
+                var row_id_price = $('#price_'+x).val();
+                var actual_amount = row_id_quantity*row_id_price;
+                
+                $('#total_'+x).val(actual_amount);
+            }
+        }
+       }
+      $(document).on('keyup','.price',function(){
+                    total_cal(count);
+      });
+  </script>
+
+  <script>
+
+$(document).ready(function(e){
+            $("#data-for-invoice").on("submit",function(e){
+                e.preventDefault();
+                // alert("hiuh");
+                    $.ajax({
+						url: "server.ejs",
+						type: "POST",
+						data:  new FormData(this),
+						contentType: false,
+						cache: false,
+						processData:false,
+						success: function(data)
+						{
+                            // var rel_data = data.trim();
+                            // if(rel_data == "okay")
+                            // {
+                            //     $("#DisplayDiv").html("<div>data inserted successfully </div>");
+                            //     setTimeout(() => {
+                            //         $("#DisplayDiv").html("");
+                            //     }, 3000);
+                            // }
+                            //alert(data);
+						},
+						error: function(error) 
+						{
+							alert(error);
+						} 	        
+					});
+                
+            });
+        });
+
+                        const $form = $('#data_for_invoice')
+                        $form.on('submit', submitHandler)
+
+                        function submitHandler (e) {
+                        e.preventDefault()
+                        /* var sell_date = $("#data_man").val();
+                            if(sell_date == "")
+                            {
+                                alert("تاریخ فروش خالی است !");
+                            }else{ */
+
+                                    $.ajax({
+                                        url: '/froshat_details',
+                                        type:'POST',
+                                        data: $form.serialize()
+                                    }).done(response => {
+                                        document.getElementById("data_for_invoice").reset();
+                                        console.log(response)
+                                        alert(response);
+                                        window.location.href= "fro.ejs";
+                                    })
+                                  }
+                      //  }
+
+$(function(){
+    var dis_type = $("#dis_type").val();
+    
+    showUser(dis_type);
+  });
+
+function showUser(id){
+    
+var data ={};
+
+$.ajax({
+    type: 'POST',
+    data: JSON.stringify(data),
+    contentType: "application/json",
+    dataType:'json',
+    url: '/get_all_types_3?param='+id,                      
+    success: function(data) {
+       
+        var js_arr = JSON.stringify(data);
+        var str_array = js_arr.split(',');
+
+       var newStr = js_arr.substring(1, js_arr.length-1);
+       var parsedJSON = JSON.parse(newStr);
+       
+      // var serial_number = parsedJSON.name;
+       var contact = parsedJSON.contact;
+       var name = parsedJSON.name;
+       
+       $("#customer-detail1").val(contact);
+       $("#customer-detail2").val(name);
+        
+    },
+    error: function(error) {
+        console.log("some error in fetching the notifications");
+    }
+});
+}
+  </script>
+</html>

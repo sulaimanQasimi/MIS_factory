@@ -1,0 +1,390 @@
+<!DOCTYPE html>
+<html lang="fa">
+<head>
+   <meta charset="UTF-8">
+   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+   <title>معلومات ذخیره شده درباره کارمندان</title>
+   <!-- style -->
+   <link rel="stylesheet" href="assets/css/bootstrap.min.css">
+   <link rel="stylesheet" href="assets/css/bootstrap-rtl.min.css">
+   <link rel="stylesheet" href="assets/css/font-awesome.min.css">
+   <link rel="stylesheet" href="assets/css/main.css">
+   <link rel="stylesheet" href="assets/css/emp.css">
+   <link rel="stylesheet" href="assets/css/operation.css">
+   <link rel="stylesheet" href="DataTables/datatables.min.css"/>
+   <link rel="stylesheet" href="assets/css/talabat-sabt.css">
+   <link rel="stylesheet" href="assets/css/responsive.css">
+
+     <!-- script -->
+     <!-- <script src="https://unpkg.com/jalali-moment/dist/jalali-moment.browser.js"></script> -->
+  <script src="assets/js/jquery.min.js"></script>
+  <script src="assets/js/popper.min.js"></script>
+  <script src="assets/js/bootstrap.min.js"></script>
+  <script src="DataTables/datatables.min.js"></script>
+  <script src="assets/js/operations.js"></script>
+
+  <style>
+    .tr th{
+      position: sticky !important;
+      top: 0px !important;
+      background-color: dodgerblue;
+    }
+  </style>
+</head>
+<body id="back-top" >
+   <!-- modal for operations -->
+  <!-- for add -->
+  <div class="black-bg"></div>
+  <div class="add-modal">
+    <span class="close_span"><img src="assets/img/last-project/delete.svg" width="20px;" alt="close"></span>
+    <div class="modal-header"><h3> مواد اولیه</h3></div>
+    <div class="modal-body">
+      
+      <div class="reg col-12" >
+
+          <table class="table table-striped" id="table-adding" style="width: 100%;">
+            <thead>
+              <tr>
+                <th>شماره</th>
+                <th> نام محصول  </th>
+                <th> نوعیت  </th>
+                <th> مقدار  </th>
+               <!--  <th>قیمت</th> -->
+                <!-- <th>تاریخ</th>
+                <th>عملیات</th> -->
+    
+              </tr>
+            </thead>
+            <tbody id="myTable_payment">
+              <!-- <tr>
+                <td>1</td>
+                <td>132 af</td>
+                <td>832 af</td>
+                <td>1399/9/2</td>
+                <td>1399/9/2</td>
+               
+              </tr> -->
+            </tbody>
+          </table>
+   
+      </div>
+
+    </div>
+  </div>
+<!-- for edit -->
+<div class="edit-modal">
+  <span class="close_span"><img src="assets/img/last-project/delete.svg" width="20px" alt="close"></span>
+  <div class="modal-header"><h3>ویرایش کردن</h3></div>
+  <div class="modal-body">
+      <form action="" enctype="multipart/form-data" id="rmf_reg_edit">
+        <table class="table table-striped">
+          <thead>
+            <tr>
+              
+              <th>نام محصول </th>
+              <th> نوعیت محصول </th>
+              <th>واحد پولی</th>
+              <th>نرخ </th>
+              <th> مقدار </th>
+              <th>قیمت خرید</th>
+              <!-- <th> قیمت فروش</th> -->
+              <th>نمبر ثبت محصول</th>
+              <th>تاریخ</th>
+  
+            </tr>
+          </thead>
+          <!--  id="myTable" -->
+          <tbody>
+            <input type="hidden" name="expense_id" id="expense_id">
+            <tr>
+              
+              <td><input type="text" name="item_name" id="item_name" class="form-control"></td>
+              <td><input type="text" name="item_type" id="item_type" class="form-control"></td>
+              <td><input type="text" name="currency" id="currency" class="form-control"></td>
+              <td><input type="text" name="ex_rate" id="ex_rate" class="form-control"></td>
+              <td><input type="text" readonly name="quantity" id="quantity" class="form-control"></td>
+              <td><input type="text" name="fixed_price" id="fixed_price" class="form-control"></td>
+              <!-- <td><input type="text" name="sell_price" id="sell_price" class="form-control"></td> -->
+              <td><input type="text" name="id_number" id="id_number" class="form-control"></td>
+              <td><input type="text" name="data_man" id="data_man" class="form-control"></td>
+            </tr>
+      <tr>
+        <td colspan="9">
+          
+          <button style="display: block; width: 100%;" class="btn btn-success mx-auto">ذخیره کردن</button>
+            
+        </td>
+      </tr>
+          </tbody>
+        </table>
+      </form>
+     
+  </div>
+</div>
+
+  <style>
+    table{
+      margin-top: 20px;
+      padding: 20px;
+    }
+  </style>
+<script>
+  $(document).ready(()=>{
+    $('#table-man').dataTable({filter:false,pagination:false});
+  });
+</script>
+<body class="my-login-page">
+  <section class="h-100" style=" padding:0px !important;">
+    <div class="container-fluid h-100" style=" width:100%;">
+      <div class="card-wrapper" style="width:100%;margin-top:1%; ">
+
+        <div class="card-body">
+          <a class="print" onclick="javascript:window.print();"><img title="چاپ کردن" data-toggle="tooltip" class="ml-5 btn btn-primary" style="cursor: pointer;"  width="40px" src="assets/img/mawadkham/print.svg" alt="print"></a>
+
+          <a href="stock_materials.ejs" data-toggle="tooltip" title=" انبار مواد خام" type="button" style="color:white" class="btn btn-success btn-medium print">
+            
+            انبار مواد تولید شده</a>
+
+          <h3 style="text-align: center; margin-bottom: 20px;">جدول ثبت مواد آماده انبار کارخانه  </h3>
+          <!-- <div class="srch-inp">
+            <span class="fa fa-search sh-m print"></span>
+            <input id="myInput" class="tb-search print"  placeholder="چی را جستجو میکنی؟" type="search">
+          </div> -->
+          <% include custom_date.ejs %>
+          <table class="table table-striped" id="table-man">
+            <thead>
+              <tr class="tr">
+                <th>شماره</th>
+                <th>نام محصول</th>
+                <th> واحد</th>
+                <th>واحد پولی</th>
+                <th>نرخ</th>
+                <th>مقدار </th>
+                <th>قیمت خرید</th>
+                <!-- <th>قیمت فروش</th> -->
+                <th>نمبر ثبت محصول</th>
+                <th>تاریخ</th>
+                <th class="print">عملیات</th>
+
+              </tr>
+              
+            </thead>
+           <!--  id="myTable" -->
+            <tbody class="all_data">
+              <% var i =0; data_04.forEach(function(rmf_reg) {  %>
+              <tr class="tr">
+                <td><%= i+1 %></td>
+                 <td><%= rmf_reg.item_name %></td>
+                 <td><%= rmf_reg.item_type %></td>
+                <td><%= rmf_reg.currency %></td>
+                <td><%= rmf_reg.ex_rate %></td>
+                <td><% if(rmf_reg.quantity <= 10 ){ %> <div style="color: red;"><%= rmf_reg.quantity %></div> <%}else{%><div style="color: green;"><%= rmf_reg.quantity %></div><%}%></td>
+                <td><%= rmf_reg.fixed_price %></td>
+               
+                <td><%= rmf_reg.serial_number %></td>
+                <td><%= data_date[i] %></td>
+                <td class="print">
+                  <button data-toggle="tooltip" title="حذف" onclick="delete1(<%= rmf_reg.id %>)" class="edt del"><img width="15px" src="assets/img/last-project/delete.svg" alt=""></button>
+                  <button title="ویرایش" data-toggle="tooltip" onclick="update_rmf(<%= rmf_reg.id %>)" class="edt edit-tbl" ><img width="15px"
+                      src="assets/img/last-project/edit.svg" alt=""></button>
+                  <button data-toggle="tooltip" title="اضافه کردن" onclick="view_mahsol(<%= rmf_reg.id %>)" class="edt add-tbl"><img width="15px"
+                      src="assets/img/last-project/eye_100px.png " alt=""></button>
+
+                </td>
+              </tr>
+              <% i++; }); %>
+              
+            </tbody>
+            <tfoot>
+              <tr class="bg bg-primary" style="color: white;">
+                <td colspan="14" style="text-align: center;">
+
+                  <div class="total_salaries">مجموعه اجناس : 
+                    <div>
+                      <%= expenses %>
+                    </div>
+                  </div>
+                  
+                </td>
+              </tr>
+            </tfoot>
+           
+          </table>
+
+          <a href="readyMF.ejs" data-toggle="tooltip" title="صفحه پیشین" type="button" style="color:white" class="btn mt-5 btn-success btn-medium print">
+            صفحه
+            قبل</a>
+
+        </div>
+      </div>
+    </div>
+
+    <a href="#back-top" style="display: none;" class="go-top"><i class="fa fa-angle-up"></i></a>
+    <script src="assets/js/script.js"></script>
+    <script>
+      $(document).ready(function(){
+        $("#myInput").on("keyup", function() {
+          var value = $(this).val().toLowerCase();
+          $("#myTable tr").filter(function() {
+            $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
+          });
+        });
+      });
+      $(function () {
+  $('[data-toggle="tooltip"]').tooltip();
+});
+$(()=>{
+  $('.dataTables_length').addClass('print');
+  $('.dataTables_info').addClass('print');
+  $('.dataTables_paginate').addClass('print');
+
+  function ref(){
+    
+  }
+
+});
+
+      </script>
+        <script src="assets/js/script.js"></script>
+        <script>
+          const $form = $('#rmf_reg_edit')
+      $form.on('submit', submitHandler)
+      
+      function submitHandler (e) {
+        e.preventDefault()
+      
+        $.ajax({
+          url: '/update_rmf_material_01',
+          type:'POST',
+          data: $form.serialize()
+        }).done(response => {
+          console.log(response)
+          window.location.href= "rmf_reg.ejs";
+        })
+      }
+        </script>
+        <script>
+
+function delete1(id)
+              {
+                var result = confirm('are you sure ?');
+                if(result == true)
+                {
+                  var data ={};
+                    $.ajax({
+                        type: 'POST',
+                        data: JSON.stringify(data),
+                        contentType: "application/json",
+                        dataType:'json',
+                        url: '/raw_reg_delete?param='+id,                      
+                        success: function(data) {
+                           window.location.href= "rmf_reg.ejs";
+                        },
+                        error: function(error) {
+                            console.log("some error in fetching the notifications");
+                        }
+                        });
+                }
+              }
+
+              function update_rmf(id)
+              {
+                
+                var data ={};
+                    $.ajax({
+                        type: 'POST',
+                        data: JSON.stringify(data),
+                        contentType: "application/json",
+                        dataType:'json',
+                        url: '/update_rmf_regs?param='+id,                      
+                        success: function(data) {
+                          var obj_to_staring = JSON.stringify(data);//always server data is coming in object type we have to converted in string
+
+                           var string_to_object = JSON.parse(obj_to_staring);//for accessing the value of key we have to convert to object
+                           var shamsi_date = string_to_object.data;//our first part of data converted to object so we can access the value
+                           var name1 = string_to_object.data1;//our second part of data still in string type so we again convt to obj
+
+                           var pars2 = JSON.parse(name1);//here we have parse(convrt to obj) it again,because second parts was nested string
+
+                          var expense_id= pars2.id;
+                          var item_name= pars2.item_name;//now second part converted in obj so by using key we can access it's value
+                          var item_type= pars2.item_type;
+                          var quantity= pars2.quantity;
+                          var fixed_price = pars2.fixed_price;
+                          var sell_price = pars2.sell_price;
+                          var currency = pars2.currency;
+                          var ex_rate = pars2.ex_rate;
+                          var id_number = pars2.serial_number;
+                         
+                          
+                          $("#expense_id").val(expense_id);
+                          $("#item_name").val(item_name);
+                          $("#item_type").val(item_type);
+                          $("#quantity").val(quantity);
+                          $("#fixed_price").val(fixed_price);
+                          $("#sell_price").val(sell_price);
+                          $("#currency").val(currency);
+                          $("#ex_rate").val(ex_rate);
+                          $("#id_number").val(id_number);
+                          $("#data_man").val(shamsi_date);
+                        },
+                        error: function(error) {
+                            console.log("some error in fetching the notifications");
+                        }
+                        });
+              }
+
+              function view_mahsol(id)
+              {
+                        
+
+                            $.ajax({
+                                  url: '/update_show_edit3?id_val='+id,
+                                  type: 'POST',
+                                  //data: formData,
+                                  async: false,
+                                  cache: false,
+                                  contentType: false,
+                                  processData: false,
+                                  success: function (data) {
+                                  
+                                  $("#myTable_payment").html(data);
+                                    //document.getElementById("form2").reset();
+                                  },
+                                  error: function(data){
+                                      alert(data);
+                                  }
+                              });
+                              return false;
+              }
+
+              function from_to_date()
+              {
+                       $("#input_laoner").hide();
+                   // var id = $("#edit_id").val();
+                    var from_date =  $("#date_man").val();
+                    var to_date =$("#date_man1").val();
+                   
+                      $.ajax({
+                        url: '/from_date_to_rmf_reg_01?from_date='+from_date+'&to_date='+to_date,
+                            type: 'POST',
+                            //data: formData,
+                            async: false,
+                            cache: false,
+                            contentType: false,
+                            processData: false,
+                            success: function (data) {
+                           
+                             $(".all_data").html(data);
+                              
+                            },
+                            error: function(data){
+                                alert(data);
+                            }
+                        });
+                        return false;
+              }
+        </script>
+</body>
+
+</html>

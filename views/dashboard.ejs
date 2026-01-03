@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>سیستم مدیریتی</title>
+  <!-- style -->
+  <link rel="stylesheet" href="assets/css/bootstrap.min.css" />
+  <link rel="stylesheet" href="assets/css/bootstrap-rtl.min.css" />
+  <link rel="stylesheet" href="assets/css/font-awesome.min.css" />
+  <link rel="stylesheet" href="assets/css/jquery-ui.css" />
+  <link rel="stylesheet" href="assets/css/main.css" />
+  <link rel="stylesheet" href="assets/css/chat.css" />
+  <link rel="stylesheet" href="assets/css/dashboard.css" />
+  <link rel="stylesheet" href="assets/css/scrollbar.css" />
+  <link rel="stylesheet" href="assets/css/responsive.css" />
+  <link rel="icon" href="assets/img/co-nav.png" />
+  <!-- script -->
+  <script src="assets/js/jquery.min.js"></script>
+  <script src="assets/js/jquery-ui.js"></script>
+  <script src="assets/js/popper.min.js"></script>
+  <script src="assets/js/bootstrap.min.js"></script>
+  <script src="assets/js/append.js"></script>
+     <!--common script for all pages-->
+     <script src="assets/js/common-scripts.js"></script>
+     <!--script for this page-->
+     <script src="assets/js/chart1.js"></script>
+     <script src="assets/js/sparkline-chart.js"></script>
+     <script src="assets/js/easy-pie-chart.js"></script>
+     <script src="assets/js/all-chartjs.js"></script>
+</head>
+<body>
+<section class="all-web">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="panel col-sm-12 col-md-3">
+                <div class="color-box">
+                  <a href="dis-reg.ejs"><img width="70px" src="assets/img/disposal.svg" alt="disposal"></a>
+                </div>
+                <div class="content">
+                    <h2 class="numbers"><%= expenses %> 
+                    </h2>  
+                    <h6>مجموعه مصارف</h6>
+                </div>
+            </div>
+
+            <div class="panel col-sm-12 col-md-3">
+                <div class="color-box">
+                  <a href="raw_material_store.ejs"><img width="70px" src="assets/img/disposal.svg" alt="disposal"></a>
+                </div>
+                <div class="content">
+                    <h2 class="numbers"><%= purchase %> 
+                    </h2>  
+                    <h6>مجموعه خرید مواد خام</h6>
+                </div>
+            </div>
+
+            <div class="panel col-sm-12 col-md-3">
+              <div class="color-box balance">
+                <a href="froshat_view.ejs">  <img width="70px" src="assets/img/total_sales.svg" alt="disposal"></a>
+              </div>
+              <div class="content" >
+                  <h2 class="numbers"><%= sell_amount %>
+                  </h2>
+                  <h6>مجموعه فروشات</h6> 
+                 
+              </div>
+          </div>
+          <div class="panel col-sm-12  col-md-3">
+            <div class="color-box sales">
+              <img width="70px" src="assets/img/create_order.svg" alt="disposal">
+            </div>
+            <div class="content">
+                <h2 class="numbers"><%= (sell_amount -(expenses + purchase)).toFixed(3);  %>
+                </h2>
+                <h6>مفاد </h6>
+                
+            </div>
+        </div>
+        <div class="panel col-sm-12  col-md-3">
+          <div class="color-box orders">
+           <a href="oloan_reg.ejs"> <img width="70px" src="assets/img/money_pound.svg" alt="disposal"></a>
+          </div>
+          <div class="content">
+              <h2 class="numbers"><%= outging_loan %></h2>
+              <h6>  مجموعه قرضه های خروجی</h6>
+            </div>
+      </div>
+
+      <div class="panel col-sm-12  col-md-3">
+        <div class="color-box orders">
+            <a href="iloan_reg.ejs"><img width="70px" src="assets/img/money_pound.svg" alt="disposal"></a>
+        </div>
+        <div class="content">
+            <h2 class="numbers"><%= incoming_loan %></h2>
+            <h6>  مجموعه قرضه های داخلی</h6>
+          </div>
+    </div>
+        </div>
+    </div>
+</section>
+ <!--custom chart start-->
+<!-- <div class="all_charts">
+    <div class="border-head col-10 mx-auto ">
+        <h3>چارت ورودی</h3>
+      </div>
+      <div class="custom-bar-chart col-10 mx-auto">
+        <div class="bar">
+            <div class="title">حمل</div>
+            <div class="value tooltips" data-original-title="80%" data-toggle="tooltip" data-placement="top">80%</div>
+        </div>
+        <div class="bar doted">
+            <div class="title">ثور</div>
+            <div class="value tooltips" data-original-title="50%" data-toggle="tooltip" data-placement="top">50%</div>
+        </div>
+        <div class="bar ">
+            <div class="title">جوزا</div>
+            <div class="value tooltips" data-original-title="40%" data-toggle="tooltip" data-placement="top">40%</div>
+        </div>
+        <div class="bar doted">
+            <div class="title">سرطان</div>
+            <div class="value tooltips" data-original-title="55%" data-toggle="tooltip" data-placement="top">55%</div>
+        </div>
+        <div class="bar">
+            <div class="title">اسد</div>
+            <div class="value tooltips" data-original-title="20%" data-toggle="tooltip" data-placement="top">20%</div>
+        </div>
+        <div class="bar doted">
+            <div class="title">سنبله</div>
+            <div class="value tooltips" data-original-title="39%" data-toggle="tooltip" data-placement="top">39%</div>
+        </div>
+        <div class="bar">
+            <div class="title">میزان</div>
+            <div class="value tooltips" data-original-title="75%" data-toggle="tooltip" data-placement="top">75%</div>
+        </div>
+        <div class="bar doted">
+            <div class="title">عقرب</div>
+            <div class="value tooltips" data-original-title="45%" data-toggle="tooltip" data-placement="top">45%</div>
+        </div>
+        <div class="bar ">
+            <div class="title">قوس</div>
+            <div class="value tooltips" data-original-title="50%" data-toggle="tooltip" data-placement="top">50%</div>
+        </div>
+        <div class="bar doted">
+            <div class="title">جدی</div>
+            <div class="value tooltips" data-original-title="42%" data-toggle="tooltip" data-placement="top">42%</div>
+        </div>
+        <div class="bar ">
+            <div class="title">دلو</div>
+            <div class="value tooltips" data-original-title="60%" data-toggle="tooltip" data-placement="top">60%</div>
+        </div>
+        <div class="bar doted">
+            <div class="title">حوت</div>
+            <div class="value tooltips" data-original-title="90%" data-toggle="tooltip" data-placement="top">90%</div>
+        </div>
+      </div>
+</div> -->
+
+
+<canvas id="myChart" width="1500px" height="300px"></canvas>
+<!--custom chart end-->
+</body>
+
+
+  <script>
+
+      //owl carousel
+      $(document).ready(function() {
+          $("#owl-demo").owlCarousel({
+              navigation : true,
+              slideSpeed : 300,
+              paginationSpeed : 400,
+              singleItem : true
+
+          });
+      });
+
+      $(function(){
+        $.ajax({
+          url: '/graph_data',
+          type: 'POST',
+          //data: formData,
+          async: false,
+          cache: false,
+          contentType: false,
+          processData: false,
+          success: function (data) {
+            var obj_to_staring = JSON.stringify(data);
+            var string_to_object = JSON.parse(obj_to_staring);
+            var hamal=  string_to_object[0];
+            var sawar =  string_to_object[1];
+            var jawza =  string_to_object[2];
+            var saratan=  string_to_object[3];
+            var asad =   string_to_object[4];
+            var sonbola =  string_to_object[5];
+            var mezan =  string_to_object[6];
+            var aqrab = string_to_object[7];
+            var qaws = string_to_object[8];
+            var jadi = string_to_object[9];
+            var dalw = string_to_object[10];
+            var hot = string_to_object[11];
+            var rec_data = [hamal,sawar,jawza,saratan,asad,sonbola,mezan,aqrab,qaws,jadi,dalw,hot];
+      //custom select box
+      /* $(function(){
+          $('select.styled').customSelect();
+          label: '# of Votes',
+      }); */
+
+var ctx = document.getElementById('myChart').getContext('2d');
+var myChart = new Chart(ctx, {
+    type: 'bar',
+    data: {
+        labels: ['حمل', 'ثور', 'جوزا', 'سرطان', 'اسد', 'سنبله','میزان', 'عقرب', 'قوس', 'جدی', 'دلو', 'حوت'],
+        datasets: [{
+            label: '# فروشات',
+            data: rec_data,
+            backgroundColor: [
+                'rgba(255, 99, 132, 0.2)',
+                'rgba(54, 162, 235, 0.2)',
+                'rgba(255, 206, 86, 0.2)',
+                'rgba(75, 192, 192, 0.2)',
+                'rgba(153, 102, 255, 0.2)',
+                'rgba(255, 159, 64, 0.2)'
+            ],
+            borderColor: [
+                'rgba(255, 99, 132, 1)',
+                'rgba(54, 162, 235, 1)',
+                'rgba(255, 206, 86, 1)',
+                'rgba(75, 192, 192, 1)',
+                'rgba(153, 102, 255, 1)',
+                'rgba(255, 159, 64, 1)'
+            ],
+            borderWidth: 1
+        }]
+    },
+   /*  options: {
+        scales: {
+            yAxes: [{
+                ticks: {
+                    beginAtZero: true
+                }
+            }]
+        }
+    } */
+});
+
+            
+          
+          },
+          error: function(data){
+              alert(data);
+          }
+      });
+      });
+    //   success
+     
+    /*  getData();
+          async function getData(){
+
+            const response =  await fetch('ZonAnn.Ts+dSST.csv');
+            const response =  await response.text();
+
+            const table = data.split('\n').slice(1);
+            table.forEach(row => {
+
+                const columns = row.split(',');
+                const year = columns[0];
+                xlabels.push(year);
+                const temp = columns[1];
+                Console.log(year , temp);
+                
+            });
+          } */
+
+  </script>
+</html>

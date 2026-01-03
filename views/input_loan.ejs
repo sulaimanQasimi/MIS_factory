@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="theme-color" content="dodgerblue" />
+  <title>سیستم مدیریتی</title>
+  <!-- style -->
+  <link rel="stylesheet" href="assets/css/bootstrap.min.css" />
+  <link rel="stylesheet" href="assets/css/bootstrap-rtl.min.css" />
+  <link rel="stylesheet" href="assets/css/font-awesome.min.css" />
+  <link rel="stylesheet" href="assets/css/persian-datepicker.css">
+  <link rel="stylesheet" href="assets/css/jquery-ui.css" />
+  <link rel="stylesheet" href="assets/css/main.css" />
+  <link rel="stylesheet" href="assets/css/emp.css" />
+  <link rel="stylesheet" href="assets/css/dashboard.css" />
+  <link rel="stylesheet" href="assets/css/scrollbar.css" />
+  <link rel="stylesheet" href="assets/css/responsive.css" />
+  <link rel="icon" href="assets/img/co-nav.png" />
+  <!-- script -->
+  <script src="assets/js/jquery.min.js"></script>
+  <script src="assets/js/jquery-ui.js"></script>
+  <script src="assets/js/popper.min.js"></script>
+  <script src="assets/js/bootstrap.min.js"></script>
+  <script src="assets/js/persian-datepicker.js"></script>
+  <script src="assets/js/append.js"></script>
+    <script>
+    
+    /* $(function(){
+        var exchangeRate = $("#currency").val();
+        if(exchangeRate == "دالر"){
+            $("#to_dollar").val(localStorage.getItem(1));
+        }
+        else if(exchangeRate == "یورو"){
+            $("#to_dollar").val(localStorage.getItem(2));
+        }
+        else if(exchangeRate == "افغانی"){
+            $("#to_dollar").val(1);
+        }
+        else if(exchangeRate == "کلدار"){
+            $("#to_dollar").val(localStorage.getItem(3));
+        }
+        else if(exchangeRate == "تومان"){
+            $("#to_dollar").val(localStorage.getItem(4));
+        }
+      }); */
+
+      $(function(){
+    change_c();
+  });
+    </script>
+    
+</head>
+<body>
+    <div class="container">
+      <div class="row">
+      <section class="all-web" >
+
+        <h3 class="mt-5 mb-5 " style="text-align: center;">قرضه های ورودی</h3>
+        <hr>
+        <br>
+        <form action="" method="post" class="needs-validation"  id="form1">
+        <div class="row">
+          <div class="col-xs-12 col-sm-12 col-md-10 col-lg-4">
+            <div class="input-group">
+              <label class="mt-2" for="giranda" > قرضه گیرنده :</label>
+              <input  type="text" id="giranda" name="giranda" required class="giranda mb-3 col-12 form-control">
+              
+            </div>
+            <div class="input-group">
+              <label class="mt-2" for="dahanda" >قرضه دهنده:</label>
+              <input  type="text" id="dahanda" name="dahanda" required class="dahanda mb-3 col-12 form-control">
+            </div>
+            <div class="input-group">
+              <label class="mt-2" for="amount" >مقدار :</label>
+              <input  type="number" id="amount" name="amount" required class="amount mb-3 col-12 form-control">
+            </div>
+            <div class="input-group">
+              <label class="mt-2" for="tedad" >تعداد اقساط  :</label>
+              <input  type="number" id="tedad" name="tedad" required class="tedad mb-3 col-12 form-control">
+            </div>
+          </div>
+          <!-- second -->
+          <div class="col-xs-12 col-sm-12 col-md-10 col-lg-4">
+            <div class="input-group">
+              <label class="mt-2" for="phone" >شماره قرضه دهنده:</label>
+              <input  type="number" id="phone" name="phone" required class="phone mb-3 col-12 form-control">
+            </div>
+            <div class="input-group">
+              <label class="mt-2" for="add" > آدرس :</label>
+              <input  type="text" id="add" name="address" required class="add mb-3 col-12 form-control">
+            </div>
+            <div class="input-group">
+              <label class="mt-2" for="currency" >واحد پولی  :</label>
+              <select type="number" id="currency" name="currency" onchange="change_c()" required class="currency mb-3 col-12 form-control">
+                <option value="افغانی">افغانی</option>      
+            <option value="دالر">دالر</option>      
+            <option value="کلدار">کلدار</option>      
+            <option value="تومان">تومان</option>      
+            <option value="یورو">یورو</option>      
+            </select>
+            <!-- for making currecny visible -->
+            <script>
+                
+
+                function change_c(){
+                  var exchangeRate = $("#currency").val();
+                  if(exchangeRate == "دالر"){
+                      $("#to_dollar").val(1);
+                      $("#dynamic_ex_rate").text("به دالر:");
+                  }
+                  else if(exchangeRate == "یورو"){
+                      $("#to_dollar").val(localStorage.getItem(2));
+                      $("#dynamic_ex_rate").text("به یورو:");
+                  }
+                  else if(exchangeRate == "افغانی"){
+                      $("#to_dollar").val(localStorage.getItem(1));
+                      $("#dynamic_ex_rate").text("به افغانی:");
+
+                  }
+                  else if(exchangeRate == "کلدار"){
+                      $("#to_dollar").val(localStorage.getItem(3));
+                      $("#dynamic_ex_rate").text("به کلدار:");
+                  }
+                  else if(exchangeRate == "تومان"){
+                      $("#to_dollar").val(localStorage.getItem(4));
+                      $("#dynamic_ex_rate").text("به تومان:");
+                  }
+                }
+              </script>
+           
+            </div>
+            <div class="input-group">
+              <label class="mt-2" id="dynamic_ex_rate" for="to_dollar" >به افغانی :</label>
+              <input readonly type="text" id="to_dollar" name="to_dollar" required class="to_dollar mb-3 col-12 form-control">
+            </div>
+          </div>
+          <!-- third -->
+          <div class="col-xs-12 col-sm-12 col-md-10 col-lg-4">
+          <div class="input-group">
+              <label class="mt-2" for="mafad"  > مفاد</label>
+              <input  type="number" id="mafad" name="mafad" required class="mafad mb-3 col-12 form-control">
+            </div>
+      <div class="input-group">
+              <label class="mt-2" for="total" >  مجموعه:</label>
+              <input readonly type="number" id="total" name="total" required class="total mb-3 col-12 form-control">
+            </div>
+            <div class="input-group">
+              <label class="mt-2" for="date-man" >تاریخ :</label>
+              <input type="text" id="date-man" required name="date_man" class="date-man mb-3 col-12 form-control">
+            </div>
+           <!-- <div class="input-group">
+              <label class="mt-2 " for="emp_img" > تصویر:</label>
+               <input type="file"  id="emp_img" name="emp_img" class="emp_img mb-3 col-12 form-control"> 
+              <label class="btn mb-3 mt-2 st btn-default btn-sm form-control center-block btn-file">
+                <i style="color:dodgerblue;" class="fa fa-upload fa-2x" aria-hidden="true"></i>
+                <input type="file" style="display: none;">
+              </label>
+            </div> -->
+          </div>
+          <div class="col-sm-12 height" style="height:40px;"></div>
+          <div class="col-sm-3"><a style="color: #fff;" href="iloan_reg.ejs" class="btn btn-sm btn-success">معومات ثبت شده</a></div>
+          <div class="col-sm-6">
+            <input type="submit" class="btn btn-primary rounded-pill" style="width:100%;" value="ذخیره">
+          </div>
+          <div class="col-sm-3"></div>
+        </div>
+      </form>
+      
+        
+      </section>
+      </div>
+    </div>
+</body>
+<script src="assets/js/script.js"></script>
+<script src="assets/js/form-valiate.js"></script>
+<script>
+    $(document).ready(()=>{
+  $(function() {
+  $('#date_man').datepicker({
+       changeMonth: true,
+       changeYear: true
+   });
+});
+
+function calc_total(){
+var total = $('.total');
+var mafad = $('.mafad');
+var amount = $('.amount');
+total.val(parseInt(amount.val())+parseInt(mafad.val()));
+}
+
+$('#mafad').keyup(()=>{
+  calc_total();
+});
+$('#amount').keyup(()=>{
+  calc_total();
+});
+    });
+</script>
+
+<script>
+
+const $form = $('#form1')
+  
+  $form.on('submit', submitHandler)
+  
+  function submitHandler (e) {
+    e.preventDefault()
+    $.ajax({
+      url: '/incoming_loan',
+      type:'POST',
+      data: $form.serialize()
+    }).done(response => {
+      console.log(response)
+    })
+  }
+</script>
+</html>

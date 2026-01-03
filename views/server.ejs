@@ -1,0 +1,19 @@
+<?php
+include "config.php";
+
+if(isset($_POST["item"]))
+{
+    $itm = $_POST["item"];
+    $quantity = $_POST["quantity"];
+    $price = $_POST["price"];
+    $total = $_POST["total"];
+
+    echo $itm;
+    echo $quantity;
+    echo $price ;
+    echo $total;
+
+    $qry = mysqli_query($con , "insert into froshat ")
+}
+
+?>
