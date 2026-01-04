@@ -4690,6 +4690,83 @@ app.use('/', billRoutes);
                         });
                     });
 
+                    // Add new stack_to_market_list
+                    app.post('/add_stack_to_market_list', function(req,res)
+                    {
+                        var item_name = req.body.item_name;
+                        var item_type = req.body.item_type;
+                        var fixed_price = req.body.fixed_price || 0;
+                        var sell_price = req.body.sell_price || 0;
+                        var quantity = req.body.quantity || 0;
+                        var thickness = req.body.thickness || 0;
+                        
+                        con.query("INSERT INTO stack_to_market_lists (item_name, item_type, fixed_price, sell_price, quantity, thickness, remaining) VALUES ('"+item_name+"', '"+item_type+"', '"+fixed_price+"', '"+sell_price+"', '"+quantity+"', '"+thickness+"', 0)", function(err,rows)
+                        {
+                            if(err) {
+                                console.log(err);
+                                return res.json({
+                                    status: '0',
+                                    error: err.message
+                                });
+                            }
+                            res.json({
+                                status: '1',
+                                data: rows,
+                                success: true
+                            });
+                        });
+                    });
+
+                    // Update stack_to_market_list
+                    app.post('/update_stack_to_market_list', function(req,res)
+                    {
+                        var edit_id = req.body.edit_id;
+                        var item_name = req.body.item_name;
+                        var item_type = req.body.item_type;
+                        var fixed_price = req.body.fixed_price || 0;
+                        var sell_price = req.body.sell_price || 0;
+                        var quantity = req.body.quantity || 0;
+                        var thickness = req.body.thickness || 0;
+                        
+                        con.query("UPDATE stack_to_market_lists SET item_name='"+item_name+"', item_type='"+item_type+"', fixed_price='"+fixed_price+"', sell_price='"+sell_price+"', quantity='"+quantity+"', thickness='"+thickness+"' WHERE id='"+edit_id+"'", function(err,rows)
+                        {
+                            if(err) {
+                                console.log(err);
+                                return res.json({
+                                    status: '0',
+                                    error: err.message
+                                });
+                            }
+                            res.json({
+                                status: '1',
+                                data: rows,
+                                success: true
+                            });
+                        });
+                    });
+
+                    // Delete stack_to_market_list
+                    app.post('/delete_stack_to_market_list', function(req,res)
+                    {
+                        var my_id = req.query.param;
+                        
+                        con.query("DELETE FROM stack_to_market_lists WHERE id = '"+my_id+"'", function(err,rows)
+                        {
+                            if(err) {
+                                console.log(err);
+                                return res.json({
+                                    status: '0',
+                                    error: err.message
+                                });
+                            }
+                            res.json({
+                                status: '1',
+                                data: rows,
+                                success: true
+                            });
+                        });
+                    });
+
                     app.post('/save_income', function(req,res)
                     {
                         var stack_to_market_list_id = req.body.stack_to_market_list_id;
@@ -6701,10 +6778,14 @@ app.use('/', billRoutes);
            });
            });
            app.get("/tool.ejs", function(req,res){
-
-  
-            res.render("tool"); 
-       
+                con.query("SELECT * FROM stack_to_market_lists ORDER BY id DESC", function(err,rows)
+                {
+                    if(err) {
+                        console.log(err);
+                        return res.send("Error loading stack to market lists");
+                    }
+                    res.render("tool", {data: rows}); 
+                });
            });
            app.get("/share_holders.ejs", function(req,res){
 
