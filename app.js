@@ -1563,6 +1563,23 @@ app.use('/', billRoutes);
        
            });
 
+           app.get("/income.ejs", function(req,res){
+                con.query("select * from company_info ", function(err,rows_02)
+                {
+                    if(err) {
+                        console.log(err);
+                        return res.send("Error loading company info");
+                    }
+                    con.query("select * from stack_to_market_lists ", function(err,rows_03)
+                    {
+                        if(err) {
+                            console.log(err);
+                            return res.send("Error loading stack to market lists");
+                        }
+                        res.render("income",{data_02:rows_02,data_03:rows_03}); 
+                    });
+                });
+           });
         
         //    app.get("/city_store.ejs", function(req,res){
         //     console.log("hi async");
@@ -4658,6 +4675,77 @@ app.use('/', billRoutes);
 
                                 });
                             
+                    });
+
+                    app.post('/get_stack_to_market_list', function(req,res)
+                    {
+                        var my_id =  req.query.param;
+                        con.query("SELECT * FROM stack_to_market_lists WHERE id = '"+my_id+"' ", function(err,rows_02)
+                        {
+                            if(err) {
+                                console.log(err);
+                                return res.send("Error loading stack to market list");
+                            }
+                            res.send(rows_02);
+                        });
+                    });
+
+                    app.post('/save_income', function(req,res)
+                    {
+                        var stack_to_market_list_id = req.body.stack_to_market_list_id;
+                        var quantity = req.body.quantity;
+                        var date_income = req.body.date_income;
+                        
+                        if(!stack_to_market_list_id || !quantity || !date_income) {
+                            return res.send("لطفاً تمام فیلدها را پر کنید");
+                        }
+                        
+                        // Handle multiple items if array
+                        var stack_ids = Array.isArray(stack_to_market_list_id) ? stack_to_market_list_id : [stack_to_market_list_id];
+                        var quantities = Array.isArray(quantity) ? quantity : [quantity];
+                        var m_date = moment.from(date_income, 'fa', 'YYYY/MM/DD').locale('en').format('YYYY/MM/DD');
+                        
+                        con.beginTransaction(function(err) {
+                            if (err) {
+                                throw err;
+                            } else {
+                                var success_count = 0;
+                                var error_count = 0;
+                                
+                                for(var i = 0; i < stack_ids.length; i++) {
+                                    (function(i) {
+                                        if(stack_ids[i] && quantities[i]) {
+                                            con.query("INSERT INTO income(stack_to_market_list_id, quantity, total, date) VALUES ('"+stack_ids[i]+"','"+quantities[i]+"',0,'"+m_date+"')", function (error, results, fields) {
+                                                if (error) {
+                                                    error_count++;
+                                                    console.log("Error inserting income:", error);
+                                                } else {
+                                                    success_count++;
+                                                }
+                                                
+                                                // Commit transaction after all inserts
+                                                if(i === stack_ids.length - 1) {
+                                                    if(error_count === 0) {
+                                                        con.commit(function(err) {
+                                                            if(err) {
+                                                                return con.rollback(function() {
+                                                                    res.send("خطا در ذخیره اطلاعات");
+                                                                });
+                                                            }
+                                                            res.send("اطلاعات با موفقیت ذخیره شد");
+                                                        });
+                                                    } else {
+                                                        con.rollback(function() {
+                                                            res.send("خطا در ذخیره برخی اطلاعات");
+                                                        });
+                                                    }
+                                                }
+                                            });
+                                        }
+                                    })(i);
+                                }
+                            }
+                        });
                     });
 
 
