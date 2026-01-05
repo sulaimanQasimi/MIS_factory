@@ -3697,62 +3697,53 @@ app.use('/', billRoutes);
                 var currency =  req.query.currency;
                 var ex_rate =  req.query.ex_rate;
                 var date =  req.query.date;
+                var description = req.query.description || 'پرداخت';
 
-                var m = moment.from(date, 'fa', 'YYYY/MM/DD').locale('en').format('YYYY/MM/DD');
+                var m = moment.from(date, 'fa', 'YYYY/MM/DD').locale('en').format('YYYY-MM-DD');
 
-                con.query("INSERT INTO `sales_payments`(`sales_id`, `paid`, `currency`, `ex_rate`, `date`) VALUES ('"+forsh_id+"','"+amount+"','"+currency+"','"+ex_rate+"','"+m+"')", function(err,rows_02)
+                // Insert into bill_payment table - trigger will update paid_amount in froshat_details
+                con.query("INSERT INTO `bill_payment`(`froshat_details_id`, `paid_amount`, `currency`, `ex_rate`, `payment_date`, `description`) VALUES ('"+forsh_id+"','"+amount+"','"+currency+"','"+ex_rate+"','"+m+"','"+description+"')", function(err,rows_02)
                     {
-                        
-                     con.query("select paid_amount from froshat_details where id = '"+forsh_id+"'",function(err,rows_03)
-                     {
-                          var fro_amount = rows_03[0].paid_amount;
-                          var update_amount =   parseFloat(fro_amount )+ parseFloat(amount);
-                          console.log(update_amount);
-                       con.query("update froshat_details set paid_amount = '"+update_amount+"' where id='"+forsh_id+"' ",function(err,rows_06)
-                       {
                          if(err)
-                               {
-                                   throw err
-                               }else{
-                                    con.query("select * from sales_payments where sales_id ='"+forsh_id+"'",function(err1,rows_04)
-                                    {
-                                        var shamsi = [];
-                                        for(var i =0;i<rows_04.length;i++)
-                                        {
-                                        var sh = moment(rows_04[i].date, 'YYYY/MM/DD').locale('fa').format('YYYY/MM/DD');
-                                        shamsi += sh + ",";
-                                        }
-                                        var str_array = shamsi.split(',');
-                                        if(err1)
-                                        {
-                                            throw err1;
-                                        }else
-                                        {
-                                            var table_data = "";
-                                            var no =0;
-                                            var no1 =1;
-                                            rows_04.forEach( (row) => {
-                                                table_data += "<tr id="+"delete_row_"+row.id+">";
-                                                    table_data += "<td>"+ no1 + "</td>";
-                                                    table_data += "<td>"+ row.paid+ "</td>";
-                                                    table_data += "<td>"+ row.currency+ "</td>";
-                                                    table_data += "<td>"+ row.ex_rate+ "</td>";
-                                                    table_data += "<td>"+ str_array[no]+ "</td>";
-                                                    table_data += "<td><a onclick="+"payment_delet("+row.id+")"+" href='#' style='color:red;'>حذف </a>   </td>";
-                                                    table_data += "</tr>";
-                                                    no++;
-                                                    no1++;
-                                
-                                            });
-                                            res.send(table_data);
-                                                    }
-                                    });
-                               }
-                       // res.send(rows_02);
-                    });  
+                         {
+                             return res.status(500).send("خطا در ثبت پرداخت: " + err.message);
+                         }
+                         
+                         // Get updated payment list
+                         con.query("select * from bill_payment where froshat_details_id ='"+forsh_id+"' ORDER BY payment_date DESC, id DESC",function(err1,rows_04)
+                         {
+                             if(err1)
+                             {
+                                 return res.status(500).send("خطا در دریافت لیست پرداخت ها: " + err1.message);
+                             }
+                             
+                             var shamsi = [];
+                             for(var i =0;i<rows_04.length;i++)
+                             {
+                                 var sh = moment(rows_04[i].payment_date, 'YYYY-MM-DD').locale('fa').format('YYYY/MM/DD');
+                                 shamsi += sh + ",";
+                             }
+                             var str_array = shamsi.split(',');
+                             
+                             var table_data = "";
+                             var no =0;
+                             var no1 =1;
+                             rows_04.forEach( (row) => {
+                                 table_data += "<tr id="+"delete_row_"+row.id+">";
+                                     table_data += "<td>"+ no1 + "</td>";
+                                     table_data += "<td>"+ parseFloat(row.paid_amount).toFixed(2)+ "</td>";
+                                     table_data += "<td>"+ row.currency+ "</td>";
+                                     table_data += "<td>"+ row.ex_rate+ "</td>";
+                                     table_data += "<td>"+ str_array[no]+ "</td>";
+                                     table_data += "<td>"+ (row.description || '-')+ "</td>";
+                                     table_data += "<td><button onclick="+"payment_edit("+row.id+")"+" class='btn btn-sm btn-info' style='margin:2px;'>ویرایش</button> <button onclick="+"payment_delet("+row.id+")"+" class='btn btn-sm btn-danger' style='margin:2px;'>حذف</button></td>";
+                                     table_data += "</tr>";
+                                     no++;
+                                     no1++;
+                             });
+                             res.send(table_data);
+                         });
                     });
-
-                });
 
             });
             //outgoing
@@ -3932,24 +3923,24 @@ app.use('/', billRoutes);
                        }); 
               });
 
-              /* add payments for sales details */
+              /* add payments for sales details - Updated to use bill_payment table */
               app.post("/show_all_payment_002", function(req,res){
  
                 var each_loaner = req.query.each_loaner_id;
                 
-                con.query("select * from sales_payments where sales_id ='"+each_loaner+"'",function(err,rows_04){
+                con.query("select * from bill_payment where froshat_details_id ='"+each_loaner+"' ORDER BY payment_date DESC, id DESC",function(err,rows_04){
                    
                     var shamsi = [];
 
                 if(rows_04.length < 1){
                    
-                    res.send("معذرت! پرداخت صورت نگرفته است. ");
+                    res.send("<tr><td colspan='6' style='text-align:center; color:#999; padding:20px;'>هیچ پرداختی ثبت نشده است</td></tr>");
 
                   }else{
 
                     for(var i =0;i<rows_04.length;i++)
                     {
-                    var sh = moment(rows_04[i].date, 'YYYY/MM/DD').locale('fa').format('YYYY/MM/DD');
+                    var sh = moment(rows_04[i].payment_date, 'YYYY-MM-DD').locale('fa').format('YYYY/MM/DD');
                     shamsi += sh + ",";
                     }
                     var str_array = shamsi.split(',');
@@ -3964,11 +3955,12 @@ app.use('/', billRoutes);
                             rows_04.forEach( (row) => {
                                 table_data += "<tr id="+"delete_row_"+row.id+">";
                                     table_data += "<td>"+ no1 + "</td>";
-                                    table_data += "<td>"+ row.paid+ "</td>";
+                                    table_data += "<td>"+ parseFloat(row.paid_amount).toFixed(2)+ "</td>";
                                     table_data += "<td>"+ row.currency+ "</td>";
                                     table_data += "<td>"+ row.ex_rate+ "</td>";
                                     table_data += "<td>"+ str_array[no]+ "</td>";
-                                    table_data += "<td><a onclick="+"payment_delet("+row.id+")"+" href='#' style='color:red;'> حذف </a>   </td>";
+                                    table_data += "<td>"+ (row.description || '-')+ "</td>";
+                                    table_data += "<td><button onclick="+"payment_edit("+row.id+")"+" class='btn btn-sm btn-info' style='margin:2px;'>ویرایش</button> <button onclick="+"payment_delet("+row.id+")"+" class='btn btn-sm btn-danger' style='margin:2px;'>حذف</button></td>";
                                     table_data += "</tr>";
                                     no++;
                                     no1++;
@@ -4224,10 +4216,13 @@ app.use('/', billRoutes);
             {
                 var my_id =  req.query.param;
 
-                     var  query2 = "SELECT * from sales_payments WHERE id = '"+my_id+"'";
+                     var  query2 = "SELECT * from bill_payment WHERE id = '"+my_id+"'";
                       con.query(query2,function(err,rows_02)
                       {
-                          var sh = moment(rows_02[0].date, 'YYYY/MM/DD').locale('fa').format('YYYY/MM/DD');
+                          if(err || !rows_02 || rows_02.length === 0) {
+                              return res.status(404).json({error: "پرداخت یافت نشد"});
+                          }
+                          var sh = moment(rows_02[0].payment_date, 'YYYY-MM-DD').locale('fa').format('YYYY/MM/DD');
       
                               var strify = JSON.stringify(rows_02);
                               var newStr = strify.substring(1, strify.length-1);
@@ -4290,71 +4285,47 @@ app.use('/', billRoutes);
                  var currency =  req.query.currency;
                  var ex_rate =  req.query.ex_rate;
                  var date_man =  req.query.date_man;
-                 var m = moment.from(date_man, 'fa', 'YYYY/MM/DD').locale('en').format('YYYY/MM/DD');
+                 var m = moment.from(date_man, 'fa', 'YYYY/MM/DD').locale('en').format('YYYY-MM-DD');
                  var loan_id =  req.query.loan_id;
-                       con.query("UPDATE `sales_payments` SET `sales_id`='"+loan_id+"',`paid`='"+amount+"',`currency`='"+currency+"',`ex_rate`='"+ex_rate+"',`date`='"+m+"' WHERE id = '"+id_val+"'",function(err,rows_02)
+                 var description = req.query.description || 'پرداخت';
+                       con.query("UPDATE `bill_payment` SET `froshat_details_id`='"+loan_id+"',`paid_amount`='"+amount+"',`currency`='"+currency+"',`ex_rate`='"+ex_rate+"',`payment_date`='"+m+"',`description`='"+description+"' WHERE id = '"+id_val+"'",function(err,rows_02)
                        {
-
-                        con.query("select paid from sales_payments where id = '"+id_val+"'",function(err,rows_03)
+                         if(err) {
+                             return res.status(500).send("خطا در بروزرسانی پرداخت: " + err.message);
+                         }
+                        con.query("select * from bill_payment where froshat_details_id ='"+loan_id+"' ORDER BY payment_date DESC, id DESC",function(err1,rows_04)
                         {
+                            if(err1) {
+                                return res.status(500).send("خطا در دریافت لیست پرداخت ها: " + err1.message);
+                            }
                             
-                        con.query("select paid_amount from froshat_details where id = '"+loan_id+"'",function(err,rows_05)
-                        {
-                           
-                             var payment_amount = rows_03[0].paid;
-                             console.log(payment_amount);
-                             
-                             var fro_paid  = rows_05[0].paid_amount;
-                             var update_amount =   parseFloat(payment_amount )+ parseFloat(fro_paid);
-                             
-                          con.query("update froshat_details set paid_amount = '"+update_amount+"' where id='"+loan_id+"' ",function(err,rows_06)
-                          {
-
-
-                           
-                           if(err)
-                           {
-                               throw err;
-                           }else{
-                             con.query("select * from sales_payments where sales_id ='"+loan_id+"'",function(err1,rows_04)
-                             {
-                                 var shamsi = [];
-                                 for(var i =0;i<rows_04.length;i++)
-                                 {
-                                 var sh = moment(rows_04[i].date, 'YYYY/MM/DD').locale('fa').format('YYYY/MM/DD');
-                                 shamsi += sh + ",";
-                                 }
-                                 var str_array = shamsi.split(',');
-                                 if(err1)
-                                 {
-                                     throw err1;
-                                 }else
-                                 {
-                                     var table_data = "";
-                                     var no =0;
-                                     var no1 =1;
-                                     rows_04.forEach( (row) => {
-                                         table_data += "<tr id="+"delete_row_"+row.id+">";
-                                             table_data += "<td>"+ no1 + "</td>";
-                                             table_data += "<td>"+ row.paid+ "</td>";
-                                             table_data += "<td>"+ row.currency+ "</td>";
-                                             table_data += "<td>"+ row.ex_rate+ "</td>";
-                                             table_data += "<td>"+ str_array[no]+ "</td>";
-                                             table_data += "<td><a onclick="+"payment_delet("+row.id+")"+" href='#' style='color:red;'>حذف /</a>     <a href='#' style='color:green;' onclick="+"payment_edit("+row.id+")"+">ویرایش</a></td>";
-                                             table_data += "</tr>";
-                                             no++;
-                                             no1++;
-                         
-                                     });
-                                     res.send(table_data);
-                                             }
-                             });
-                              
-                           }
-                       }); 
-                       }); 
-                       }); 
-                       }); 
+                            var shamsi = [];
+                            for(var i =0;i<rows_04.length;i++)
+                            {
+                                var sh = moment(rows_04[i].payment_date, 'YYYY-MM-DD').locale('fa').format('YYYY/MM/DD');
+                                shamsi += sh + ",";
+                            }
+                            var str_array = shamsi.split(',');
+                            
+                            var table_data = "";
+                            var no =0;
+                            var no1 =1;
+                            rows_04.forEach( (row) => {
+                                table_data += "<tr id="+"delete_row_"+row.id+">";
+                                    table_data += "<td>"+ no1 + "</td>";
+                                    table_data += "<td>"+ parseFloat(row.paid_amount).toFixed(2)+ "</td>";
+                                    table_data += "<td>"+ row.currency+ "</td>";
+                                    table_data += "<td>"+ row.ex_rate+ "</td>";
+                                    table_data += "<td>"+ str_array[no]+ "</td>";
+                                    table_data += "<td>"+ (row.description || '-')+ "</td>";
+                                    table_data += "<td><button onclick="+"payment_edit("+row.id+")"+" class='btn btn-sm btn-info' style='margin:2px;'>ویرایش</button> <button onclick="+"payment_delet("+row.id+")"+" class='btn btn-sm btn-danger' style='margin:2px;'>حذف</button></td>";
+                                    table_data += "</tr>";
+                                    no++;
+                                    no1++;
+                            });
+                            res.send(table_data);
+                        }); 
+                       });
               });
 
               app.post('/add_payment_delete_002', function(req,res)
@@ -4362,33 +4333,52 @@ app.use('/', billRoutes);
                   var my_id =  req.query.param;
                   var forsh_id =  req.query.loan_id;
                   
-
-                  con.query("select paid_amount from froshat_details where id = '"+forsh_id+"'",function(err,rows_03)
-                  {
-                  con.query("select paid from sales_payments where id = '"+my_id+"'",function(err,rows_04)
-                  {
-
-
-                       var fro_amount = rows_03[0].paid_amount;
-                       var payment_paid = rows_04[0].paid;
-                       var update_amount =   parseFloat(fro_amount - payment_paid);
-                       console.log(update_amount);
-                    con.query("update froshat_details set paid_amount = '"+update_amount+"' where id='"+forsh_id+"' ",function(err,rows_06)
-                    {
-  
-                      con.query("delete from sales_payments WHERE id = '"+my_id+"'", function(err,rows_02)
+                  // Delete from bill_payment - trigger will update paid_amount in froshat_details
+                  con.query("delete from bill_payment WHERE id = '"+my_id+"'", function(err,rows_02)
                       {
                           if(err)
-                                      {
-                                          throw err;
-                                      }else{
-
-                                  res.send("helllo");
+                          {
+                              return res.status(500).send("خطا در حذف پرداخت: " + err.message);
+                          }
+                          
+                          // Get updated payment list
+                          con.query("select * from bill_payment where froshat_details_id ='"+forsh_id+"' ORDER BY payment_date DESC, id DESC",function(err1,rows_04)
+                          {
+                              if(err1) {
+                                  return res.status(500).send("خطا در دریافت لیست پرداخت ها: " + err1.message);
                               }
+                              
+                              var shamsi = [];
+                              for(var i =0;i<rows_04.length;i++)
+                              {
+                                  var sh = moment(rows_04[i].payment_date, 'YYYY-MM-DD').locale('fa').format('YYYY/MM/DD');
+                                  shamsi += sh + ",";
+                              }
+                              var str_array = shamsi.split(',');
+                              
+                              var table_data = "";
+                              if(rows_04.length === 0) {
+                                  table_data = "<tr><td colspan='7' style='text-align:center; color:#999; padding:20px;'>هیچ پرداختی ثبت نشده است</td></tr>";
+                              } else {
+                                  var no =0;
+                                  var no1 =1;
+                                  rows_04.forEach( (row) => {
+                                      table_data += "<tr id="+"delete_row_"+row.id+">";
+                                          table_data += "<td>"+ no1 + "</td>";
+                                          table_data += "<td>"+ parseFloat(row.paid_amount).toFixed(2)+ "</td>";
+                                          table_data += "<td>"+ row.currency+ "</td>";
+                                          table_data += "<td>"+ row.ex_rate+ "</td>";
+                                          table_data += "<td>"+ str_array[no]+ "</td>";
+                                          table_data += "<td>"+ (row.description || '-')+ "</td>";
+                                          table_data += "<td><button onclick="+"payment_edit("+row.id+")"+" class='btn btn-sm btn-info' style='margin:2px;'>ویرایش</button> <button onclick="+"payment_delet("+row.id+")"+" class='btn btn-sm btn-danger' style='margin:2px;'>حذف</button></td>";
+                                          table_data += "</tr>";
+                                          no++;
+                                          no1++;
+                                  });
+                              }
+                              res.send(table_data);
+                          });
                        });
-                     });
-                 });
-              });
               });
 
               app.post('/add_payment_delete_004', function(req,res)
