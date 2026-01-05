@@ -983,7 +983,8 @@ app.use('/', billRoutes);
                 });
             }else{
            
-                con.query("INSERT INTO froshat_details(`cus_id`,`contact`,`bill_no`,`total_amount`,`paid_amount`,`currency`,`ex_rate`,`date`) VALUES ('"+customer_name+"','"+customer_contact+"','"+bill_no+"','"+total_show+"','"+received_show+"','"+currency+"','"+ex_rate+"','"+m+"')", function (error, results, fields) {
+                // Set paid_amount to 0 initially - it will be updated by trigger from bill_payment table
+                con.query("INSERT INTO froshat_details(`cus_id`,`contact`,`bill_no`,`total_amount`,`paid_amount`,`currency`,`ex_rate`,`date`) VALUES ('"+customer_name+"','"+customer_contact+"','"+bill_no+"','"+total_show+"','0','"+currency+"','"+ex_rate+"','"+m+"')", function (error, results, fields) {
                   if (error) {
                     return con.rollback(function() {
                       res.status(500).send("خطا در ثبت اطلاعات: " + error.message);
@@ -999,6 +1000,18 @@ app.use('/', billRoutes);
                             res.status(500).send("خطا در ثبت پرداخت: " + err.message);
                         });
                     }
+                   
+                   /* Insert into bill_payment if payment amount is provided */
+                   if(received_show > 0) {
+                       con.query("insert into bill_payment(`froshat_details_id`, `paid_amount`, `currency`, `ex_rate`, `payment_date`, `description`) values('"+lst_id+"','"+received_show+"','"+currency+"','"+ex_rate+"','"+m+"','پرداخت اولیه')",function(err2,rows_010)
+                       {
+                        if(err2) {
+                            return con.rollback(function() {
+                                res.status(500).send("خطا در ثبت پرداخت در bill_payment: " + err2.message);
+                            });
+                        }
+                       });
+                   }
                    
                    /* here we should save in sales_payments */
                   for(var i=0;i<items_array.length;i++)

@@ -225,10 +225,11 @@ CREATE TABLE `froshat_details` (
   `contact` varchar(20) COLLATE utf8mb4_persian_ci NOT NULL,
   `bill_no` int(11) NOT NULL,
   `total_amount` float NOT NULL,
-  `paid_amount` float NOT NULL,
+  `paid_amount` float NOT NULL DEFAULT 0,
   `currency` varchar(20) COLLATE utf8mb4_persian_ci NOT NULL,
   `ex_rate` float NOT NULL,
-  `date` date NOT NULL
+  `date` date NOT NULL,
+  `remaining_amount` float GENERATED ALWAYS AS (`total_amount` - `paid_amount`) VIRTUAL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_persian_ci;
 
 --
@@ -236,14 +237,34 @@ CREATE TABLE `froshat_details` (
 --
 
 INSERT INTO `froshat_details` (`id`, `cus_id`, `email`, `contact`, `bill_no`, `total_amount`, `paid_amount`, `currency`, `ex_rate`, `date`) VALUES
-(1, 1, NULL, '0792212900', 1, 4000, 4000, 'افغانی', 66.4, '2025-12-17'),
-(2, 1, NULL, '0792212900', 2, 3000, 3000, 'افغانی', 66.4, '2025-12-17'),
-(3, 1, NULL, '0792212900', 3, 300, 300, 'افغانی', 66.4, '2025-12-17'),
-(4, 1, NULL, '0792212900', 4, 2000, 2000, 'افغانی', 66.4, '2025-12-20'),
-(5, 1, NULL, '0792212900', 5, 500, 100, 'دالر', 1, '2025-12-23'),
-(6, 1, NULL, '0792212900', 6, 200, 100, 'افغانی', 66.5, '2025-12-23'),
-(7, 1, NULL, '0792212900', 7, 100, 50, 'دالر', 1, '2025-12-23'),
-(8, 2, NULL, '8988998', 8, 200, 100, 'افغانی', 66.5, '2025-12-23');
+(1, 1, NULL, '0792212900', 1, 4000, 0, 'افغانی', 66.4, '2025-12-17'),
+(2, 1, NULL, '0792212900', 2, 3000, 0, 'افغانی', 66.4, '2025-12-17'),
+(3, 1, NULL, '0792212900', 3, 300, 0, 'افغانی', 66.4, '2025-12-17'),
+(4, 1, NULL, '0792212900', 4, 2000, 0, 'افغانی', 66.4, '2025-12-20'),
+(5, 1, NULL, '0792212900', 5, 500, 0, 'دالر', 1, '2025-12-23'),
+(6, 1, NULL, '0792212900', 6, 200, 0, 'افغانی', 66.5, '2025-12-23'),
+(7, 1, NULL, '0792212900', 7, 100, 0, 'دالر', 1, '2025-12-23'),
+(8, 2, NULL, '8988998', 8, 200, 0, 'افغانی', 66.5, '2025-12-23');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `bill_payment`
+--
+
+CREATE TABLE `bill_payment` (
+  `id` int(11) NOT NULL,
+  `froshat_details_id` int(11) NOT NULL,
+  `paid_amount` float NOT NULL,
+  `currency` varchar(20) COLLATE utf8mb4_persian_ci NOT NULL,
+  `ex_rate` float NOT NULL,
+  `payment_date` date NOT NULL,
+  `description` text COLLATE utf8mb4_persian_ci DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_persian_ci;
+
+--
+-- Dumping data for table `bill_payment`
+--
 
 -- --------------------------------------------------------
 
@@ -1024,6 +1045,13 @@ ALTER TABLE `froshat_details`
   ADD KEY `cus_id` (`cus_id`);
 
 --
+-- Indexes for table `bill_payment`
+--
+ALTER TABLE `bill_payment`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `froshat_details_id` (`froshat_details_id`);
+
+--
 -- Indexes for table `goods_registration`
 --
 ALTER TABLE `goods_registration`
@@ -1275,6 +1303,11 @@ ALTER TABLE `expense_category`
 ALTER TABLE `froshat_details`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
 --
+-- AUTO_INCREMENT for table `bill_payment`
+--
+ALTER TABLE `bill_payment`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+--
 -- AUTO_INCREMENT for table `goods_registration`
 --
 ALTER TABLE `goods_registration`
@@ -1472,6 +1505,12 @@ ALTER TABLE `froshat_details`
   ADD CONSTRAINT `froshat_details_ibfk_1` FOREIGN KEY (`cus_id`) REFERENCES `customer_account` (`id`);
 
 --
+-- Constraints for table `bill_payment`
+--
+ALTER TABLE `bill_payment`
+  ADD CONSTRAINT `bill_payment_ibfk_1` FOREIGN KEY (`froshat_details_id`) REFERENCES `froshat_details` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+--
 -- Constraints for table `goods_registration`
 --
 ALTER TABLE `goods_registration`
@@ -1653,6 +1692,50 @@ BEGIN
     )
     WHERE stml.id = OLD.stack_to_market_list_id;
   END IF;
+END$$
+
+--
+-- Triggers to update paid_amount in froshat_details from bill_payment
+-- This makes paid_amount behave like a virtual column calculated from payments
+--
+CREATE TRIGGER `update_paid_amount_after_bill_payment_insert` AFTER INSERT ON `bill_payment`
+FOR EACH ROW
+BEGIN
+  UPDATE `froshat_details` fd
+  SET fd.paid_amount = (
+    COALESCE((SELECT SUM(paid_amount) FROM `bill_payment` WHERE froshat_details_id = fd.id), 0)
+  )
+  WHERE fd.id = NEW.froshat_details_id;
+END$$
+
+CREATE TRIGGER `update_paid_amount_after_bill_payment_update` AFTER UPDATE ON `bill_payment`
+FOR EACH ROW
+BEGIN
+  -- Update for the new froshat_details_id
+  UPDATE `froshat_details` fd
+  SET fd.paid_amount = (
+    COALESCE((SELECT SUM(paid_amount) FROM `bill_payment` WHERE froshat_details_id = fd.id), 0)
+  )
+  WHERE fd.id = NEW.froshat_details_id;
+  
+  -- Update for the old froshat_details_id if it changed
+  IF OLD.froshat_details_id != NEW.froshat_details_id THEN
+    UPDATE `froshat_details` fd
+    SET fd.paid_amount = (
+      COALESCE((SELECT SUM(paid_amount) FROM `bill_payment` WHERE froshat_details_id = fd.id), 0)
+    )
+    WHERE fd.id = OLD.froshat_details_id;
+  END IF;
+END$$
+
+CREATE TRIGGER `update_paid_amount_after_bill_payment_delete` AFTER DELETE ON `bill_payment`
+FOR EACH ROW
+BEGIN
+  UPDATE `froshat_details` fd
+  SET fd.paid_amount = (
+    COALESCE((SELECT SUM(paid_amount) FROM `bill_payment` WHERE froshat_details_id = fd.id), 0)
+  )
+  WHERE fd.id = OLD.froshat_details_id;
 END$$
 
 DELIMITER $$
