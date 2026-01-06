@@ -1510,32 +1510,6 @@ app.use('/', billRoutes);
  });
         
            //error_1(factory_item_id)
-           app.get("/city_store_reg.ejs", function(req,res){
-
-            con.query("SELECT COUNT(item_name)AS total FROM stack_factory_registration",function(err,rows_05)
-                {
-            con.query("SELECT * from stack_to_market ORDER BY fixed_price ASC ",function(err,rows_02)
-            {
-                if(rows_02.length >0)
-                    {
-
-                            var arr = [];
-                            for(var i =0 ;i<rows_02.length;i++)
-                            {
-                            var sh = moment(rows_02[i].date, 'YYYY/MM/DD').locale('fa').format('YYYY/MM/DD');
-                                arr += sh +",";
-                            }
-                            var str_array = arr.split(',');
-                            //console.log(str_array);
-            
-                        res.render("city_store_reg",{data_02:rows_02,date_data:str_array,all_items:rows_05[0].total}); 
-                    }else{
-                        res.send("<h1 style='color:green; text-align:center;'>گدام شهری خالی است !</h1>");
-                    }
-       
-           });
-           });
-           });
 
            //ajax
         //    app.post('/signUp', (req, res) => {
@@ -1543,52 +1517,6 @@ app.use('/', billRoutes);
         //         res.status(200).send({ status: 'ok' });
         //     });
 
-           app.get("/city_store.ejs", function(req,res){
-        
-                        con.query("select * from stack_factory_registration ",function(err,rows_02)
-                        {
-
-                            con.query("SELECT id as new_bill, bill_no FROM stack_to_market_details ORDER BY id DESC LIMIT 1", function(err,rows_04)
-                           {
-                            if(err){
-                                console.error("Error fetching stack_to_market_details:", err);
-                                return res.status(500).send("Database error");
-                            }
-
-                        con.query("SELECT id,serial_number,item_name, item_type FROM stack_factory_registration_list", function(err,rows_03)
-                        {
-                            if(err){
-                                console.error("Error fetching stack_factory_registration_list:", err);
-                                return res.status(500).send("Database error");
-                            }
-                        
-                          
-                       con.query("SELECT * FROM stuff_registration", function(err,rows_05)
-                      {
-                        if(err){
-                            console.error("Error fetching stuff_registration:", err);
-                            return res.status(500).send("Database error");
-                        }
-                        con.query("select * from company_info ", function(err,rows_02)
-                        {
-                           if(err){
-                               console.error("Error fetching company_info:", err);
-                               return res.status(500).send("Database error");
-                           }
-                           // res.render("fro",{data_02:rows_02,data_03:rows_03,data_04:rows_04[0].new_bill,data_05:rows_05});
-       
-                            // Check if rows_04 exists and has at least one element
-                            const newBillId = (rows_04 && rows_04.length > 0 && rows_04[0].new_bill) ? rows_04[0].new_bill : null;
-                            res.render("city_store",{data_02:rows_02,data_03:rows_03,data_03:rows_03,data_04:newBillId,data_05:rows_05}); 
-            
-                        });
-                        });
-                        });
-                        
-                    });
-                });
-       
-           });
 
         
         //    app.get("/city_store.ejs", function(req,res){
@@ -1897,15 +1825,6 @@ app.use('/', billRoutes);
                      
             });
 
-            app.post('/city_store_delete', function(req,res)
-           {
-               var my_id =  req.query.param;
- 
-                     con.query("delete from stack_to_market WHERE id = '"+my_id+"'", function(err,rows_02)
-                     {
-                         res.send(rows_02);
-                     });
-            });
 
             app.post('/delete_emp_reg', function(req,res)
            {
@@ -2561,52 +2480,6 @@ app.use('/', billRoutes);
                          }); 
                 });
 
-                app.post('/update_city_store_regs', function(req,res)
-                {
-                    var my_id =  req.query.param;
-    
-                         var  query2 = "SELECT * from stack_to_market WHERE id = '"+my_id+"'";
-                          con.query(query2,function(err,rows_02)
-                          {
-                            var sh = moment(rows_02[0].date, 'YYYY/MM/DD').locale('fa').format('YYYY/MM/DD');
-    
-                            var strify = JSON.stringify(rows_02);
-                            var newStr = strify.substring(1, strify.length-1);
-
-                              res.json({
-                                  data:sh,
-                                  data1:newStr
-                              })
-      
-                          }); 
-                 });
-                 app.post('/update_city_store_01', function(req,res)
-                 {
-                          var edit_id =  req.body.expense_id; 
-                          var item_name =  req.body.item_name;
-                          var item_type =  req.body.item_type;
-                          var quantity =  req.body.quantity; 
-                          var fixed_price =  req.body.fixed_price; 
-                          var sell_price =  req.body.sell_price; 
-                          var date =  req.body.data_man;
-                          var m_date = moment.from(date, 'fa', 'YYYY/MM/DD').locale('en').format('YYYY/MM/DD');
-    
-                          var  update_query = "UPDATE `stack_to_market` SET `item_name`='"+item_name+"',`item_type`='"+item_type+"',`fixed_price`='"+fixed_price+"',`sell_price`='"+sell_price+"',`quantity`='"+quantity+"',`date`='"+m_date+"'  WHERE id = '"+edit_id+"'";
-                           con.query(update_query,function(err,rows_02)
-                           {
-                              console.log(update_query);
-                               if(err)
-                               {
-                                   throw err
-                               }else{
-                                    res.json({
-                                    status:'1',
-                                    data:rows_02
-                                });
-                               }
-       
-                           }); 
-                  });
                   app.post('/update_emp_regs', function(req,res)
                   {
                       var my_id =  req.query.param;
