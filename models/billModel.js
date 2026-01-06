@@ -58,23 +58,25 @@ var billModel = {
 
     /**
      * Insert bill item
-     * @param {object} data - {bill_detail_id, item_name, item_type, quantity, price}
+     * @param {object} data - {bill_detail_id, item_name, item_type, quantity, price, thickness}
      * @param {function} callback - Callback function (err, result)
      */
     insertBillItem: function(data, callback) {
-        var query = "INSERT INTO bill_items (bill_detail_id, item_name, item_type, quantity, price) VALUES (?, ?, ?, ?, ?)";
-        con.query(query, [data.bill_detail_id, data.item_name, data.item_type, data.quantity, data.price], callback);
+        var query = "INSERT INTO bill_items (bill_detail_id, item_name, item_type, quantity, price, thickness) VALUES (?, ?, ?, ?, ?, ?)";
+        var thickness = data.thickness || 0;
+        con.query(query, [data.bill_detail_id, data.item_name, data.item_type, data.quantity, data.price, thickness], callback);
     },
 
     /**
      * Update bill item
      * @param {number} itemId - The bill_items.id
-     * @param {object} data - {quantity, price}
+     * @param {object} data - {quantity, price, thickness}
      * @param {function} callback - Callback function (err, result)
      */
     updateBillItem: function(itemId, data, callback) {
-        var query = "UPDATE bill_items SET quantity = ?, price = ? WHERE id = ?";
-        con.query(query, [data.quantity, data.price, itemId], callback);
+        var query = "UPDATE bill_items SET quantity = ?, price = ?, thickness = ? WHERE id = ?";
+        var thickness = data.thickness !== undefined ? data.thickness : 0;
+        con.query(query, [data.quantity, data.price, thickness, itemId], callback);
     },
 
     /**

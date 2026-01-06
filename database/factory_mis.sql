@@ -68,7 +68,8 @@ CREATE TABLE `bill_items` (
   `item_name` varchar(50) COLLATE utf8mb4_persian_ci NOT NULL,
   `item_type` varchar(20) COLLATE utf8mb4_persian_ci NOT NULL,
   `quantity` float NOT NULL,
-  `price` float NOT NULL
+  `price` float NOT NULL,
+  `thickness` float NOT NULL DEFAULT 0
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_persian_ci;
 
 --
@@ -840,20 +841,6 @@ CREATE TABLE `stack_to_market_list` (
 -- --------------------------------------------------------
 
 --
--- Table structure for table `income`
---
-
-CREATE TABLE `income` (
-  `id` int(11) NOT NULL,
-  `stack_to_market_list_id` int(11) NOT NULL,
-  `quantity` float NOT NULL,
-  `total` float NOT NULL,
-  `date` date NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_persian_ci;
-
--- --------------------------------------------------------
-
---
 -- Table structure for table `stack_to_market_lists`
 --
 
@@ -864,7 +851,6 @@ CREATE TABLE `stack_to_market_lists` (
   `fixed_price` float NOT NULL,
   `sell_price` float NOT NULL,
   `quantity` float NOT NULL,
-  `thickness` float NOT NULL DEFAULT 0,
   `remaining` float NOT NULL DEFAULT 0
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_persian_ci;
 
@@ -872,10 +858,10 @@ CREATE TABLE `stack_to_market_lists` (
 -- Dumping data for table `stack_to_market_lists`
 --
 
-INSERT INTO `stack_to_market_lists` (`id`, `item_name`, `item_type`, `fixed_price`, `sell_price`, `quantity`, `thickness`, `remaining`) VALUES
-(1, 'فوم بلاک 2x1', 'دانه ', 0, 1, 4, 0, 0),
-(2, 'کاک 70*2', 'دانه', 0, 3, 70, 0, 0),
-(3, 'کاک 70*2 تراکم 10', 'دانه', 0, 5, 17, 0, 0);
+INSERT INTO `stack_to_market_lists` (`id`, `item_name`, `item_type`, `fixed_price`, `sell_price`, `quantity`, `remaining`) VALUES
+(1, 'فوم بلاک 2x1', 'دانه ', 0, 1, 4, 0),
+(2, 'کاک 70*2', 'دانه', 0, 3, 70, 0),
+(3, 'کاک 70*2 تراکم 10', 'دانه', 0, 5, 17, 0);
 
 -- --------------------------------------------------------
 
@@ -1222,13 +1208,6 @@ ALTER TABLE `stack_to_market_list`
   ADD KEY `stack_to_market_id` (`stack_to_market_id`);
 
 --
--- Indexes for table `income`
---
-ALTER TABLE `income`
-  ADD PRIMARY KEY (`id`),
-  ADD KEY `stack_to_market_list_id` (`stack_to_market_list_id`);
-
---
 -- Indexes for table `stack_to_market_lists`
 --
 ALTER TABLE `stack_to_market_lists`
@@ -1438,10 +1417,6 @@ ALTER TABLE `stack_to_market_details`
 ALTER TABLE `stack_to_market_list`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 --
--- AUTO_INCREMENT for table `income`
---
-ALTER TABLE `income`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT for table `stack_to_market_lists`
@@ -1571,12 +1546,6 @@ ALTER TABLE `stack_to_market_details`
   ADD CONSTRAINT `stack_to_market_details_ibfk_1` FOREIGN KEY (`stuff_id`) REFERENCES `stuff_registration` (`id`);
 
 --
--- Constraints for table `income`
---
-ALTER TABLE `income`
-  ADD CONSTRAINT `income_ibfk_1` FOREIGN KEY (`stack_to_market_list_id`) REFERENCES `stack_to_market_lists` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
-
---
 -- Constraints for table `stack_to_market_list`
 --
 ALTER TABLE `stack_to_market_list`
@@ -1592,58 +1561,6 @@ ALTER TABLE `taken_amount`
 DELIMITER $$
 
 --
--- Trigger to calculate total (thickness / quantity) in income table
--- Gets thickness from stack_to_market_lists table
---
-CREATE TRIGGER `income_before_insert` BEFORE INSERT ON `income`
-FOR EACH ROW
-BEGIN
-  SET NEW.total =NEW.quantity/ (SELECT thickness FROM `stack_to_market_lists` WHERE id = NEW.stack_to_market_list_id);
-END$$
-
-CREATE TRIGGER `income_before_update` BEFORE UPDATE ON `income`
-FOR EACH ROW
-BEGIN
-  SET NEW.total = NEW.quantity/ (SELECT thickness FROM `stack_to_market_lists` WHERE id = NEW.stack_to_market_list_id);
-END$$
-
---
--- Trigger to update remaining in stack_to_market_lists after income insert/update/delete
---
-CREATE TRIGGER `update_remaining_after_income` AFTER INSERT ON `income`
-FOR EACH ROW
-BEGIN
-  UPDATE `stack_to_market_lists` stml
-  SET stml.remaining = (
-    COALESCE((SELECT SUM(total) FROM `income` WHERE stack_to_market_list_id = stml.id), 0) - 
-    COALESCE((SELECT SUM(quantity) FROM `bill_items` WHERE stack_to_market_list_id = stml.id), 0)
-  )
-  WHERE stml.id = NEW.stack_to_market_list_id;
-END$$
-
-CREATE TRIGGER `update_remaining_after_income_update` AFTER UPDATE ON `income`
-FOR EACH ROW
-BEGIN
-  UPDATE `stack_to_market_lists` stml
-  SET stml.remaining = (
-    COALESCE((SELECT SUM(total) FROM `income` WHERE stack_to_market_list_id = stml.id), 0) - 
-    COALESCE((SELECT SUM(quantity) FROM `bill_items` WHERE stack_to_market_list_id = stml.id), 0)
-  )
-  WHERE stml.id = NEW.stack_to_market_list_id;
-END$$
-
-CREATE TRIGGER `update_remaining_after_income_delete` AFTER DELETE ON `income`
-FOR EACH ROW
-BEGIN
-  UPDATE `stack_to_market_lists` stml
-  SET stml.remaining = (
-    COALESCE((SELECT SUM(total) FROM `income` WHERE stack_to_market_list_id = stml.id), 0) - 
-    COALESCE((SELECT SUM(quantity) FROM `bill_items` WHERE stack_to_market_list_id = stml.id), 0)
-  )
-  WHERE stml.id = OLD.stack_to_market_list_id;
-END$$
-
---
 -- Trigger to update remaining in stack_to_market_lists after bill_items insert/update/delete
 --
 CREATE TRIGGER `update_remaining_after_bill_items_insert` AFTER INSERT ON `bill_items`
@@ -1652,7 +1569,7 @@ BEGIN
   IF NEW.stack_to_market_list_id IS NOT NULL THEN
     UPDATE `stack_to_market_lists` stml
     SET stml.remaining = (
-      COALESCE((SELECT SUM(total) FROM `income` WHERE stack_to_market_list_id = stml.id), 0) - 
+      stml.quantity - 
       COALESCE((SELECT SUM(quantity) FROM `bill_items` WHERE stack_to_market_list_id = stml.id), 0)
     )
     WHERE stml.id = NEW.stack_to_market_list_id;
@@ -1665,7 +1582,7 @@ BEGIN
   IF NEW.stack_to_market_list_id IS NOT NULL THEN
     UPDATE `stack_to_market_lists` stml
     SET stml.remaining = (
-      COALESCE((SELECT SUM(total) FROM `income` WHERE stack_to_market_list_id = stml.id), 0) - 
+      stml.quantity - 
       COALESCE((SELECT SUM(quantity) FROM `bill_items` WHERE stack_to_market_list_id = stml.id), 0)
     )
     WHERE stml.id = NEW.stack_to_market_list_id;
@@ -1674,7 +1591,7 @@ BEGIN
   IF OLD.stack_to_market_list_id IS NOT NULL AND OLD.stack_to_market_list_id != NEW.stack_to_market_list_id THEN
     UPDATE `stack_to_market_lists` stml
     SET stml.remaining = (
-      COALESCE((SELECT SUM(total) FROM `income` WHERE stack_to_market_list_id = stml.id), 0) - 
+      stml.quantity - 
       COALESCE((SELECT SUM(quantity) FROM `bill_items` WHERE stack_to_market_list_id = stml.id), 0)
     )
     WHERE stml.id = OLD.stack_to_market_list_id;
@@ -1687,7 +1604,7 @@ BEGIN
   IF OLD.stack_to_market_list_id IS NOT NULL THEN
     UPDATE `stack_to_market_lists` stml
     SET stml.remaining = (
-      COALESCE((SELECT SUM(total) FROM `income` WHERE stack_to_market_list_id = stml.id), 0) - 
+      stml.quantity - 
       COALESCE((SELECT SUM(quantity) FROM `bill_items` WHERE stack_to_market_list_id = stml.id), 0)
     )
     WHERE stml.id = OLD.stack_to_market_list_id;

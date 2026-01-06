@@ -142,8 +142,9 @@
                             <th>شماره ثبت</th>
                             <th>نام جنس</th>
                             <th>واحد</th>
-                            <th>مقدار</th>
+                            <th> M^2 مقدار</th>
                             <th>قیمت</th>
+                            <th> cm ضخامت</th>
                             <th>مجموع</th>
                             <th class="print">حذف</th>
                         </tr>
@@ -336,6 +337,8 @@ $('#data_man').datepicker({
                     '<td><input type="text" name="quantity" value="'+quantity+'" class="form-control quantity" id="quantity_'+count+'"></td>';
                     html_code+=
                     '<td><input type="text" name="price" value="'+price+'" class="form-control price" id="price_'+count+'"></td>';
+                    html_code+=
+                    '<td><input type="number" step="0.01" name="thickness" value="0" class="form-control thickness" id="thickness_'+count+'"></td>';
                     html_code+=
                     '<td><input type="number" name="total" value="'+total+'" readonly class="form-control total" id="total_'+count+'"></td>';
                     html_code+=

@@ -34,7 +34,7 @@ router.post('/sending_details', function(req, res) {
         var no = 1;
         
         if (rows.length === 0) {
-            table_data = "<tr><td colspan='7' style='text-align:center; color:gray;'>هیچ آیتمی ثبت نشده است</td></tr>";
+            table_data = "<tr><td colspan='8' style='text-align:center; color:gray;'>هیچ آیتمی ثبت نشده است</td></tr>";
         } else {
             rows.forEach(function(row) {
                 if (row && row.item_name) {
@@ -44,6 +44,7 @@ router.post('/sending_details', function(req, res) {
                     table_data += "<td>" + (row.item_type || '') + "</td>";
                     table_data += "<td>" + (row.quantity || 0) + "</td>";
                     table_data += "<td>" + (row.price || 0) + "</td>";
+                    table_data += "<td>" + (parseFloat(row.thickness || 0).toFixed(2)) + "</td>";
                     var total = parseFloat(row.price || 0) * parseFloat(row.quantity || 0);
                     table_data += "<td>" + total.toFixed(2) + "</td>";
                     table_data += "<td><a onclick='cat_delet1(" + row.id + ")' href='#' style='color:red;'> حذف /</a>     <a onclick='cat_edit(" + row.id + ")' data-toggle='modal' data-target='#basicModal' href=# style='color:green;'>ویرایش</a></td>";
@@ -95,6 +96,7 @@ router.post('/update_bills_01', function(req, res) {
     var itemType = req.query.item_type;
     var quantity = req.query.quantity;
     var price = req.query.price;
+    var thickness = req.query.thickness || 0;
     
     if (!itemId || !billId) {
         return res.status(400).send("شناسه آیتم یا بل ارسال نشده است");
@@ -140,7 +142,7 @@ router.post('/update_bills_01', function(req, res) {
                 }
                 
                 // Update the bill item
-                billModel.updateBillItem(itemId, {quantity: quantity, price: price}, function(err, result) {
+                billModel.updateBillItem(itemId, {quantity: quantity, price: price, thickness: thickness}, function(err, result) {
                     if (err) {
                         return res.status(500).send("خطا در بروزرسانی آیتم: " + err.message);
                     }

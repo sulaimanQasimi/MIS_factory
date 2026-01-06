@@ -898,6 +898,7 @@ app.use('/', billRoutes);
             var quantity_raw = req.body.quantity;
             var stak_to_market_id_raw = req.body.stak_to_market;
             var price_raw = req.body.price;
+            var thickness_raw = req.body.thickness;
             
             // Convert to arrays if they're strings
             if(typeof items_raw === 'string') {
@@ -930,6 +931,14 @@ app.use('/', billRoutes);
                 stak_to_market_id = stak_to_market_id_raw.filter(item => item && item.trim() !== '');
             }
             
+            // Handle thickness - can be array or string, default to 0
+            var thickness = [];
+            if(typeof thickness_raw === 'string') {
+                thickness = thickness_raw.split(',').filter(item => item && item.trim() !== '').map(t => parseFloat(t) || 0);
+            } else if(Array.isArray(thickness_raw)) {
+                thickness = thickness_raw.filter(item => item && item.trim() !== '').map(t => parseFloat(t) || 0);
+            }
+            
             if(items.length === 0) {
                 return res.status(400).send("حداقل یک جنس اضافه کنید!");
             }
@@ -940,12 +949,14 @@ app.use('/', billRoutes);
             var new_quantity = quantity.join(',') + "," + newstr;
             var new_price = price.join(',') + "," + newstr;
             var new_stack_to_market_id = stak_to_market_id.join(',') + "," + newstr;
+            var new_thickness = (thickness.length > 0 ? thickness.join(',') : '0,'.repeat(items.length)) + newstr;
 
             var items_array = new_items.split(',').filter(item => item && item.trim() !== 'someerr');
             var buy_type_array = new_type.split(',').filter(item => item && item.trim() !== 'someerr');
             var quantity_array = new_quantity.split(',').filter(item => item && item.trim() !== 'someerr');
             var price_array = new_price.split(',').filter(item => item && item.trim() !== 'someerr');
             var stak_to_market_id_array = new_stack_to_market_id.split(',').filter(item => item && item.trim() !== 'someerr');
+            var thickness_array = new_thickness.split(',').filter(item => item && item.trim() !== 'someerr').map(t => parseFloat(t) || 0);
             
             var total_show = parseFloat(req.body.total_show) || 0;
             var received_show = parseFloat(req.body.reciept_show) || 0;
@@ -1034,9 +1045,12 @@ app.use('/', billRoutes);
                                     // Get stack_to_market_list_id if available
                                     var stack_to_market_list_id = (stak_to_market_id_array[i] && stak_to_market_id_array[i] !== 'undefined' && stak_to_market_id_array[i] !== '') ? stak_to_market_id_array[i] : null;
                                     
+                                    // Get thickness for this item (default to 0 if not provided)
+                                    var item_thickness = (thickness_array[i] !== undefined && thickness_array[i] !== null) ? thickness_array[i] : 0;
+                                    
                                     // Then insert into bill_items
                                     var stack_to_market_list_id_value = stack_to_market_list_id ? "'"+stack_to_market_list_id+"'" : 'NULL';
-                                    con.query("insert into bill_items(bill_detail_id,stack_to_market_list_id,item_name,item_type,quantity,price) values('"+bill_detail_id+"',"+stack_to_market_list_id_value+",'"+items_array[i]+"','"+buy_type_array[i]+"','"+quantity_array[i]+"','"+price_array[i]+"')", function (error2, results2, fields2) {
+                                    con.query("insert into bill_items(bill_detail_id,stack_to_market_list_id,item_name,item_type,quantity,price,thickness) values('"+bill_detail_id+"',"+stack_to_market_list_id_value+",'"+items_array[i]+"','"+buy_type_array[i]+"','"+quantity_array[i]+"','"+price_array[i]+"','"+item_thickness+"')", function (error2, results2, fields2) {
                                         if (error2) {
                                             return con.rollback(function() {
                                                 res.status(500).send("خطا در ثبت آیتم های بل: " + error2.message);
@@ -1576,23 +1590,6 @@ app.use('/', billRoutes);
        
            });
 
-           app.get("/income.ejs", function(req,res){
-                con.query("select * from company_info ", function(err,rows_02)
-                {
-                    if(err) {
-                        console.log(err);
-                        return res.send("Error loading company info");
-                    }
-                    con.query("select * from stack_to_market_lists ", function(err,rows_03)
-                    {
-                        if(err) {
-                            console.log(err);
-                            return res.send("Error loading stack to market lists");
-                        }
-                        res.render("income",{data_02:rows_02,data_03:rows_03}); 
-                    });
-                });
-           });
         
         //    app.get("/city_store.ejs", function(req,res){
         //     console.log("hi async");
@@ -4031,6 +4028,7 @@ app.use('/', billRoutes);
                 var item_type =  req.query.item_type;
                 var quantity =  req.query.quantity;
                 var price =  req.query.price;
+                var thickness =  req.query.thickness || 0;
                 var web_total = quantity * price;
                 var update_qun ;
                 var sta_update_quan;
@@ -4072,7 +4070,7 @@ app.use('/', billRoutes);
                         {
 
                 // Update bill_items instead of bill_details
-                con.query("UPDATE `bill_items` SET `quantity`='"+quantity+"',`price`='"+price+"' where id = '"+bil_id+"' ", function(err,rows_02)
+                con.query("UPDATE `bill_items` SET `quantity`='"+quantity+"',`price`='"+price+"',`thickness`='"+thickness+"' where id = '"+bil_id+"' ", function(err,rows_02)
                     {
                         if(err) {
                             return res.status(500).send("خطا در بروزرسانی آیتم: " + err.message);
@@ -4701,9 +4699,8 @@ app.use('/', billRoutes);
                         var fixed_price = req.body.fixed_price || 0;
                         var sell_price = req.body.sell_price || 0;
                         var quantity = req.body.quantity || 0;
-                        var thickness = req.body.thickness || 0;
                         
-                        con.query("INSERT INTO stack_to_market_lists (item_name, item_type, fixed_price, sell_price, quantity, thickness, remaining) VALUES ('"+item_name+"', '"+item_type+"', '"+fixed_price+"', '"+sell_price+"', '"+quantity+"', '"+thickness+"', 0)", function(err,rows)
+                        con.query("INSERT INTO stack_to_market_lists (item_name, item_type, fixed_price, sell_price, quantity, remaining) VALUES ('"+item_name+"', '"+item_type+"', '"+fixed_price+"', '"+sell_price+"', '"+quantity+"', 0)", function(err,rows)
                         {
                             if(err) {
                                 console.log(err);
@@ -4729,9 +4726,8 @@ app.use('/', billRoutes);
                         var fixed_price = req.body.fixed_price || 0;
                         var sell_price = req.body.sell_price || 0;
                         var quantity = req.body.quantity || 0;
-                        var thickness = req.body.thickness || 0;
                         
-                        con.query("UPDATE stack_to_market_lists SET item_name='"+item_name+"', item_type='"+item_type+"', fixed_price='"+fixed_price+"', sell_price='"+sell_price+"', quantity='"+quantity+"', thickness='"+thickness+"' WHERE id='"+edit_id+"'", function(err,rows)
+                        con.query("UPDATE stack_to_market_lists SET item_name='"+item_name+"', item_type='"+item_type+"', fixed_price='"+fixed_price+"', sell_price='"+sell_price+"', quantity='"+quantity+"' WHERE id='"+edit_id+"'", function(err,rows)
                         {
                             if(err) {
                                 console.log(err);
@@ -4769,65 +4765,6 @@ app.use('/', billRoutes);
                             });
                         });
                     });
-
-                    app.post('/save_income', function(req,res)
-                    {
-                        var stack_to_market_list_id = req.body.stack_to_market_list_id;
-                        var quantity = req.body.quantity;
-                        var date_income = req.body.date_income;
-                        
-                        if(!stack_to_market_list_id || !quantity || !date_income) {
-                            return res.send("لطفاً تمام فیلدها را پر کنید");
-                        }
-                        
-                        // Handle multiple items if array
-                        var stack_ids = Array.isArray(stack_to_market_list_id) ? stack_to_market_list_id : [stack_to_market_list_id];
-                        var quantities = Array.isArray(quantity) ? quantity : [quantity];
-                        var m_date = moment.from(date_income, 'fa', 'YYYY/MM/DD').locale('en').format('YYYY/MM/DD');
-                        
-                        con.beginTransaction(function(err) {
-                            if (err) {
-                                throw err;
-                            } else {
-                                var success_count = 0;
-                                var error_count = 0;
-                                
-                                for(var i = 0; i < stack_ids.length; i++) {
-                                    (function(i) {
-                                        if(stack_ids[i] && quantities[i]) {
-                                            con.query("INSERT INTO income(stack_to_market_list_id, quantity, total, date) VALUES ('"+stack_ids[i]+"','"+quantities[i]+"',0,'"+m_date+"')", function (error, results, fields) {
-                                                if (error) {
-                                                    error_count++;
-                                                    console.log("Error inserting income:", error);
-                                                } else {
-                                                    success_count++;
-                                                }
-                                                
-                                                // Commit transaction after all inserts
-                                                if(i === stack_ids.length - 1) {
-                                                    if(error_count === 0) {
-                                                        con.commit(function(err) {
-                                                            if(err) {
-                                                                return con.rollback(function() {
-                                                                    res.send("خطا در ذخیره اطلاعات");
-                                                                });
-                                                            }
-                                                            res.send("اطلاعات با موفقیت ذخیره شد");
-                                                        });
-                                                    } else {
-                                                        con.rollback(function() {
-                                                            res.send("خطا در ذخیره برخی اطلاعات");
-                                                        });
-                                                    }
-                                                }
-                                            });
-                                        }
-                                    })(i);
-                                }
-                            }
-                        });
-                    });
-
 
                     /* when we create formulea */
            app.post('/mahsol_items', function(req,res)
