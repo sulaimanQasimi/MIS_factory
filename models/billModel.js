@@ -12,6 +12,7 @@ var billModel = {
      * @param {function} callback - Callback function (err, rows)
      */
     getBillItems: function(billId, callback) {
+        // First try to get from bill_items (newer structure)
         var query = "SELECT bill_items.*, bill_details.bill_id FROM bill_items " +
                     "INNER JOIN bill_details ON bill_items.bill_detail_id = bill_details.id " +
                     "WHERE bill_details.bill_id = ?";
@@ -20,7 +21,23 @@ var billModel = {
                 console.error("Error getting bill items:", err);
                 return callback(err, null);
             }
-            callback(null, rows || []);
+            
+            // If bill_items has data, return it
+            if (rows && rows.length > 0) {
+                return callback(null, rows);
+            }
+            
+            // Otherwise, fallback to bill_details (older structure)
+            console.log("No items found in bill_items for bill_id " + billId + ", checking bill_details...");
+            var fallbackQuery = "SELECT id, bill_id, item_name, item_type, quantity, price, 0 as thickness FROM bill_details WHERE bill_id = ?";
+            con.query(fallbackQuery, [billId], function(err2, rows2) {
+                if (err2) {
+                    console.error("Error getting bill details:", err2);
+                    return callback(err2, null);
+                }
+                console.log("Found " + (rows2 ? rows2.length : 0) + " items in bill_details for bill_id: " + billId);
+                callback(null, rows2 || []);
+            });
         });
     },
 

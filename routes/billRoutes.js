@@ -9,10 +9,10 @@ var billModel = require('../models/billModel');
 var con = require('../config/database');
 
 /**
- * GET /sending_details
+ * GET/POST /sending_details
  * Get bill items for a specific bill
  */
-router.post('/sending_details', function(req, res) {
+router.get('/sending_details', function(req, res) {
     var billId = req.query.param;
     
     if (!billId) {
@@ -23,18 +23,66 @@ router.post('/sending_details', function(req, res) {
     console.log("Fetching bill items for bill_id:", billId);
     
     billModel.getBillItems(billId, function(err, rows) {
-        console.log("Rows:", rows);
         if (err) {
             console.error("Error querying bill_items:", err);
             return res.status(500).send("خطا در بارگذاری آیتم های بل: " + (err.sqlMessage || err.message));
         }
         
-        console.log("Found " + rows.length + " items for bill_id: " + billId);
+        console.log("Found " + (rows ? rows.length : 0) + " items for bill_id: " + billId);
         var table_data = "";
         var no = 1;
         
-        if (rows.length === 0) {
-            table_data = "<tr><td colspan='8' style='text-align:center; color:gray;'>هیچ آیتمی ثبت نشده است</td></tr>";
+        if (!rows || rows.length === 0) {
+            table_data = "<tr><td colspan='8' style='text-align:center; color:gray; padding: 20px;'>هیچ آیتمی ثبت نشده است</td></tr>";
+        } else {
+            rows.forEach(function(row) {
+                if (row && row.item_name) {
+                    table_data += "<tr>";
+                    table_data += "<td>" + no + "</td>";
+                    table_data += "<td>" + (row.item_name || '') + "</td>";
+                    table_data += "<td>" + (row.item_type || '') + "</td>";
+                    table_data += "<td>" + (row.quantity || 0) + "</td>";
+                    table_data += "<td>" + (row.price || 0) + "</td>";
+                    table_data += "<td>" + (parseFloat(row.thickness || 0).toFixed(2)) + "</td>";
+                    var total = parseFloat(row.price || 0) * parseFloat(row.quantity || 0);
+                    table_data += "<td>" + total.toFixed(2) + "</td>";
+                    table_data += "<td><a onclick='cat_delet1(" + row.id + ")' href='#' style='color:red;'> حذف /</a>     <a onclick='cat_edit(" + row.id + ")' data-toggle='modal' data-target='#basicModal' href=# style='color:green;'>ویرایش</a></td>";
+                    table_data += "</tr>";
+                    no++;
+                } else {
+                    console.log("Skipping invalid row:", row);
+                }
+            });
+        }
+        
+        console.log("Sending table data (length: " + table_data.length + ")");
+        res.send(table_data);
+    });
+});
+
+// Also support POST for backward compatibility
+router.post('/sending_details', function(req, res) {
+    var billId = req.query.param || req.body.param;
+    
+    if (!billId) {
+        console.error("No bill ID provided");
+        return res.status(400).send("شناسه بل ارسال نشده است");
+    }
+
+    console.log("Fetching bill items for bill_id:", billId);
+    
+    billModel.getBillItems(billId, function(err, rows) {
+        if (err) {
+            console.error("Error querying bill_items:", err);
+            return res.status(500).send("خطا در بارگذاری آیتم های بل: " + (err.sqlMessage || err.message));
+        }
+        
+        console.log("Found " + (rows ? rows.length : 0) + " items for bill_id: " + billId);
+        var table_data = "";
+        var no = 1;
+        
+        if (!rows || rows.length === 0) {
+            table_data = "<tr><td colspan='8' style='text-align:center; color:gray; padding: 20px;'>هیچ آیتمی ثبت نشده است</td></tr>";
         } else {
             rows.forEach(function(row) {
                 if (row && row.item_name) {

@@ -596,7 +596,9 @@
                     
                     Utils.ajaxRequest({
                         url: '/sending_details?param=' + billId,
+                        type: 'GET',
                         success: function(data) {
+                            console.log('Bill items loaded for bill_id:', billId, 'Data length:', data ? data.length : 0);
                             if (data && data.trim() !== '' && data.trim() !== '<tr><td colspan="7"') {
                                 $container.html(data);
                                 state.billDetailsCache[billId] = data;
@@ -605,9 +607,14 @@
                             }
                         },
                         error: function(xhr, status, error) {
+                            console.error('Error loading bill items:', {billId: billId, status: status, error: error, responseText: xhr.responseText});
                             let errorMsg = 'خطا در بارگذاری آیتم ها';
                             if (status === 'timeout') {
                                 errorMsg = 'زمان بارگذاری به پایان رسید. لطفا دوباره تلاش کنید.';
+                            } else if (xhr.status === 404) {
+                                errorMsg = 'مسیر درخواست یافت نشد. لطفا صفحه را بروزرسانی کنید.';
+                            } else if (xhr.status === 500) {
+                                errorMsg = 'خطای سرور: ' + (xhr.responseText || error);
                             }
                             $container.html('<tr><td colspan="8" style="text-align:center; color:red; padding: 20px;"><i class="fa fa-exclamation-triangle"></i> ' + errorMsg + '</td></tr>');
                         }
@@ -943,11 +950,13 @@
                     let billItemsHtml = '';
                     Utils.ajaxRequest({
                         url: '/sending_details?param=' + billId,
+                        type: 'GET',
                         async: false,
                         success: function(data) {
                             billItemsHtml = Utils.cleanHtmlForPrint(data) || '<tr><td colspan="7" style="text-align:center; color:gray; padding: 20px;">هیچ آیتمی ثبت نشده است</td></tr>';
                         },
-                        error: function() {
+                        error: function(xhr, status, error) {
+                            console.error('Error loading bill items for print:', {billId: billId, status: status, error: error});
                             billItemsHtml = '<tr><td colspan="7" style="text-align:center; color:red; padding: 20px;">خطا در بارگذاری آیتم ها</td></tr>';
                         }
                     });
