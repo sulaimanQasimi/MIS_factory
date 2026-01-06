@@ -3380,7 +3380,8 @@ app.use('/', billRoutes);
                 
                //console.log(my_id);
 
-                   con.query("SELECT customer_account.company_name, froshat_details.* FROM customer_account INNER JOIN froshat_details ON customer_account.id=froshat_details.cus_id WHERE froshat_details.date BETWEEN '"+f_d+"' AND '"+t_d+"'", function(err,rows_02)
+                   // Load ALL bills in date range (including fully paid ones)
+                   con.query("SELECT customer_account.company_name, froshat_details.* FROM customer_account INNER JOIN froshat_details ON customer_account.id=froshat_details.cus_id WHERE froshat_details.date BETWEEN '"+f_d+"' AND '"+t_d+"' ORDER BY froshat_details.date DESC, froshat_details.id DESC", function(err,rows_02)
                    {
                        if(err) {
                            console.error("Error in query:", err);
@@ -3393,73 +3394,68 @@ app.use('/', billRoutes);
                        }
                        
                     var table_data = "";
-                    var no =1;
+                    var no = 1;
                     rows_02.forEach( (row) => {
+                        // Format date to Persian
+                        var formatted_date = moment(row.date, 'YYYY/MM/DD').locale('fa').format('YYYY/MM/DD');
+                        var remaining_amount = parseFloat(row.total_amount - row.paid_amount).toFixed(2);
+                        var paid_amount = parseFloat(row.paid_amount || 0).toFixed(2);
+                        var total_amount = parseFloat(row.total_amount || 0).toFixed(2);
                         
-                            // past here 
-                           
-                              
-                            table_data +=  '<tr>';
-                            table_data +=  '<th colspan="11" style=" padding: 0px;">';
-                                  
-                            table_data +=   '<div class="card mb-2" style=" padding: 0px;">';
-                                      
-                                     
-                            table_data +=      '<div class="card-header " style="padding: 0px;" id="headingOne">';
-                            table_data +=    ' <table class=" mb-0 mt-0 ml-0 mr-0" style="width: 100%;">';
-                            table_data +=        '<tr class="head">';
-                            table_data +=        '<td>'+no+'</td>';
-                            table_data +=       ' <td style="width:120px;" >'+row.company_name+'</td>';
-                            table_data +=       '<td style="width:100px;">'+row.contact+'</td>';
-                            table_data +=       '<td style="width:143px;">'+row.date+'</td>';
-                            table_data +=       '<td>'+row.paid_amount+'</td>';
-                            table_data +=       '<td>'+parseFloat(row.total_amount - row.paid_amount)+'</td>';
-                            table_data +=       '<td>'+row.total_amount+'</td>';
-                            table_data +=       '<td style="width:40px;">#'+row.bill_no+'</td>';
-                            table_data +=       '<td>'+row.currency+'</td>';
-                            table_data +=        '<td>'+row.ex_rate+'</td>';
-                            table_data +=        '<td class="print">';
-                            table_data +=         '<button data-toggle="tooltip" title="حذف" onclick="delete1( '+row.id+')" class="edt del"><img width="15px" src="assets/img/last-project/delete.svg" alt=""></button>'
-                
-                            table_data +=          '<button title="ویرایش" data-toggle="tooltip" onclick="update_froshat( '+row.id+' )"  class="edt edit-tbl" ><img width="15px" src="assets/img/last-project/edit.svg" alt=""></button>';
-                
-                            table_data +=           '<button data-toggle="tooltip" title="اضافه کردن" onclick="add_out_loan( '+row.id+')" class="edt add-tbl"><img width="15px" src="assets/img/last-project/add.svg  " alt=""></button>';
-                            
-                            table_data +=        '</td>';
-                            table_data +=         '</tr>';
-                            table_data +=      '</table>';
-                            table_data +=    '<h2 class="mb-0">';
-                            table_data +=            '<button type="button" class="btn btn-link" data-toggle="collapse" data-target="#collapseOne_'+row.id+' " style="float:left;"><img src="assets/img/expand_arrow_26px.png" onclick="change_icon(this.id)" id="'+row.id+'" alt=""></button>';									
-                            table_data +=      '</h2>';
-                            table_data +=  '</div>';
-                                       
-                                      
-                            table_data +=     '<div id="collapseOne_'+row.id+'" class="collapse" aria-labelledby="headingOne" data-parent="#accordionExample">';
-                            table_data +=   ' <div class="card-body">';
-                            table_data +=   '<table class="table table-bordered">';
-                                              
-                            table_data +=                              '<thead>';
-                            table_data +=                         '<tr>';
-                            table_data +=           '<th colspan="7">جزءیات بل فروش</th>';
-                            table_data +=               ' </tr>';
-                            table_data +=         '<tr style="background-color: lightgray; color: black;">';
-                            table_data +=             '<th>شماره</th>';
-                            table_data +=           '<th>نام جنس</th>';
-                            table_data +=     '<th>نوعیت جنس</th>';
-                            table_data +=                   '<th>مقدار</th>';
-                            table_data +=                '<th>قیمت</th>';
-                            table_data +=          '<th>مجموعه</th>';
-                            table_data +=        '<th>عملیات</th>';
-                            table_data +=            '</tr>';
-                            table_data += '</thead>';
-                            table_data +=     '<tbody id="bill_details_'+row.id+'">';
-                            table_data +=  '</tbody>';
-                            table_data +=  '</table>';
-
-                            
-                            table_data +=    '</th>';
-                                
-                            table_data +=' </tr>';
+                        table_data +=  '<tr>';
+                        table_data +=  '<th colspan="11" style=" padding: 0px;">';
+                        table_data +=   '<div class="card mb-2" style=" padding: 0px;">';
+                        table_data +=      '<div class="card-header " style="padding: 0px;" id="headingOne">';
+                        table_data +=    ' <table class=" mb-0 mt-0 ml-0 mr-0" style="width: 100%;">';
+                        table_data +=        '<tr class="head">';
+                        table_data +=        '<td>'+no+'</td>';
+                        table_data +=       ' <td style="width:120px;" >'+(row.company_name || 'نامشخص')+'</td>';
+                        table_data +=       '<td style="width:100px;">'+(row.contact || '-')+'</td>';
+                        table_data +=       '<td style="width:143px;">'+formatted_date+'</td>';
+                        table_data +=       '<td><strong style="color: #28a745;">'+paid_amount+'</strong></td>';
+                        table_data +=       '<td><strong style="color: #dc3545;">'+remaining_amount+'</strong></td>';
+                        table_data +=       '<td><strong style="color: #007bff;">'+total_amount+'</strong></td>';
+                        table_data +=       '<td style="width:40px;">#'+row.bill_no+'</td>';
+                        table_data +=       '<td>'+row.currency+'</td>';
+                        table_data +=        '<td>'+row.ex_rate+'</td>';
+                        table_data +=        '<td class="print">';
+                        table_data +=         '<button data-toggle="tooltip" title="حذف" data-bill-id="'+row.id+'" class="edt del btn-delete"><img width="15px" src="assets/img/last-project/delete.svg" alt=""></button>';
+                        table_data +=          '<button title="ویرایش" data-toggle="tooltip" data-bill-id="'+row.id+'" class="edt edit-tbl btn-edit"><img width="15px" src="assets/img/last-project/edit.svg" alt=""></button>';
+                        table_data +=           '<button data-toggle="tooltip" title="اضافه کردن" data-bill-id="'+row.id+'" class="edt add-tbl btn-add-payment"><img width="15px" src="assets/img/last-project/add.svg" alt=""></button>';
+                        table_data +=           '<button data-toggle="tooltip" title="چاپ بل" data-bill-id="'+row.id+'" class="edt print-tbl btn-print" style="background: #17a2b8; border: none; padding: 5px; border-radius: 3px;"><img width="15px" src="assets/img/mawadkham/print.svg" alt=""></button>';
+                        table_data +=        '</td>';
+                        table_data +=         '</tr>';
+                        table_data +=      '</table>';
+                        table_data +=    '<h2 class="mb-0">';
+                        table_data +=            '<button type="button" class="btn btn-link" data-toggle="collapse" data-target="#collapseOne_'+row.id+'" style="float:left;"><img src="assets/img/expand_arrow_26px.png" data-bill-id="'+row.id+'" id="'+row.id+'" alt="" class="btn-toggle-details"></button>';									
+                        table_data +=      '</h2>';
+                        table_data +=  '</div>';
+                        table_data +=     '<div id="collapseOne_'+row.id+'" class="collapse" aria-labelledby="headingOne" data-parent="#accordionExample">';
+                        table_data +=   ' <div class="card-body">';
+                        table_data +=   '<table class="table table-bordered">';
+                        table_data +=                              '<thead>';
+                        table_data +=                         '<tr>';
+                        table_data +=           '<th colspan="8">جزئیات بل فروش</th>';
+                        table_data +=               ' </tr>';
+                        table_data +=         '<tr style="background-color: lightgray; color: black;">';
+                        table_data +=             '<th>شماره</th>';
+                        table_data +=           '<th>نام جنس</th>';
+                        table_data +=     '<th>نوعیت جنس</th>';
+                        table_data +=                   '<th>مقدار</th>';
+                        table_data +=                '<th>قیمت</th>';
+                        table_data +=          '<th>ضخامت</th>';
+                        table_data +=          '<th>مجموعه</th>';
+                        table_data +=        '<th>عملیات</th>';
+                        table_data +=            '</tr>';
+                        table_data += '</thead>';
+                        table_data +=     '<tbody id="bill_details_'+row.id+'">';
+                        table_data +=  '</tbody>';
+                        table_data +=  '</table>';
+                        table_data +=   '</div>';
+                        table_data +=     '</div>';
+                        table_data +=   '</div>';
+                        table_data +=    '</th>';
+                        table_data +=' </tr>';
                             no++;
                       
                         
@@ -5124,29 +5120,35 @@ app.use('/', billRoutes);
 
             con.query("SELECT * from customer_account", function(err,rows_03)
             {
+                if(err) {
+                    console.error("Error loading customer_account:", err);
+                    return res.status(500).send("خطا در بارگذاری اطلاعات مشتریان");
+                }
 
-                        con.query("SELECT customer_account.id as cust_id, customer_account.company_name, froshat_details.* FROM customer_account INNER JOIN froshat_details ON customer_account.id=froshat_details.cus_id WHERE froshat_details.total_amount != froshat_details.paid_amount", function(err,rows_01)
+                // Load ALL bills from froshat_details (removed filter to show all bills including fully paid ones)
+                con.query("SELECT customer_account.id as cust_id, customer_account.company_name, froshat_details.* FROM customer_account INNER JOIN froshat_details ON customer_account.id=froshat_details.cus_id ORDER BY froshat_details.date DESC, froshat_details.id DESC", function(err,rows_01)
+                {
+                    if(err) {
+                        console.error("Error loading froshat_details:", err);
+                        return res.status(500).send("خطا در بارگذاری اطلاعات فروشات");
+                    }
+
+                    if(rows_01.length > 0)
+                    {
+                        var arr = [];
+                        for(var i = 0; i < rows_01.length; i++)
                         {
-                                    if(rows_01.length >0)
-                                    {
-
-                                        var arr = [];
-                                        for(var i =0 ; i<rows_01.length;i++)
-                                        {
-                                        var sh = moment(rows_01[i].date, 'YYYY/MM/DD').locale('fa').format('YYYY/MM/DD');
-                                            arr += sh +",";
-                                        }
-                                        var str_array = arr.split(',');
-                            
-                    
-                                     res.render("froshat_view",{data_01:rows_01,data_03:rows_03,date_data:str_array}); 
-                                    }else{
-                                        res.send("<h1 style='color:green; text-align:center;'>فروشات صورت نگرفته است !</h1>");
-                                    }
-                        });
-                        });
-                
-                   
+                            var sh = moment(rows_01[i].date, 'YYYY/MM/DD').locale('fa').format('YYYY/MM/DD');
+                            arr += sh + ",";
+                        }
+                        var str_array = arr.split(',');
+                        
+                        res.render("froshat_view",{data_01:rows_01,data_03:rows_03,date_data:str_array}); 
+                    } else {
+                        res.send("<h1 style='color:green; text-align:center;'>فروشات صورت نگرفته است !</h1>");
+                    }
+                });
+            });
             });
 
 
@@ -7524,7 +7526,8 @@ if(rows[i].dev_type == 'iOS')
                 });
                                           }
         }
-        });                    }
+        });
+}
 
         function backup_func(dir_folder,file_name){
             
