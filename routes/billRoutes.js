@@ -129,6 +129,15 @@ router.post('/update_bill_details', function(req, res) {
             return res.status(404).send("آیتم مورد نظر یافت نشد!");
         }
         
+        // Convert thickness from meters to cm for display (multiply by 100)
+        if (rows && rows.length > 0) {
+            rows.forEach(function(row) {
+                if (row.thickness !== undefined && row.thickness !== null) {
+                    row.thickness = parseFloat(row.thickness) * 100; // Convert meters to cm
+                }
+            });
+        }
+        
         res.send(rows);
     });
 });
@@ -144,7 +153,9 @@ router.post('/update_bills_01', function(req, res) {
     var itemType = req.query.item_type;
     var quantity = req.query.quantity;
     var price = req.query.price;
-    var thickness = req.query.thickness || 0;
+    // Convert thickness from cm to meters (divide by 100) before saving to database
+    var thicknessCm = parseFloat(req.query.thickness) || 0;
+    var thickness = thicknessCm / 100; // Convert cm to meters
     
     if (!itemId || !billId) {
         return res.status(400).send("شناسه آیتم یا بل ارسال نشده است");

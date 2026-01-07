@@ -1059,10 +1059,14 @@ app.post("/froshat_details", function (req, res) {
   var stak_to_market_id_array = new_stack_to_market_id
     .split(",")
     .filter((item) => item && item.trim() !== "someerr");
+  // Convert thickness from cm to meters (divide by 100) before saving to database
   var thickness_array = new_thickness
     .split(",")
     .filter((item) => item && item.trim() !== "someerr")
-    .map((t) => parseFloat(t) || 0);
+    .map((t) => {
+      var cmValue = parseFloat(t) || 0;
+      return cmValue / 100; // Convert cm to meters
+    });
 
   var total_show = parseFloat(req.body.total_show) || 0;
   var received_show = parseFloat(req.body.reciept_show) || 0;
@@ -1215,7 +1219,7 @@ app.post("/froshat_details", function (req, res) {
                                   ? stak_to_market_id_array[i]
                                   : null;
 
-                              // Get thickness for this item (default to 0 if not provided)
+                              // Get thickness for this item (already converted to meters, default to 0 if not provided)
                               var item_thickness =
                                 thickness_array[i] !== undefined &&
                                 thickness_array[i] !== null
@@ -3991,6 +3995,28 @@ app.post("/update_froshat_view", function (req, res) {
       data: sh,
       data1: newStr,
     });
+  });
+});
+
+// Endpoint to get company info for bill printing
+app.get("/get_company_info", function (req, res) {
+  con.query("SELECT * FROM company_info LIMIT 1", function (err, rows) {
+    if (err) {
+      console.error("Error loading company info:", err);
+      return res.status(500).json({ error: "خطا در بارگذاری اطلاعات شرکت" });
+    }
+    if (rows && rows.length > 0) {
+      res.json(rows[0]);
+    } else {
+      res.json({
+        company_name: "شرکت تولیدی مزار فوم",
+        logo: "mazar_foam%20logo.png",
+        contact: "0796323516",
+        location: "",
+        email: "",
+        description: ""
+      });
+    }
   });
 });
 

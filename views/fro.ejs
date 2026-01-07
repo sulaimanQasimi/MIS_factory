@@ -258,6 +258,33 @@ $('#data_man').datepicker({
                 // });
 
             </script>
+            
+            <!-- Virtual field/conversion functions for thickness (meters <-> cm) -->
+            <script>
+                /**
+                 * Convert thickness from meters to centimeters for display
+                 * @param {number} meters - Thickness value in meters
+                 * @returns {number} Thickness value in centimeters
+                 */
+                function thicknessMetersToCm(meters) {
+                    if (!meters || isNaN(meters)) return 0;
+                    return parseFloat(meters) * 100;
+                }
+                
+                /**
+                 * Convert thickness from centimeters to meters for storage
+                 * @param {number} cm - Thickness value in centimeters
+                 * @returns {number} Thickness value in meters
+                 */
+                function thicknessCmToMeters(cm) {
+                    if (!cm || isNaN(cm)) return 0;
+                    return parseFloat(cm) / 100;
+                }
+                
+                // Make functions globally available
+                window.thicknessMetersToCm = thicknessMetersToCm;
+                window.thicknessCmToMeters = thicknessCmToMeters;
+            </script>
             <!-- </form> -->
     </div>
  </div>

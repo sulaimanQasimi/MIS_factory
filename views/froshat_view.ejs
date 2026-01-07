@@ -903,7 +903,54 @@
                 printBill: function(billId) {
                     const loading = Utils.showLoading('در حال بارگذاری اطلاعات بل...');
                     let billData = {};
+                    let companyInfo = {};
                     let hasError = false;
+                    
+                    // Fetch company info first
+                    Utils.ajaxRequest({
+                        url: '/get_company_info',
+                        type: 'GET',
+                        async: false,
+                        success: function(data) {
+                            companyInfo = {
+                                company_name: data.company_name || 'شرکت تولیدی مزار فوم',
+                                logo:  'assets/img/mazar_foam%20logo.png',
+                                contact:  '0796323516',
+                                location: data.location || '',
+                                email: data.email || '',
+                                description: data.description || ''
+                            };
+                            // Fix logo path - make it absolute from server root
+                            if (companyInfo.logo) {
+                                // Decode URL encoding if present
+                                companyInfo.logo = decodeURIComponent(companyInfo.logo);
+                                
+                                if (companyInfo.logo.startsWith('http')) {
+                                    // Already a full URL, keep as is
+                                } else if (companyInfo.logo.startsWith('/')) {
+                                    // Already absolute from root, keep as is
+                                } else if (companyInfo.logo.startsWith('assets/') || companyInfo.logo.startsWith('Images/')) {
+                                    // Already has path prefix, make absolute
+                                    companyInfo.logo = '/' + companyInfo.logo;
+                                } else {
+                                    // Just filename, add Images/ prefix and make absolute
+                                    companyInfo.logo = '/Images/' + companyInfo.logo;
+                                }
+                            }
+                        },
+                        error: function(error) {
+                            console.error('Error fetching company info:', error);
+                            // Use defaults
+                            companyInfo = {
+                                company_name: 'شرکت تولیدی مزار فوم',
+                                logo: 'assets/img/co-nav.png',
+                                contact: '',
+                                location: '',
+                                email: '',
+                                description: ''
+                            };
+                        }
+                    });
                     
                     // Fetch bill header
                     Utils.ajaxRequest({
@@ -985,7 +1032,7 @@
                         return;
                     }
                     
-                    // Build print content
+                    // Build print content with logo, phone, and address - styled like the banner image
                     const printContent = [
                         '<!DOCTYPE html>',
                         '<html lang="fa" dir="rtl">',
@@ -996,37 +1043,58 @@
                         '<style>',
                         '* { margin: 0; padding: 0; box-sizing: border-box; }',
                         'body { font-family: "Tahoma", "Arial", sans-serif; padding: 20px; background: #fff; color: #000; }',
-                        '.print-header { position: relative; text-align: center; margin-bottom: 30px; border-bottom: 3px solid #333; padding-bottom: 20px; }',
-                        '.print-header h1 { font-size: 24px; margin-bottom: 10px; color: #333; }',
-                        '.company-name { position: absolute; top: 0; right: 0; font-size: 18px; font-weight: bold; color: #333; text-align: right; }',
-                        '.bill-info { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 30px; padding: 15px; background: #f9f9f9; border: 1px solid #ddd; }',
+                        '.company-banner { background: linear-gradient(135deg, #0066cc 0%, #004499 100%); padding: 25px 30px; margin-bottom: 30px; border-radius: 8px; display: flex; align-items: center; justify-content: space-between; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }',
+                        '.company-text-section { flex: 1; text-align: right; color: white; }',
+                        '.company-name-main { font-size: 28px; font-weight: bold; margin-bottom: 8px; color: white; text-shadow: 1px 1px 2px rgba(0,0,0,0.2); }',
+                        '.company-tagline { font-size: 16px; color: rgba(255,255,255,0.95); margin-bottom: 10px; }',
+                        '.company-contact-info { font-size: 14px; color: rgba(255,255,255,0.9); margin-top: 8px; }',
+                        '.company-contact-info p { margin: 4px 0; }',
+                        '.company-logo-section { margin-left: 30px; }',
+                        '.company-logo { width: 120px; height: 120px; border-radius: 50%; border: 3px solid white; background: rgba(255,255,255,0.1); padding: 8px; object-fit: contain; box-shadow: 0 2px 8px rgba(0,0,0,0.2); }',
+                        '.bill-title-section { text-align: center; margin: 25px 0; padding: 15px; background: #f8f9fa; border-radius: 5px; }',
+                        '.bill-title-section h1 { font-size: 26px; color: #333; margin-bottom: 8px; }',
+                        '.bill-title-section .print-date { font-size: 14px; color: #666; }',
+                        '.bill-info { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 30px; padding: 15px; background: #f9f9f9; border: 1px solid #ddd; border-radius: 5px; }',
                         '.bill-info-item { margin-bottom: 10px; }',
                         '.bill-info-item strong { display: inline-block; width: 150px; color: #333; }',
-                        '.section-title { font-size: 18px; font-weight: bold; margin: 25px 0 15px 0; padding: 10px; background: #333; color: #fff; text-align: center; }',
+                        '.section-title { font-size: 18px; font-weight: bold; margin: 25px 0 15px 0; padding: 12px; background: linear-gradient(135deg, #0066cc 0%, #004499 100%); color: #fff; text-align: center; border-radius: 5px; }',
                         'table { width: 100%; border-collapse: collapse; margin-bottom: 30px; page-break-inside: avoid; }',
-                        'table th { background: #333; color: #fff; padding: 12px; text-align: center; border: 1px solid #000; }',
+                        'table th { background: linear-gradient(135deg, #0066cc 0%, #004499 100%); color: #fff; padding: 12px; text-align: center; border: 1px solid #004499; }',
                         'table td { padding: 10px; text-align: center; border: 1px solid #ddd; }',
                         'table tr:nth-child(even) { background: #f9f9f9; }',
-                        '.summary-box { margin-top: 30px; padding: 20px; background: #f0f0f0; border: 2px solid #333; }',
+                        '.summary-box { margin-top: 30px; padding: 20px; background: #f0f0f0; border: 2px solid #0066cc; border-radius: 5px; }',
                         '.summary-row { display: flex; justify-content: space-between; padding: 8px 0; font-size: 16px; }',
-                        '.summary-row.total { font-weight: bold; font-size: 18px; border-top: 2px solid #333; padding-top: 15px; margin-top: 10px; }',
+                        '.summary-row.total { font-weight: bold; font-size: 18px; border-top: 2px solid #0066cc; padding-top: 15px; margin-top: 10px; }',
                         '.print-footer { margin-top: 40px; text-align: center; font-size: 12px; color: #666; border-top: 1px solid #ddd; padding-top: 20px; }',
-                        '@media print { body { padding: 0; } .no-print { display: none; } table { page-break-inside: auto; } tr { page-break-inside: avoid; page-break-after: auto; } }',
+                        '@media print { body { padding: 0; } .no-print { display: none; } table { page-break-inside: auto; } tr { page-break-inside: avoid; page-break-after: auto; } .company-banner { page-break-inside: avoid; } }',
                         '.print-button { text-align: center; margin: 20px 0; }',
-                        '.print-button button { padding: 12px 30px; font-size: 16px; background: #007bff; color: white; border: none; border-radius: 5px; cursor: pointer; }',
-                        '.print-button button:hover { background: #0056b3; }',
+                        '.print-button button { padding: 12px 30px; font-size: 16px; background: #0066cc; color: white; border: none; border-radius: 5px; cursor: pointer; }',
+                        '.print-button button:hover { background: #004499; }',
                         '</style>',
                         '</head>',
                         '<body>',
-                        '<div class="print-header">',
-                        '<div class="company-name">شرکت تولیدی مزار فوم</div>',
+                        '<div class="company-banner">',
+                        '<div class="company-text-section">',
+                        '<div class="company-name-main">' + companyInfo.company_name + '</div>',
+                        companyInfo.description ? '<div class="company-tagline">' + companyInfo.description + '</div>' : '',
+                        '<div class="company-contact-info">',
+                        companyInfo.location ? '<p><strong>آدرس:</strong> ' + companyInfo.location + '</p>' : '',
+                        companyInfo.contact ? '<p><strong>شماره تماس:</strong> ' + companyInfo.contact + '</p>' : '',
+                        companyInfo.email ? '<p><strong>ایمیل:</strong> ' + companyInfo.email + '</p>' : '',
+                        '</div>',
+                        '</div>',
+                        '<div class="company-logo-section">',
+                        '<img src="' + companyInfo.logo + '" alt="Logo" class="company-logo" onerror="this.style.display=\'none\'">',
+                        '</div>',
+                        '</div>',
+                        '<div class="bill-title-section">',
                         '<h1>بل فروش</h1>',
-                        '<p style="font-size: 14px; color: #666;">تاریخ چاپ: ' + new Date().toLocaleDateString('fa-IR') + '</p>',
+                        '<div class="print-date">تاریخ چاپ: ' + new Date().toLocaleDateString('fa-IR') + '</div>',
                         '</div>',
                         '<div class="bill-info">',
                         '<div class="bill-info-item"><strong>شماره بل:</strong> #' + billData.bill_no + '</div>',
-                        '<div class="bill-info-item"><strong>نام شرکت:</strong> ' + billData.company_name + '</div>',
-                        '<div class="bill-info-item"><strong>شماره تماس:</strong> ' + billData.contact + '</div>',
+                        '<div class="bill-info-item"><strong>نام شرکت خریدار:</strong> ' + billData.company_name + '</div>',
+                        '<div class="bill-info-item"><strong>شماره تماس خریدار:</strong> ' + billData.contact + '</div>',
                         '<div class="bill-info-item"><strong>تاریخ:</strong> ' + billData.date + '</div>',
                         '<div class="bill-info-item"><strong>واحد پولی:</strong> ' + billData.currency + '</div>',
                         '<div class="bill-info-item"><strong>نرخ تبدیل:</strong> ' + billData.ex_rate + '</div>',
@@ -1299,6 +1367,7 @@
                             $('#item_type').val(parsed.item_type);
                             $('#quantity').val(parsed.quantity);
                             $('#price').val(parsed.price);
+                            // Thickness is already converted to cm by the backend, so display as-is
                             $('#thickness').val(parsed.thickness || 0);
                             $('#basicModal').modal('show');
                         } catch (e) {
