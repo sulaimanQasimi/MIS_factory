@@ -1446,7 +1446,7 @@ ALTER TABLE `users`
 -- Constraints for table `bill_details`
 --
 ALTER TABLE `bill_details`
-  ADD CONSTRAINT `bill_details_ibfk_1` FOREIGN KEY (`bill_id`) REFERENCES `froshat_details` (`id`);
+  ADD CONSTRAINT `bill_details_ibfk_1` FOREIGN KEY (`bill_id`) REFERENCES `froshat_details` (`id`) ON DELETE CASCADE;
 
 --
 -- Constraints for table `bill_items`
@@ -1525,13 +1525,13 @@ ALTER TABLE `partner_taken_amount`
 -- Constraints for table `return_bill`
 --
 ALTER TABLE `return_bill`
-  ADD CONSTRAINT `return_bill_ibfk_1` FOREIGN KEY (`bill_id`) REFERENCES `froshat_details` (`id`);
+  ADD CONSTRAINT `return_bill_ibfk_1` FOREIGN KEY (`bill_id`) REFERENCES `froshat_details` (`id`) ON DELETE CASCADE;
 
 --
 -- Constraints for table `sales_payments`
 --
 ALTER TABLE `sales_payments`
-  ADD CONSTRAINT `sales_payments_ibfk_1` FOREIGN KEY (`sales_id`) REFERENCES `froshat_details` (`id`);
+  ADD CONSTRAINT `sales_payments_ibfk_1` FOREIGN KEY (`sales_id`) REFERENCES `froshat_details` (`id`) ON DELETE CASCADE;
 
 --
 -- Constraints for table `stack_bill_detail`
