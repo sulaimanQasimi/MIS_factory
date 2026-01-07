@@ -837,6 +837,7 @@
                  * Delete bill
                  */
                 deleteBill: function(billId) {
+                   console.log(billId);
                     if (!confirm('⚠️ آیا از حذف این بل مطمئن هستید؟')) {
                         return;
                     }
@@ -851,7 +852,7 @@
                         dataType: 'json',
                         success: function(data) {
                             Utils.hideLoading(loading);
-                            Utils.showSuccess(data);
+                            Utils.showSuccess(data.message || data);
                             window.location.reload();
                         },
                         error: function(error) {
