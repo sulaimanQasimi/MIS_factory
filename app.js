@@ -1211,8 +1211,8 @@ app.post("/froshat_details", function (req, res) {
                               // Get the bill_detail_id from the insert
                               var bill_detail_id = results1.insertId;
 
-                              // Get stack_to_market_list_id if available
-                              var stack_to_market_list_id =
+                              // Get stack_factory_registration_id if available
+                              var stack_factory_registration_id =
                                 stak_to_market_id_array[i] &&
                                 stak_to_market_id_array[i] !== "undefined" &&
                                 stak_to_market_id_array[i] !== ""
@@ -1227,15 +1227,15 @@ app.post("/froshat_details", function (req, res) {
                                   : 0;
 
                               // Then insert into bill_items
-                              var stack_to_market_list_id_value =
-                                stack_to_market_list_id
-                                  ? "'" + stack_to_market_list_id + "'"
+                              var stack_factory_registration_id_value =
+                                stack_factory_registration_id
+                                  ? "'" + stack_factory_registration_id + "'"
                                   : "NULL";
                               con.query(
-                                "insert into bill_items(bill_detail_id,stack_to_market_list_id,item_name,item_type,quantity,price,thickness) values('" +
+                                "insert into bill_items(bill_detail_id,stack_factory_registration_id,item_name,item_type,quantity,price,thickness) values('" +
                                   bill_detail_id +
                                   "'," +
-                                  stack_to_market_list_id_value +
+                                  stack_factory_registration_id_value +
                                   ",'" +
                                   items_array[i] +
                                   "','" +
@@ -1264,7 +1264,7 @@ app.post("/froshat_details", function (req, res) {
                           );
 
                           con.query(
-                            "select * from stack_to_market_lists where id = '" +
+                            "select * from stack_factory_registration_list where id = '" +
                               stak_to_market_id_array[i] +
                               "'",
                             function (error, results2, fields) {
@@ -1291,14 +1291,14 @@ app.post("/froshat_details", function (req, res) {
                               update_quantity = db_quantity - quantity_array[i];
 
                               con.query(
-                                "update stack_to_market_lists set quantity = '" +
+                                "update stack_factory_registration_list set quantity = '" +
                                   update_quantity +
                                   "' where id='" +
                                   stak_to_market_id_array[i] +
                                   "'",
                                 function (error, results3, fields) {
                                   console.log(
-                                    "update stack_to_market_lists set quantity = '" +
+                                    "update stack_factory_registration_list set quantity = '" +
                                       update_quantity +
                                       "' where id='" +
                                       stak_to_market_id_array[i] +
@@ -4914,12 +4914,15 @@ app.post("/update_bills_01", function (req, res) {
   // db = 3 , web =4
 
   con.query(
-    "select * from stack_to_market_lists where item_name ='" +
+    "select * from stack_factory_registration_list where item_name ='" +
       item_name +
       "' and item_type='" +
       item_type +
       "' ",
     function (err, rows_08) {
+      if (err || !rows_08 || rows_08.length === 0) {
+        return res.status(500).send("آیتم در انبار یافت نشد!");
+      }
       var stk_qunt = rows_08[0].quantity;
       // Query bill_items instead of bill_details
       con.query(
@@ -4951,7 +4954,7 @@ app.post("/update_bills_01", function (req, res) {
                             var sta_update_quan = stk_qunt +update_qun;*/
 
           con.query(
-            "update stack_to_market_lists set quantity = '" +
+            "update stack_factory_registration_list set quantity = '" +
               sta_update_quan +
               "' where item_name ='" +
               item_name +
@@ -5094,7 +5097,7 @@ app.post("/update_stack_bills_01", function (req, res) {
                       "' ",
                     function (err, rows_02) {
                       con.query(
-                        "update  stack_to_market_lists set quantity ='" +
+                        "update  stack_factory_registration_list set quantity ='" +
                           sta_update_quan_01 +
                           "'  where item_name ='" +
                           item_name +
@@ -5390,7 +5393,7 @@ app.post("/add_payment_delete_004", function (req, res) {
       var fro_id = rows_01[0].bill_id;
 
       con.query(
-        "select * from stack_to_market where item_name = '" +
+        "select * from stack_factory_registration_list where item_name = '" +
           item_name +
           "' and item_type='" +
           item_type +
@@ -5405,7 +5408,7 @@ app.post("/add_payment_delete_004", function (req, res) {
             parseFloat(stak_qun) + parseFloat(bill_qunatity);
 
           con.query(
-            "update stack_to_market set quantity='" +
+            "update stack_factory_registration_list set quantity='" +
               update_stck_quna +
               "' where item_name = '" +
               item_name +
@@ -5414,7 +5417,7 @@ app.post("/add_payment_delete_004", function (req, res) {
               "'",
             function (err4, rows_09) {
               console.log(
-                "update stack_to_market set quantity='" +
+                "update stack_factory_registration_list set quantity='" +
                   update_stck_quna +
                   "' where item_name = '" +
                   item_name +
@@ -5530,19 +5533,22 @@ app.post("/delete_stack_bill", function (req, res) {
       var bill_qunatity = rows_01[0].quantity;
 
       con.query(
-        "select * from stack_to_market_lists where item_name = '" +
+        "select * from stack_factory_registration_list where item_name = '" +
           item_name +
           "' and item_type='" +
           item_type +
           "'",
         function (err4, rows_08) {
+          if (err4 || !rows_08 || rows_08.length === 0) {
+            return res.status(500).send("جنس در موجودی یافت نشد!");
+          }
           var stak_qun = rows_08[0].quantity;
           var update_stck_quna =
             parseFloat(stak_qun) - parseFloat(bill_qunatity);
           //var update_stck_quna = parseFloat(stak_qun )+parseFloat(bill_qunatity);
 
           con.query(
-            "update stack_to_market_lists set quantity='" +
+            "update stack_factory_registration_list set quantity='" +
               update_stck_quna +
               "' where item_name = '" +
               item_name +
@@ -5758,13 +5764,26 @@ app.post("/iloan_payment_edit1", function (req, res) {
 /* ending </add payment> */
 app.post("/forsh_items", function (req, res) {
   var my_id = req.query.param;
+  // Search by item_name (more intuitive than searching by price)
+  // Also handle case where user might type "item_name -- price" format from datalist
+  var searchTerm = my_id.split(' --')[0].trim(); // Extract item name if format includes price
+  
   con.query(
-    "select * from stack_to_market_lists where sell_price = '" + my_id + "'",
+    "select * from stack_factory_registration_list where item_name = ? LIMIT 1",
+    [searchTerm],
     function (err, rows_02) {
+      if (err) {
+        console.error("Error in forsh_items:", err);
+        return res.status(500).json({ error: "خطا در جستجو" });
+      }
       console.log(
-        "select * from stack_to_market_lists where sell_price = '" + my_id + "'"
+        "select * from stack_factory_registration_list where item_name = '" + searchTerm + "'"
       );
-      res.send(rows_02);
+      if (rows_02 && rows_02.length > 0) {
+        res.json(rows_02[0]);
+      } else {
+        res.status(404).json({ error: "آیتم یافت نشد" });
+      }
     }
   );
 });
@@ -6527,12 +6546,14 @@ app.get("/fro.ejs", function (req, res) {
       console.log(err);
       return res.send("Error loading company info");
     }
-    /* select * from stack_to_market group by item_name , item_type */
-    con.query("select * from stack_to_market_lists  ", function (err, rows_03) {
+    /* select * from stack_factory_registration_list group by item_name , item_type */
+    // Load all items from stack_factory_registration_list for the dropdown
+    con.query("select * from stack_factory_registration_list ORDER BY item_name, item_type", function (err, rows_03) {
       if (err) {
-        console.log(err);
-        return res.send("Error loading stack to market lists");
+        console.error("Error loading stack_factory_registration_list:", err);
+        return res.send("Error loading stack factory registration list: " + err.message);
       }
+      console.log("Loaded " + (rows_03 ? rows_03.length : 0) + " items from stack_factory_registration_list");
       con.query(
         "SELECT MAX(id) as new_bill FROM froshat_details",
         function (err, rows_04) {

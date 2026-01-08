@@ -64,7 +64,7 @@ INSERT INTO `bill_details` (`id`, `bill_id`, `item_name`, `item_type`, `quantity
 CREATE TABLE `bill_items` (
   `id` int(11) NOT NULL,
   `bill_detail_id` int(11) NOT NULL,
-  `stack_to_market_list_id` int(11) DEFAULT NULL,
+  `stack_factory_registration_id` int(11) DEFAULT NULL,
   `item_name` varchar(50) COLLATE utf8mb4_persian_ci NOT NULL,
   `item_type` varchar(20) COLLATE utf8mb4_persian_ci NOT NULL,
   `quantity` float NOT NULL,
@@ -982,7 +982,7 @@ ALTER TABLE `bill_details`
 ALTER TABLE `bill_items`
   ADD PRIMARY KEY (`id`),
   ADD KEY `bill_detail_id` (`bill_detail_id`),
-  ADD KEY `stack_to_market_list_id` (`stack_to_market_list_id`);
+  ADD KEY `stack_factory_registration_id` (`stack_factory_registration_id`);
 
 --
 -- Indexes for table `company_info`
@@ -1453,7 +1453,7 @@ ALTER TABLE `bill_details`
 --
 ALTER TABLE `bill_items`
   ADD CONSTRAINT `bill_items_ibfk_1` FOREIGN KEY (`bill_detail_id`) REFERENCES `bill_details` (`id`) ON DELETE CASCADE,
-  ADD CONSTRAINT `bill_items_ibfk_2` FOREIGN KEY (`stack_to_market_list_id`) REFERENCES `stack_to_market_lists` (`id`) ON DELETE SET NULL ON UPDATE CASCADE;
+  ADD CONSTRAINT `bill_items_ibfk_2` FOREIGN KEY (`stack_factory_registration_id`) REFERENCES `stack_factory_registration_list` (`id`) ON DELETE SET NULL ON UPDATE CASCADE;
 
 --
 -- Constraints for table `constant`
@@ -1561,53 +1561,49 @@ ALTER TABLE `taken_amount`
 DELIMITER $$
 
 --
--- Trigger to update remaining in stack_to_market_lists after bill_items insert/update/delete
+-- Trigger to update quantity in stack_factory_registration_list after bill_items insert/update/delete
 --
-CREATE TRIGGER `update_remaining_after_bill_items_insert` AFTER INSERT ON `bill_items`
+CREATE TRIGGER `update_quantity_after_bill_items_insert` AFTER INSERT ON `bill_items`
 FOR EACH ROW
 BEGIN
-  IF NEW.stack_to_market_list_id IS NOT NULL THEN
-    UPDATE `stack_to_market_lists` stml
-    SET stml.remaining = (
-      stml.quantity - 
-      COALESCE((SELECT SUM(quantity) FROM `bill_items` WHERE stack_to_market_list_id = stml.id), 0)
+  IF NEW.stack_factory_registration_id IS NOT NULL THEN
+    UPDATE `stack_factory_registration_list` sfr
+    SET sfr.quantity = (
+      sfr.quantity - NEW.quantity
     )
-    WHERE stml.id = NEW.stack_to_market_list_id;
+    WHERE sfr.id = NEW.stack_factory_registration_id;
   END IF;
 END$$
 
-CREATE TRIGGER `update_remaining_after_bill_items_update` AFTER UPDATE ON `bill_items`
+CREATE TRIGGER `update_quantity_after_bill_items_update` AFTER UPDATE ON `bill_items`
 FOR EACH ROW
 BEGIN
-  IF NEW.stack_to_market_list_id IS NOT NULL THEN
-    UPDATE `stack_to_market_lists` stml
-    SET stml.remaining = (
-      stml.quantity - 
-      COALESCE((SELECT SUM(quantity) FROM `bill_items` WHERE stack_to_market_list_id = stml.id), 0)
+  IF NEW.stack_factory_registration_id IS NOT NULL THEN
+    UPDATE `stack_factory_registration_list` sfr
+    SET sfr.quantity = (
+      sfr.quantity - (NEW.quantity - COALESCE(OLD.quantity, 0))
     )
-    WHERE stml.id = NEW.stack_to_market_list_id;
+    WHERE sfr.id = NEW.stack_factory_registration_id;
   END IF;
   
-  IF OLD.stack_to_market_list_id IS NOT NULL AND OLD.stack_to_market_list_id != NEW.stack_to_market_list_id THEN
-    UPDATE `stack_to_market_lists` stml
-    SET stml.remaining = (
-      stml.quantity - 
-      COALESCE((SELECT SUM(quantity) FROM `bill_items` WHERE stack_to_market_list_id = stml.id), 0)
+  IF OLD.stack_factory_registration_id IS NOT NULL AND OLD.stack_factory_registration_id != NEW.stack_factory_registration_id THEN
+    UPDATE `stack_factory_registration_list` sfr
+    SET sfr.quantity = (
+      sfr.quantity + COALESCE(OLD.quantity, 0)
     )
-    WHERE stml.id = OLD.stack_to_market_list_id;
+    WHERE sfr.id = OLD.stack_factory_registration_id;
   END IF;
 END$$
 
-CREATE TRIGGER `update_remaining_after_bill_items_delete` AFTER DELETE ON `bill_items`
+CREATE TRIGGER `update_quantity_after_bill_items_delete` AFTER DELETE ON `bill_items`
 FOR EACH ROW
 BEGIN
-  IF OLD.stack_to_market_list_id IS NOT NULL THEN
-    UPDATE `stack_to_market_lists` stml
-    SET stml.remaining = (
-      stml.quantity - 
-      COALESCE((SELECT SUM(quantity) FROM `bill_items` WHERE stack_to_market_list_id = stml.id), 0)
+  IF OLD.stack_factory_registration_id IS NOT NULL THEN
+    UPDATE `stack_factory_registration_list` sfr
+    SET sfr.quantity = (
+      sfr.quantity + OLD.quantity
     )
-    WHERE stml.id = OLD.stack_to_market_list_id;
+    WHERE sfr.id = OLD.stack_factory_registration_id;
   END IF;
 END$$
 

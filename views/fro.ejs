@@ -129,9 +129,13 @@
                 </div>
             </div>
             <datalist id="search_list">
-                <% data_03.forEach(function(item_reg) {  %>
-                    <option value="<%= item_reg.sell_price %>"><%= item_reg.item_name %> --<%= item_reg.sell_price %> </option>
+                <% if (data_03 && data_03.length > 0) { %>
+                    <% data_03.forEach(function(item_reg) {  %>
+                        <option value="<%= item_reg.item_name %>"><%= item_reg.item_name %> -- <%= item_reg.sell_price || item_reg.fixed_price || 0 %> (<%= item_reg.item_type %>) -- موجودی: <%= item_reg.quantity || 0 %></option>
                     <% }); %>
+                <% } else { %>
+                    <option value="">هیچ آیتمی موجود نیست</option>
+                <% } %>
             </datalist>
             <div class="row">
                 <form class="col-sm-12 mt-5" action="" class="needs-validation" enctype="multipart/form-data" id="data_for_invoice" autocomplete="off">
@@ -322,9 +326,22 @@ $('#data_man').datepicker({
   </script>
   <script>
       var count = 1;
-      $("#myinput").on("search",function(){
-          var search_input = $("#myinput").val();
-         
+      var lastSearchValue = '';
+      
+      // Handle both search event and input change (when user selects from datalist)
+      $("#myinput").on("search input",function(){
+          var search_input = $("#myinput").val().trim();
+          
+          // Skip if empty or same as last search
+          if (!search_input || search_input === lastSearchValue) {
+              return;
+          }
+          
+          lastSearchValue = search_input;
+          
+          // Extract item name if format includes " -- price"
+          var itemName = search_input.split(' --')[0].trim();
+          
           var data ={};
 
                 $.ajax({
@@ -332,14 +349,30 @@ $('#data_man').datepicker({
                     data: JSON.stringify(data),
                     contentType: "application/json",
                     dataType:'json',
-                    url: '/forsh_items?param='+search_input,                      
+                    url: '/forsh_items?param='+encodeURIComponent(itemName),                      
                     success: function(data) {
-                
-                        var js_arr = JSON.stringify(data);
-                        var str_array = js_arr.split(',');
-
-                        var newStr = js_arr.substring(1, js_arr.length-1);
-                        var parsedJSON = JSON.parse(newStr);
+                        // Handle single object response
+                        var parsedJSON;
+                        if (typeof data === 'string') {
+                            try {
+                                parsedJSON = JSON.parse(data);
+                            } catch(e) {
+                                // If it's already parsed or in array format
+                                var js_arr = JSON.stringify(data);
+                                var newStr = js_arr.substring(1, js_arr.length-1);
+                                parsedJSON = JSON.parse(newStr);
+                            }
+                        } else if (Array.isArray(data) && data.length > 0) {
+                            parsedJSON = data[0];
+                        } else {
+                            parsedJSON = data;
+                        }
+                        
+                        if (!parsedJSON || !parsedJSON.id) {
+                            alert("آیتم یافت نشد!");
+                            return;
+                        }
+                        
                         var st_id = parsedJSON.id;
                     //alert(st_id);
                    //$("#stak_to_market_id").val(st_id);
@@ -348,7 +381,7 @@ $('#data_man').datepicker({
                     var quantity= 1;
                     
                     var buy_type = parsedJSON.item_type;
-                    var price = parsedJSON.fixed_price;
+                    var price = parsedJSON.sell_price || parsedJSON.fixed_price;
                     
                     var total = price * quantity ;
                     //alert(total);
@@ -385,6 +418,7 @@ $('#data_man').datepicker({
                     count++;
 
                     $("#myinput").val("");
+                    lastSearchValue = '';
 
                     // $("#item").val(name);
                     // $("#emp_fname").val(last_name);
