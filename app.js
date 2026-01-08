@@ -7274,6 +7274,63 @@ app.post("/add_expense1", function (req, res) {
   );
 });
 
+// Route to get bill items for froshat_view.ejs
+app.get("/sending_details", function (req, res) {
+  var bill_id = req.query.param;
+  
+  if (!bill_id) {
+    return res.send('<tr><td colspan="8" style="text-align:center; color:red; padding: 20px;">خطا: شماره بل مشخص نشده است</td></tr>');
+  }
+
+  // Query bill_items joined with bill_details to get items for this bill
+  con.query(
+    "SELECT bill_items.*, bill_details.bill_id FROM bill_items " +
+    "INNER JOIN bill_details ON bill_items.bill_detail_id = bill_details.id " +
+    "WHERE bill_details.bill_id = '" + bill_id + "' " +
+    "ORDER BY bill_items.id",
+    function (err, rows) {
+      if (err) {
+        console.error("Error loading bill items:", err);
+        return res.send('<tr><td colspan="8" style="text-align:center; color:red; padding: 20px;">خطا در بارگذاری آیتم ها: ' + err.message + '</td></tr>');
+      }
+
+      if (!rows || rows.length === 0) {
+        return res.send('<tr><td colspan="8" style="text-align:center; color:gray; padding: 20px;">هیچ آیتمی ثبت نشده است</td></tr>');
+      }
+
+      var table_data = "";
+      var no = 1;
+      
+      rows.forEach(function(row) {
+        // Convert thickness from meters to cm for display
+        var thicknessCm = row.thickness ? (parseFloat(row.thickness) * 100).toFixed(2) : '0.00';
+        var total = (parseFloat(row.quantity || 0) * parseFloat(row.price || 0)).toFixed(2);
+        
+        table_data += "<tr>";
+        table_data += "<td>" + no + "</td>";
+        table_data += "<td>" + (row.item_name || '') + "</td>";
+        table_data += "<td>" + (row.item_type || '') + "</td>";
+        table_data += "<td>" + (row.quantity || 0) + "</td>";
+        table_data += "<td>" + (row.price || 0) + "</td>";
+        table_data += "<td>" + thicknessCm + " cm</td>";
+        table_data += "<td>" + total + "</td>";
+        table_data += "<td class='print'>";
+        table_data += "<button onclick='cat_delet1(" + row.id + ")' class='btn btn-sm btn-danger' style='margin: 2px;' title='حذف'>";
+        table_data += "<img width='15px' src='assets/img/last-project/delete.svg' alt='حذف'>";
+        table_data += "</button>";
+        table_data += "<button onclick='cat_edit(" + row.id + ")' class='btn btn-sm btn-warning' data-toggle='modal' data-target='#basicModal' style='margin: 2px;' title='ویرایش'>";
+        table_data += "<img width='15px' src='assets/img/last-project/edit.svg' alt='ویرایش'>";
+        table_data += "</button>";
+        table_data += "</td>";
+        table_data += "</tr>";
+        no++;
+      });
+      
+      res.send(table_data);
+    }
+  );
+});
+
 app.post("/show_all_data", function (req, res) {
   con.query("select * from expense_category", function (err, rows_04) {
     if (err) {
