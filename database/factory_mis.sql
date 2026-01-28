@@ -11,7 +11,7 @@
  Target Server Version : 80041 (8.0.41)
  File Encoding         : 65001
 
- Date: 28/01/2026 08:48:32
+ Date: 28/01/2026 09:14:22
 */
 
 SET NAMES utf8mb4;
@@ -32,7 +32,7 @@ CREATE TABLE `bill_details`  (
   INDEX `bill_id`(`bill_id` ASC) USING BTREE,
   INDEX `item_id`(`item_name` ASC) USING BTREE,
   CONSTRAINT `bill_details_ibfk_1` FOREIGN KEY (`bill_id`) REFERENCES `froshat_details` (`id`) ON DELETE CASCADE ON UPDATE RESTRICT
-) ENGINE = InnoDB AUTO_INCREMENT = 10 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_persian_ci ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 12 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_persian_ci ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Table structure for bill_items
@@ -51,7 +51,7 @@ CREATE TABLE `bill_items`  (
   INDEX `bill_detail_id`(`bill_detail_id` ASC) USING BTREE,
   INDEX `stack_factory_registration_id`(`stack_factory_registration_id` ASC) USING BTREE,
   CONSTRAINT `bill_items_ibfk_2` FOREIGN KEY (`stack_factory_registration_id`) REFERENCES `stack_factory_registration_list` (`id`) ON DELETE SET NULL ON UPDATE CASCADE
-) ENGINE = InnoDB AUTO_INCREMENT = 2 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_persian_ci ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 6 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_persian_ci ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Table structure for bill_payment
@@ -68,7 +68,7 @@ CREATE TABLE `bill_payment`  (
   PRIMARY KEY (`id`) USING BTREE,
   INDEX `froshat_details_id`(`froshat_details_id` ASC) USING BTREE,
   CONSTRAINT `bill_payment_ibfk_1` FOREIGN KEY (`froshat_details_id`) REFERENCES `froshat_details` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE = InnoDB AUTO_INCREMENT = 2 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_persian_ci ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 4 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_persian_ci ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Table structure for company_info
@@ -182,7 +182,7 @@ CREATE TABLE `froshat_details`  (
   PRIMARY KEY (`id`) USING BTREE,
   INDEX `cus_id`(`cus_id` ASC) USING BTREE,
   CONSTRAINT `froshat_details_ibfk_1` FOREIGN KEY (`cus_id`) REFERENCES `customer_account` (`id`) ON DELETE RESTRICT ON UPDATE RESTRICT
-) ENGINE = InnoDB AUTO_INCREMENT = 10 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_persian_ci ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 12 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_persian_ci ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Table structure for goods_registration
@@ -468,7 +468,7 @@ CREATE TABLE `sales_payments`  (
   PRIMARY KEY (`id`) USING BTREE,
   INDEX `sales_id`(`sales_id` ASC) USING BTREE,
   CONSTRAINT `sales_payments_ibfk_1` FOREIGN KEY (`sales_id`) REFERENCES `froshat_details` (`id`) ON DELETE CASCADE ON UPDATE RESTRICT
-) ENGINE = InnoDB AUTO_INCREMENT = 20 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_persian_ci ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 22 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_persian_ci ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Table structure for set_price
@@ -732,8 +732,10 @@ delimiter ;;
 CREATE TRIGGER `update_quantity_after_bill_items_insert` AFTER INSERT ON `bill_items` FOR EACH ROW BEGIN
   IF NEW.stack_factory_registration_id IS NOT NULL THEN
     UPDATE `stack_factory_registration_list` sfr
-    SET sfr.quantity = sfr.quantity - (NEW.quantity * NEW.thickness)
-    WHERE sfr.id = NEW.stack_factory_registration_id;
+    SET sfr.quantity = ROUND(sfr.quantity - (NEW.quantity * NEW.thickness), 4)
+    WHERE sfr.id = NEW.stack_factory_registration_id
+    -- Optional: Prevent inventory from dropping below zero
+    AND sfr.quantity >= (NEW.quantity * NEW.thickness); 
   END IF;
 END
 ;;
@@ -747,7 +749,7 @@ delimiter ;;
 CREATE TRIGGER `update_quantity_after_bill_items_delete` AFTER DELETE ON `bill_items` FOR EACH ROW BEGIN
   IF OLD.stack_factory_registration_id IS NOT NULL THEN
     UPDATE `stack_factory_registration_list` sfr
-    SET sfr.quantity = sfr.quantity + (OLD.quantity * OLD.thickness)
+    SET sfr.quantity = ROUND(sfr.quantity + (OLD.quantity * OLD.thickness), 4)
     WHERE sfr.id = OLD.stack_factory_registration_id;
   END IF;
 END

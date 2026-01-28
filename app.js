@@ -5809,37 +5809,49 @@ app.post("/stock_to_market_bill", function (req, res) {
 app.post("/get_stack_to_market_list", function (req, res) {
   var my_id = req.query.param;
   con.query(
-    "SELECT * FROM stack_to_market_lists WHERE id = '" + my_id + "' ",
+    "SELECT * FROM stack_factory_registration_list WHERE id = '" + my_id + "' ",
     function (err, rows_02) {
       if (err) {
         console.log(err);
-        return res.send("Error loading stack to market list");
+        return res.send("Error loading stack factory registration list");
       }
       res.send(rows_02);
     }
   );
 });
 
-// Add new stack_to_market_list
+// Add new stack_factory_registration_list
 app.post("/add_stack_to_market_list", function (req, res) {
   var item_name = req.body.item_name;
   var item_type = req.body.item_type;
   var fixed_price = req.body.fixed_price || 0;
   var sell_price = req.body.sell_price || 0;
   var quantity = req.body.quantity || 0;
+  var currency = req.body.currency || 'افغانی';
+  var ex_rate = req.body.ex_rate || 1;
+  var serial_number = req.body.serial_number || 0;
+  var date = req.body.date || new Date().toISOString().split('T')[0];
 
   con.query(
-    "INSERT INTO stack_to_market_lists (item_name, item_type, fixed_price, sell_price, quantity, remaining) VALUES ('" +
+    "INSERT INTO stack_factory_registration_list (item_name, item_type, quantity, fixed_price, sell_price, currency, ex_rate, serial_number, date) VALUES ('" +
       item_name +
       "', '" +
       item_type +
+      "', '" +
+      quantity +
       "', '" +
       fixed_price +
       "', '" +
       sell_price +
       "', '" +
-      quantity +
-      "', 0)",
+      currency +
+      "', '" +
+      ex_rate +
+      "', '" +
+      serial_number +
+      "', '" +
+      date +
+      "')",
     function (err, rows) {
       if (err) {
         console.log(err);
@@ -5857,7 +5869,7 @@ app.post("/add_stack_to_market_list", function (req, res) {
   );
 });
 
-// Update stack_to_market_list
+// Update stack_factory_registration_list
 app.post("/update_stack_to_market_list", function (req, res) {
   var edit_id = req.body.edit_id;
   var item_name = req.body.item_name;
@@ -5865,18 +5877,27 @@ app.post("/update_stack_to_market_list", function (req, res) {
   var fixed_price = req.body.fixed_price || 0;
   var sell_price = req.body.sell_price || 0;
   var quantity = req.body.quantity || 0;
+  var currency = req.body.currency || 'افغانی';
+  var ex_rate = req.body.ex_rate || 1;
+  var serial_number = req.body.serial_number || 0;
 
   con.query(
-    "UPDATE stack_to_market_lists SET item_name='" +
+    "UPDATE stack_factory_registration_list SET item_name='" +
       item_name +
       "', item_type='" +
       item_type +
+      "', quantity='" +
+      quantity +
       "', fixed_price='" +
       fixed_price +
       "', sell_price='" +
       sell_price +
-      "', quantity='" +
-      quantity +
+      "', currency='" +
+      currency +
+      "', ex_rate='" +
+      ex_rate +
+      "', serial_number='" +
+      serial_number +
       "' WHERE id='" +
       edit_id +
       "'",
@@ -5897,12 +5918,12 @@ app.post("/update_stack_to_market_list", function (req, res) {
   );
 });
 
-// Delete stack_to_market_list
+// Delete stack_factory_registration_list
 app.post("/delete_stack_to_market_list", function (req, res) {
   var my_id = req.query.param;
 
   con.query(
-    "DELETE FROM stack_to_market_lists WHERE id = '" + my_id + "'",
+    "DELETE FROM stack_factory_registration_list WHERE id = '" + my_id + "'",
     function (err, rows) {
       if (err) {
         console.log(err);
@@ -6548,12 +6569,12 @@ app.get("/fro.ejs", function (req, res) {
     }
     /* select * from stack_factory_registration_list group by item_name , item_type */
     // Load all items from stack_factory_registration_list for the dropdown
-    con.query("select * from stack_factory_registration_list ORDER BY item_name, item_type", function (err, rows_03) {
+    con.query("SELECT * FROM stack_factory_registration_list WHERE item_name IS NOT NULL AND item_name != '' ORDER BY item_name, item_type", function (err, rows_03) {
       if (err) {
         console.error("Error loading stack_factory_registration_list:", err);
         return res.send("Error loading stack factory registration list: " + err.message);
       }
-      console.log("Loaded " + (rows_03 ? rows_03.length : 0) + " items from stack_factory_registration_list");
+      console.log("Loaded " + (rows_03 ? rows_03.length : 0) + " items from stack_factory_registration_list (Total in table should match)");
       con.query(
         "SELECT MAX(id) as new_bill FROM froshat_details",
         function (err, rows_04) {
@@ -8548,11 +8569,11 @@ app.get("/tools-rge.ejs", function (req, res) {
 });
 app.get("/tool.ejs", function (req, res) {
   con.query(
-    "SELECT * FROM stack_to_market_lists ORDER BY id DESC",
+    "SELECT * FROM stack_factory_registration_list ORDER BY id DESC",
     function (err, rows) {
       if (err) {
         console.log(err);
-        return res.send("Error loading stack to market lists");
+        return res.send("Error loading stack factory registration list");
       }
       res.render("tool", { data: rows });
     }

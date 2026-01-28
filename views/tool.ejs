@@ -75,8 +75,26 @@
                 </div>
                 <div class="col-xs-12 col-sm-12 col-md-6 col-lg-3">
                   <div class="form-group">
-                    <label for="remaining">باقیمانده (فقط خواندنی):</label>
-                    <input type="number" step="0.01" id="remaining" name="remaining" readonly class="form-control" value="0">
+                    <label for="currency">واحد پولی:</label>
+                    <input type="text" id="currency" name="currency" class="form-control" value="افغانی">
+                  </div>
+                </div>
+                <div class="col-xs-12 col-sm-12 col-md-6 col-lg-3">
+                  <div class="form-group">
+                    <label for="ex_rate">نرخ تبدیل:</label>
+                    <input type="number" step="0.01" id="ex_rate" name="ex_rate" class="form-control" value="1">
+                  </div>
+                </div>
+                <div class="col-xs-12 col-sm-12 col-md-6 col-lg-3">
+                  <div class="form-group">
+                    <label for="serial_number">شماره سریال:</label>
+                    <input type="number" id="serial_number" name="serial_number" class="form-control" value="0">
+                  </div>
+                </div>
+                <div class="col-xs-12 col-sm-12 col-md-6 col-lg-3">
+                  <div class="form-group">
+                    <label for="date">تاریخ:</label>
+                    <input type="date" id="date" name="date" class="form-control" required>
                   </div>
                 </div>
                 <div class="col-xs-12 col-sm-12 col-md-6 col-lg-3">
@@ -109,7 +127,8 @@
                     <th>قیمت ثابت</th>
                     <th>قیمت فروش</th>
                     <th>تعداد</th>
-                    <th>باقیمانده</th>
+                    <th>واحد پولی</th>
+                    <th>تاریخ</th>
                     <th>عملیات</th>
                   </tr>
                 </thead>
@@ -123,7 +142,8 @@
                         <td><%= item.fixed_price %></td>
                         <td><%= item.sell_price %></td>
                         <td><%= item.quantity %></td>
-                        <td><%= item.remaining %></td>
+                        <td><%= item.currency || 'افغانی' %></td>
+                        <td><%= item.date %></td>
                         <td>
                           <button class="btn btn-sm btn-warning edit-btn" data-id="<%= item.id %>" title="ویرایش">
                             <i class="fa fa-edit"></i>
@@ -152,6 +172,11 @@
 <script src="assets/js/form-valiate.js"></script>
 <script>
   $(document).ready(function(){
+    // Set default date
+    if (!$('#date').val()) {
+      $('#date').val(new Date().toISOString().split('T')[0]);
+    }
+    
     // Initialize DataTable
     if ($.fn.DataTable) {
       $('#dataTable').DataTable({
@@ -223,7 +248,10 @@
           $('#fixed_price').val(item.fixed_price);
           $('#sell_price').val(item.sell_price);
           $('#quantity').val(item.quantity);
-          $('#remaining').val(item.remaining);
+          $('#currency').val(item.currency || 'افغانی');
+          $('#ex_rate').val(item.ex_rate || 1);
+          $('#serial_number').val(item.serial_number || 0);
+          $('#date').val(item.date);
           
           $('#form-title').text('ویرایش موجودی');
           $('#submit-btn').text('بروزرسانی');
@@ -264,7 +292,10 @@
   function resetForm() {
     $('#form1')[0].reset();
     $('#edit_id').val('');
-    $('#remaining').val('0');
+    $('#currency').val('افغانی');
+    $('#ex_rate').val('1');
+    $('#serial_number').val('0');
+    $('#date').val(new Date().toISOString().split('T')[0]);
     $('#form-title').text('ثبت موجودی جدید');
     $('#submit-btn').text('ذخیره');
     $('#cancel-btn').hide();
