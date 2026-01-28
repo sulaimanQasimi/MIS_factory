@@ -5,7 +5,7 @@ var con = mysql.createConnection({
     password: 'S11solai',
     host: 'localhost',
     dateStrings: true,
-    database: 'factory_mis',
+    database: 'f2',
     charset: 'utf8',
 });
 

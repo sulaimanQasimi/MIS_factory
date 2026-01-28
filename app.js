@@ -151,7 +151,7 @@ app.post("/system_backup", function (req, res) {
         host: "localhost",
         user: "root",
         password: "S11solai",
-        database: "factory_mis",
+        database: "f2",
       },
 
       dumpToFile: url_folder + "/" + backup_name + ".sql",
