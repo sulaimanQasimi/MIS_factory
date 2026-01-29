@@ -47,14 +47,14 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(
   bodyParser.json({
     limit: "50mb",
-  })
+  }),
 );
 
 app.use(
   bodyParser.urlencoded({
     limit: "50mb",
     extended: true,
-  })
+  }),
 );
 
 app.use(cors());
@@ -156,8 +156,8 @@ app.post("/system_backup", function (req, res) {
 
       dumpToFile: url_folder + "/" + backup_name + ".sql",
     });
-    backup_func(url_folder, "/" + backup_name + ".sql"),
-      res.send(" معلومات موفقانه بک آپ گرفته شد ");
+    (backup_func(url_folder, "/" + backup_name + ".sql"),
+      res.send(" معلومات موفقانه بک آپ گرفته شد "));
     //  dumpToFile:'F:\dump.sql'
     /* const cron = require('node-cron')
                             const moment = require('moment')
@@ -250,7 +250,7 @@ app.post("/check_login", function (req, res) {
       } else {
         res.send("fail");
       }
-    }
+    },
   );
 });
 //
@@ -286,9 +286,9 @@ app.get("/home", function (req, res) {
               /*  }else{
                                             res.send("مواد خام در گدام موجود نیست !");
                                         } */
-            }
+            },
           );
-        }
+        },
       );
     });
   } else {
@@ -386,10 +386,10 @@ app.get("/update_sales.ejs", function (req, res) {
                 data_04: rows_04,
                 data_05: rows_05,
               });
-            }
+            },
           );
         });
-      }
+      },
     );
   });
 });
@@ -458,15 +458,15 @@ app.get("/dashboard.ejs", function (req, res) {
                             outging_loan: results3[0].company_loan,
                           });
                         });
-                      }
+                      },
                     );
-                  }
+                  },
                 );
-              }
+              },
             );
-          }
+          },
         );
-      }
+      },
     );
   });
 });
@@ -560,10 +560,10 @@ app.get("/customer_view.ejs", function (req, res) {
           });
         } else {
           res.send(
-            "<h1 style='color:green; text-align:center;'>فروشات صورت نگرفته است !</h1>"
+            "<h1 style='color:green; text-align:center;'>فروشات صورت نگرفته است !</h1>",
           );
         }
-      }
+      },
     );
   });
 });
@@ -587,7 +587,7 @@ app.get("/stock_materials.ejs", function (req, res) {
     "SELECT item_name, item_type ,quantity FROM stack_factory_registration_list  ",
     function (err, rows_01) {
       res.render("stock_materials", { data: rows_01 });
-    }
+    },
   );
 });
 app.get("/received_bills.ejs", function (req, res) {
@@ -807,7 +807,7 @@ app.post("/stack_2_details", function (req, res) {
                               throw error;
                             });
                           }
-                        }
+                        },
                       );
 
                       con.query(
@@ -882,7 +882,7 @@ app.post("/stack_2_details", function (req, res) {
                                             "' and item_type='" +
                                             buy_type_array[i] +
                                             "'",
-                                          function (err, rows_007) {}
+                                          function (err, rows_007) {},
                                         );
                                       } else {
                                         con.query(
@@ -895,16 +895,16 @@ app.post("/stack_2_details", function (req, res) {
                                             "','" +
                                             quantity_array[i] +
                                             "')",
-                                          function (err, rows_08) {}
+                                          function (err, rows_08) {},
                                         );
                                       }
-                                    }
+                                    },
                                   );
-                                }
+                                },
                               );
-                            }
+                            },
                           );
-                        }
+                        },
                       );
                     }, i);
                   })(i);
@@ -920,10 +920,10 @@ app.post("/stack_2_details", function (req, res) {
 
                   // }
                 });
-              }
+              },
             );
           }
-        }
+        },
       ); //end of bill_no query
     } //end of else
   });
@@ -1013,7 +1013,7 @@ app.post("/froshat_details", function (req, res) {
       .filter((item) => item && item.trim() !== "");
   } else if (Array.isArray(stak_to_market_id_raw)) {
     stak_to_market_id = stak_to_market_id_raw.filter(
-      (item) => item && item.trim() !== ""
+      (item) => item && item.trim() !== "",
     );
   }
 
@@ -1172,11 +1172,11 @@ app.post("/froshat_details", function (req, res) {
                                 .status(500)
                                 .send(
                                   "خطا در ثبت پرداخت در bill_payment: " +
-                                    err2.message
+                                    err2.message,
                                 );
                             });
                           }
-                        }
+                        },
                       );
                     }
 
@@ -1203,7 +1203,7 @@ app.post("/froshat_details", function (req, res) {
                                   res
                                     .status(500)
                                     .send(
-                                      "خطا در ثبت جزئیات بل: " + error.message
+                                      "خطا در ثبت جزئیات بل: " + error.message,
                                     );
                                 });
                               }
@@ -1254,70 +1254,15 @@ app.post("/froshat_details", function (req, res) {
                                         .status(500)
                                         .send(
                                           "خطا در ثبت آیتم های بل: " +
-                                            error2.message
+                                            error2.message,
                                         );
                                     });
                                   }
-                                }
+                                },
                               );
-                            }
+                            },
                           );
-
-                          con.query(
-                            "select * from stack_factory_registration_list where id = '" +
-                              stak_to_market_id_array[i] +
-                              "'",
-                            function (error, results2, fields) {
-                              if (error) {
-                                return con.rollback(function () {
-                                  res
-                                    .status(500)
-                                    .send(
-                                      "خطا در بررسی موجودی: " + error.message
-                                    );
-                                });
-                              }
-                              if (!results2 || results2.length === 0) {
-                                return con.rollback(function () {
-                                  res
-                                    .status(400)
-                                    .send("جنس مورد نظر در موجودی یافت نشد!");
-                                });
-                              }
-
-                              console.log("web quantity" + quantity_array[i]);
-                              var db_quantity = results2[0].quantity;
-                              console.log("db quantity:" + db_quantity);
-                              update_quantity = db_quantity - quantity_array[i];
-
-                              con.query(
-                                "update stack_factory_registration_list set quantity = '" +
-                                  update_quantity +
-                                  "' where id='" +
-                                  stak_to_market_id_array[i] +
-                                  "'",
-                                function (error, results3, fields) {
-                                  console.log(
-                                    "update stack_factory_registration_list set quantity = '" +
-                                      update_quantity +
-                                      "' where id='" +
-                                      stak_to_market_id_array[i] +
-                                      "'"
-                                  );
-                                  if (error) {
-                                    return con.rollback(function () {
-                                      res
-                                        .status(500)
-                                        .send(
-                                          "خطا در بروزرسانی موجودی: " +
-                                            error.message
-                                        );
-                                    });
-                                  }
-                                }
-                              );
-                            }
-                          );
+                          // stack_factory_registration_list quantity updated by DB trigger (update_quantity_after_bill_items_insert)
                         }, i);
                       })(i);
                     } //end of loop
@@ -1337,12 +1282,12 @@ app.post("/froshat_details", function (req, res) {
                     }, 1000); // Wait 1 second for all setTimeout operations to complete
 
                     // }
-                  }
+                  },
                 ); // end of sales_payments query
-              }
+              },
             ); // end of INSERT query
           } //end of else (line 984)
-        }
+        },
       ); //end of bill_no query (line 972)
     } //end of else (line 969)
   }); // end of beginTransaction (line 965)
@@ -1457,14 +1402,14 @@ app.post("/update_froshat_details", function (req, res) {
                             quantity_array[i] +
                             "','" +
                             price_array[i] +
-                            "')"
+                            "')",
                         );
                         if (error) {
                           return con.rollback(function () {
                             throw error;
                           });
                         }
-                      }
+                      },
                     );
 
                     con.query(
@@ -1492,7 +1437,7 @@ app.post("/update_froshat_details", function (req, res) {
                             }
 
                             console.log(
-                              "st_tp_m quantity" + results6[0].quantity
+                              "st_tp_m quantity" + results6[0].quantity,
                             );
                             var db_quantity = results6[0].quantity;
                             update_quantity =
@@ -1514,11 +1459,11 @@ app.post("/update_froshat_details", function (req, res) {
                                     throw error;
                                   });
                                 }
-                              }
+                              },
                             );
-                          }
+                          },
                         );
-                      }
+                      },
                     );
                   }, i);
                 })(i);
@@ -1531,9 +1476,9 @@ app.post("/update_froshat_details", function (req, res) {
                   });
                 }
               });
-            }
+            },
           );
-        }
+        },
       );
     }
   });
@@ -1615,13 +1560,13 @@ app.post("/mahsole_processing", function (req, res) {
                       res.send("لیست مواد خام برای تولید محصول ذخیره شد");
                     }
                   }
-                }
+                },
               );
             })(i);
           }
-        }
+        },
       );
-    }
+    },
   );
 });
 
@@ -1714,19 +1659,19 @@ app.post("/baraword_mashol", function (req, res) {
                           } else {
                             console.log("no problems");
                           }
-                        }
+                        },
                       );
                     }, i);
                   })(i);
                 }
 
                 res.send("لیست مواد خام برای تولید محصول ذخیره شد");
-              }
+              },
             );
-          }
+          },
         );
       }
-    }
+    },
   );
 });
 /* baraword */
@@ -1805,18 +1750,18 @@ app.post("/after_producing", function (req, res) {
                         "' and item_type='" +
                         type_array[i] +
                         "'",
-                      function (err, rows_04) {}
+                      function (err, rows_04) {},
                     );
-                  }
+                  },
                 );
-              }
+              },
             );
           }, i);
         })(i);
       }
 
       res.send("success");
-    }
+    },
   );
 });
 /* after producing mahsole */
@@ -1888,7 +1833,7 @@ app.get("/cs-prof.ejs", function (req, res) {
     "SELECT customer_account.name,froshat_details.total_amount FROM customer_account INNER JOIN froshat_details ON customer_account.id = froshat_details.cus_id;",
     function (err, rows_02) {
       res.render("cs-prof", { data_02: rows_02 });
-    }
+    },
   );
 });
 
@@ -1914,14 +1859,14 @@ app.get("/cs-reg.ejs", function (req, res) {
               data_01: rows_01,
               total_cus: rows_02[0].total_customers,
             });
-          }
+          },
         );
       } else {
         res.send(
-          "<h1 style='color:green; text-align:center;'>!مشتری ثبت نشده است</h1>"
+          "<h1 style='color:green; text-align:center;'>!مشتری ثبت نشده است</h1>",
         );
       }
-    }
+    },
   );
 });
 
@@ -1965,12 +1910,12 @@ app.get("/dis-reg.ejs", function (req, res) {
             });
           } else {
             res.send(
-              "<h1 style='color:green; text-align:center;'>معضرت مصرف ثبت نشده !</h1>"
+              "<h1 style='color:green; text-align:center;'>معضرت مصرف ثبت نشده !</h1>",
             );
           }
-        }
+        },
       );
-    }
+    },
   );
 });
 
@@ -1982,7 +1927,7 @@ app.post("/get_all_types", function (req, res) {
     function (err, rows_02) {
       console.log("SELECT * FROM material_type where id = '" + my_id + "'");
       res.send(rows_02);
-    }
+    },
   );
 });
 
@@ -1993,10 +1938,10 @@ app.post("/get_all_types_2", function (req, res) {
     "SELECT * FROM ready_materials_type where id = '" + my_id + "'",
     function (err, rows_02) {
       console.log(
-        "SELECT * FROM ready_materials_type where name = '" + my_id + "'"
+        "SELECT * FROM ready_materials_type where name = '" + my_id + "'",
       );
       res.send(rows_02);
-    }
+    },
   );
 });
 
@@ -2007,10 +1952,10 @@ app.post("/get_all_types_02", function (req, res) {
     "SELECT * FROM stuff_registration where id = '" + my_id + "'",
     function (err, rows_02) {
       console.log(
-        "SELECT * FROM stuff_registration where id = '" + my_id + "'"
+        "SELECT * FROM stuff_registration where id = '" + my_id + "'",
       );
       res.send(rows_02);
-    }
+    },
   );
 });
 
@@ -2022,7 +1967,7 @@ app.post("/get_all_types_3", function (req, res) {
     function (err, rows_02) {
       console.log("SELECT * FROM customer_account where id = '" + my_id + "'");
       res.send(rows_02);
-    }
+    },
   );
 });
 
@@ -2041,7 +1986,7 @@ app.post("/get_stuff_salary", function (req, res) {
       "'",
     function (err, rows_02) {
       res.send(rows_02);
-    }
+    },
   );
 });
 
@@ -2080,10 +2025,10 @@ app.post("/updated_froshats", function (req, res) {
           m_date +
           "' WHERE id= '" +
           sales_id +
-          "'"
+          "'",
       );
       res.send("موفقانه ذخیره شد");
-    }
+    },
   );
 });
 ///////////////////starting <delete queries>////////////////////////
@@ -2095,7 +2040,7 @@ app.post("/expense_delete", function (req, res) {
     "delete from expenses WHERE id = '" + my_id + "'",
     function (err, rows_02) {
       res.send(rows_02);
-    }
+    },
   );
 });
 
@@ -2106,7 +2051,7 @@ app.post("/cate_delete", function (req, res) {
     "delete from expense_category WHERE id = '" + my_id + "'",
     function (err, rows_02) {
       res.send(rows_02);
-    }
+    },
   );
 });
 
@@ -2117,7 +2062,7 @@ app.post("/material_delete", function (req, res) {
     "delete from stack_raw_materials WHERE id = '" + my_id + "'",
     function (err, rows_02) {
       res.send(rows_02);
-    }
+    },
   );
 });
 
@@ -2161,15 +2106,15 @@ app.post("/raw_reg_delete", function (req, res) {
                       "'",
                     function (err, rows_005) {
                       res.send(rows_02);
-                    }
+                    },
                   );
-                }
+                },
               );
-            }
+            },
           );
-        }
+        },
       );
-    }
+    },
   );
 });
 
@@ -2180,7 +2125,7 @@ app.post("/delete_emp_reg", function (req, res) {
     "delete from stuff_registration WHERE id = '" + my_id + "'",
     function (err, rows_02) {
       res.send(rows_02);
-    }
+    },
   );
 });
 
@@ -2191,7 +2136,7 @@ app.post("/delete_emp_removal", function (req, res) {
     "delete from taken_amount WHERE id = '" + my_id + "'",
     function (err, rows_02) {
       res.send(rows_02);
-    }
+    },
   );
 });
 
@@ -2224,15 +2169,15 @@ app.post("/delete_stuff_paid", function (req, res) {
                     "delete from payable_amount WHERE id = '" + my_id + "'",
                     function (err, rows_04) {
                       res.send(rows_04);
-                    }
+                    },
                   );
-                }
+                },
               );
-            }
+            },
           );
-        }
+        },
       );
-    }
+    },
   );
 });
 
@@ -2243,7 +2188,7 @@ app.post("/delete_income_loans", function (req, res) {
     "delete from incoming_loan WHERE id = '" + my_id + "'",
     function (err, rows_02) {
       res.send(rows_02);
-    }
+    },
   );
 });
 
@@ -2254,7 +2199,7 @@ app.post("/delete_outcome_loans", function (req, res) {
     "delete from outgoing_loan WHERE id = '" + my_id + "'",
     function (err, rows_02) {
       res.send(rows_02);
-    }
+    },
   );
 });
 
@@ -2265,7 +2210,7 @@ app.post("/delete_machine_tols", function (req, res) {
     "delete from item_registration WHERE id = '" + my_id + "'",
     function (err, rows_02) {
       res.send(rows_02);
-    }
+    },
   );
 });
 
@@ -2276,7 +2221,7 @@ app.post("/delete_tols", function (req, res) {
     "delete from item_registration WHERE id = '" + my_id + "'",
     function (err, rows_02) {
       res.send(rows_02);
-    }
+    },
   );
 });
 
@@ -2287,7 +2232,7 @@ app.post("/delete_customers", function (req, res) {
     "delete from customer_account WHERE id = '" + my_id + "'",
     function (err, rows_02) {
       res.send(rows_02);
-    }
+    },
   );
 });
 
@@ -2298,7 +2243,7 @@ app.post("/delete_partners", function (req, res) {
     "delete from partner_registration WHERE id = '" + my_id + "'",
     function (err, rows_02) {
       res.send(rows_02);
-    }
+    },
   );
 });
 
@@ -2309,7 +2254,7 @@ app.post("/delete_partner_taken", function (req, res) {
     "delete from outgoing_loan WHERE id = '" + my_id + "'",
     function (err, rows_02) {
       res.send(rows_02);
-    }
+    },
   );
 });
 
@@ -2320,7 +2265,7 @@ app.post("/delete_company_info", function (req, res) {
     "delete from company_info WHERE id = '" + my_id + "'",
     function (err, rows_02) {
       res.send(rows_02);
-    }
+    },
   );
 });
 
@@ -2366,10 +2311,10 @@ app.post("/add_payment_delete", function (req, res) {
               });
               res.send(table_data);
             }
-          }
+          },
         );
       }
-    }
+    },
   );
 });
 
@@ -2386,7 +2331,7 @@ app.post("/add_payment_delete_001", function (req, res) {
       } else {
         res.send("معذرت ! پرداخت صورت نگرفته است ");
       }
-    }
+    },
   );
 });
 
@@ -2403,7 +2348,7 @@ app.post("/froshat_view_delete", function (req, res) {
         res.json({ message: "رکورد یافت نشد!" });
         return;
       }
-      var frosh_id = rows_01[0]['bill_id'];
+      var frosh_id = rows_01[0]["bill_id"];
       con.query(
         "delete from froshat_details WHERE id = '" + frosh_id + "'",
         function (err, rows_02) {
@@ -2412,9 +2357,9 @@ app.post("/froshat_view_delete", function (req, res) {
           } else {
             res.json({ message: "موفقانه حذف شد !" });
           }
-        }
+        },
       );
-    }
+    },
   );
 });
 
@@ -2428,9 +2373,9 @@ app.post("/delete_parent_mahsol_formula", function (req, res) {
         "delete from ready_materials_type where id = '" + my_id + "'",
         function (err, rows_05) {
           res.send("موفقانه حذف شد !");
-        }
+        },
       );
-    }
+    },
   );
 });
 
@@ -2444,9 +2389,9 @@ app.post("/delete_price_mahsol_formula", function (req, res) {
         "delete from set_price where id = '" + my_id + "'",
         function (err, rows_05) {
           res.send("موفقانه حذف شد !");
-        }
+        },
       );
-    }
+    },
   );
 });
 
@@ -2457,7 +2402,7 @@ app.post("/delete_users", function (req, res) {
     "delete from users WHERE id = '" + my_id + "'",
     function (err, rows_02) {
       res.send(rows_02);
-    }
+    },
   );
 });
 //||||||||||||||||ending </delete queries>||||||||||||||||||||||||//
@@ -2564,7 +2509,7 @@ app.post("/delete_add_new_material", function (req, res) {
     "delete from material_type WHERE id = '" + my_id + "'",
     function (err, rows_02) {
       res.send(rows_02);
-    }
+    },
   );
 });
 
@@ -2575,7 +2520,7 @@ app.post("/delete_add_new_material_type", function (req, res) {
     "delete from ready_materials_type WHERE id = '" + my_id + "'",
     function (err, rows_02) {
       res.send(rows_02);
-    }
+    },
   );
 });
 
@@ -2747,29 +2692,29 @@ app.post("/graph_data", function (req, res) {
                                                     result.split(",");
 
                                                   res.send(str_array);
-                                                }
+                                                },
                                               );
-                                            }
+                                            },
                                           );
-                                        }
+                                        },
                                       );
-                                    }
+                                    },
                                   );
-                                }
+                                },
                               );
-                            }
+                            },
                           );
-                        }
+                        },
                       );
-                    }
+                    },
                   );
-                }
+                },
               );
-            }
+            },
           );
-        }
+        },
       );
-    }
+    },
   );
 });
 
@@ -2814,7 +2759,7 @@ app.post("/cat_val_edit", function (req, res) {
           }
         });
       }
-    }
+    },
   );
 });
 
@@ -3015,14 +2960,14 @@ app.post("/update_rmf_material_01", function (req, res) {
                       status: "1",
                       data: rows_02,
                     });
-                  }
+                  },
                 );
               }
-            }
+            },
           );
-        }
+        },
       );
-    }
+    },
   );
 });
 
@@ -3860,13 +3805,13 @@ app.post("/update_hb_reg_02", function (req, res) {
             m_date +
             "'  WHERE id = '" +
             edit_id +
-            "'"
+            "'",
         );
 
         file.mv("Images/" + file_name, function (err) {
           res.send("hello");
         });
-      }
+      },
     );
   }
 });
@@ -3978,7 +3923,7 @@ app.post("/update_com_info_02", function (req, res) {
         file.mv("Images/" + file_name, function (err) {
           res.send("hello");
         });
-      }
+      },
     );
   }
 });
@@ -4022,7 +3967,7 @@ app.get("/get_company_info", function (req, res) {
         contact: "0796323516",
         location: "",
         email: "",
-        description: ""
+        description: "",
       });
     }
   });
@@ -4132,7 +4077,7 @@ app.post("/show_all_payment", function (req, res) {
           res.send(table_data);
         }
       }
-    }
+    },
   );
 });
 
@@ -4206,11 +4151,11 @@ app.post("/add_input_loan", function (req, res) {
               });
               res.send(table_data);
             }
-          }
+          },
         );
       }
       // res.send(rows_02);
-    }
+    },
   );
 });
 
@@ -4257,7 +4202,7 @@ app.post("/searching_bill_no", function (req, res) {
           .locale("fa")
           .format("YYYY/MM/DD");
         var remaining_amount = parseFloat(
-          row.total_amount - row.paid_amount
+          row.total_amount - row.paid_amount,
         ).toFixed(2);
         var paid_amount = parseFloat(row.paid_amount || 0).toFixed(2);
         var total_amount = parseFloat(row.total_amount || 0).toFixed(2);
@@ -4357,7 +4302,7 @@ app.post("/searching_bill_no", function (req, res) {
       });
 
       res.send(table_data);
-    }
+    },
   );
 });
 //  table_data += "<td>"+ no1 + "</td>";
@@ -4463,18 +4408,18 @@ app.post("/new_add_output_sales", function (req, res) {
                             payments: table_data,
                           });
                         }
-                      }
+                      },
                     );
                     // }//end of completed
-                  }
+                  },
                 );
               }
               // res.send(rows_02);
-            }
+            },
           );
-        }
+        },
       );
-    }
+    },
   );
 });
 
@@ -4559,9 +4504,9 @@ app.post("/add_output_sales", function (req, res) {
             no1++;
           });
           res.send(table_data);
-        }
+        },
       );
-    }
+    },
   );
 });
 //outgoing
@@ -4614,7 +4559,7 @@ app.post("/show_all_payment_001", function (req, res) {
           res.send(table_data);
         }
       }
-    }
+    },
   );
 });
 
@@ -4688,10 +4633,10 @@ app.post("/add_output_loan", function (req, res) {
               });
               res.send(table_data);
             }
-          }
+          },
         );
       }
-    }
+    },
   );
 });
 
@@ -4788,10 +4733,10 @@ app.post("/update_show_edit_001", function (req, res) {
               });
               res.send(table_data);
             }
-          }
+          },
         );
       }
-    }
+    },
   );
 });
 
@@ -4808,7 +4753,7 @@ app.post("/show_all_payment_002", function (req, res) {
 
       if (rows_04.length < 1) {
         res.send(
-          "<tr><td colspan='6' style='text-align:center; color:#999; padding:20px;'>هیچ پرداختی ثبت نشده است</td></tr>"
+          "<tr><td colspan='6' style='text-align:center; color:#999; padding:20px;'>هیچ پرداختی ثبت نشده است</td></tr>",
         );
       } else {
         for (var i = 0; i < rows_04.length; i++) {
@@ -4850,7 +4795,7 @@ app.post("/show_all_payment_002", function (req, res) {
           res.send(table_data);
         }
       }
-    }
+    },
   );
 });
 
@@ -4903,7 +4848,7 @@ app.post("/show_all_payment_003", function (req, res) {
           res.send(table_data);
         }
       }
-    }
+    },
   );
 });
 
@@ -5015,17 +4960,17 @@ app.post("/update_bills_01", function (req, res) {
                               .send("خطا در بروزرسانی مجموع: " + err1.message);
                           }
                           res.send("hello success");
-                        }
+                        },
                       );
-                    }
+                    },
                   );
-                }
+                },
               );
-            }
+            },
           );
-        }
+        },
       );
-    }
+    },
   );
 });
 
@@ -5124,17 +5069,17 @@ app.post("/update_stack_bills_01", function (req, res) {
                                 }); */
 
                           res.send("hello success");
-                        }
+                        },
                       );
-                    }
+                    },
                   );
-                }
+                },
               );
-            }
+            },
           );
-        }
+        },
       );
-    }
+    },
   );
 });
 
@@ -5157,7 +5102,7 @@ app.post("/update_formula_01", function (req, res) {
       "' ",
     function (err, rows_02) {
       res.send("موفقانه ذخیره شد");
-    }
+    },
   );
 });
 
@@ -5302,9 +5247,9 @@ app.post("/update_show_edit_002", function (req, res) {
             no1++;
           });
           res.send(table_data);
-        }
+        },
       );
-    }
+    },
   );
 });
 
@@ -5373,9 +5318,9 @@ app.post("/add_payment_delete_002", function (req, res) {
             });
           }
           res.send(table_data);
-        }
+        },
       );
-    }
+    },
   );
 });
 
@@ -5394,126 +5339,74 @@ app.post("/add_payment_delete_004", function (req, res) {
         return res.status(500).send("آیتم مورد نظر یافت نشد!");
       }
 
-      var item_name = rows_01[0].item_name;
-      var item_type = rows_01[0].item_type;
-      var bill_qunatity = rows_01[0].quantity;
       var bill_detail_id = rows_01[0].bill_detail_id;
       var fro_id = rows_01[0].bill_id;
 
+      // stack_factory_registration_list quantity restored by DB trigger (update_quantity_after_bill_items_delete)
+      // Delete from bill_items
       con.query(
-        "select * from stack_factory_registration_list where item_name = '" +
-          item_name +
-          "' and item_type='" +
-          item_type +
-          "'",
-        function (err4, rows_08) {
-          if (err4 || !rows_08 || rows_08.length === 0) {
-            return res.status(500).send("جنس در موجودی یافت نشد!");
+        "delete from bill_items WHERE id = '" + bill_id + "'",
+        function (err, rows_02) {
+          if (err) {
+            return res.status(500).send("خطا در حذف آیتم: " + err.message);
           }
 
-          var stak_qun = rows_08[0].quantity;
-          var update_stck_quna =
-            parseFloat(stak_qun) + parseFloat(bill_qunatity);
+          console.log("delete from bill_items WHERE id = '" + bill_id + "'");
 
+          // Check if bill_detail has any remaining items, if not, delete it too
           con.query(
-            "update stack_factory_registration_list set quantity='" +
-              update_stck_quna +
-              "' where item_name = '" +
-              item_name +
-              "' and item_type='" +
-              item_type +
+            "SELECT COUNT(*) as item_count FROM bill_items WHERE bill_detail_id = '" +
+              bill_detail_id +
               "'",
-            function (err4, rows_09) {
-              console.log(
-                "update stack_factory_registration_list set quantity='" +
-                  update_stck_quna +
-                  "' where item_name = '" +
-                  item_name +
-                  "' and item_type='" +
-                  item_type +
-                  "'"
-              );
+            function (err_check, rows_check) {
+              if (!err_check && rows_check && rows_check[0].item_count == 0) {
+                // No more items, delete the bill_detail
+                con.query(
+                  "delete from bill_details WHERE id = '" +
+                    bill_detail_id +
+                    "'",
+                  function (err_del, rows_del) {
+                    console.log("Deleted empty bill_detail: " + bill_detail_id);
+                  },
+                );
+              }
+            },
+          );
 
-              //var loan_id =  req.query.loan_id;
+          // Calculate total from bill_items
+          con.query(
+            "SELECT SUM(bill_items.price * bill_items.quantity) as fro_total FROM bill_items INNER JOIN bill_details ON bill_items.bill_detail_id = bill_details.id WHERE bill_details.bill_id ='" +
+              fro_id +
+              "'",
+            function (err1, rows_03) {
+              if (err1) {
+                return res
+                  .status(500)
+                  .send("خطا در محاسبه مجموع: " + err1.message);
+              }
 
-              // Delete from bill_items
+              var fro_total = rows_03[0].fro_total || 0;
               con.query(
-                "delete from bill_items WHERE id = '" + bill_id + "'",
-                function (err, rows_02) {
-                  if (err) {
+                "update froshat_details set total_amount = '" +
+                  fro_total +
+                  "' where id ='" +
+                  fro_id +
+                  "'",
+                function (err2, rows_04) {
+                  if (err2) {
                     return res
                       .status(500)
-                      .send("خطا در حذف آیتم: " + err.message);
+                      .send("خطا در بروزرسانی مجموع: " + err2.message);
+                  } else {
+                    res.send("hello");
                   }
-
-                  console.log(
-                    "delete from bill_items WHERE id = '" + bill_id + "'"
-                  );
-
-                  // Check if bill_detail has any remaining items, if not, delete it too
-                  con.query(
-                    "SELECT COUNT(*) as item_count FROM bill_items WHERE bill_detail_id = '" +
-                      bill_detail_id +
-                      "'",
-                    function (err_check, rows_check) {
-                      if (
-                        !err_check &&
-                        rows_check &&
-                        rows_check[0].item_count == 0
-                      ) {
-                        // No more items, delete the bill_detail
-                        con.query(
-                          "delete from bill_details WHERE id = '" +
-                            bill_detail_id +
-                            "'",
-                          function (err_del, rows_del) {
-                            console.log(
-                              "Deleted empty bill_detail: " + bill_detail_id
-                            );
-                          }
-                        );
-                      }
-                    }
-                  );
-
-                  // Calculate total from bill_items
-                  con.query(
-                    "SELECT SUM(bill_items.price * bill_items.quantity) as fro_total FROM bill_items INNER JOIN bill_details ON bill_items.bill_detail_id = bill_details.id WHERE bill_details.bill_id ='" +
-                      fro_id +
-                      "'",
-                    function (err1, rows_03) {
-                      if (err1) {
-                        return res
-                          .status(500)
-                          .send("خطا در محاسبه مجموع: " + err1.message);
-                      }
-
-                      var fro_total = rows_03[0].fro_total || 0;
-                      con.query(
-                        "update froshat_details set total_amount = '" +
-                          fro_total +
-                          "' where id ='" +
-                          fro_id +
-                          "'",
-                        function (err2, rows_04) {
-                          if (err2) {
-                            return res
-                              .status(500)
-                              .send("خطا در بروزرسانی مجموع: " + err2.message);
-                          } else {
-                            res.send("hello");
-                          }
-                        }
-                      );
-                    }
-                  );
-                }
+                },
               );
-            }
+            },
           );
-        }
+        },
       );
-    }
+    },
   );
 });
 
@@ -5523,7 +5416,7 @@ app.post("/delete_mahsol_formula", function (req, res) {
     "delete from create_mahsol where id = '" + bill_id + "'",
     function (err, rows) {
       res.send("موفقانه حذف شد");
-    }
+    },
   );
 });
 
@@ -5597,17 +5490,17 @@ app.post("/delete_stack_bill", function (req, res) {
                           } else {
                             res.send("hello");
                           }
-                        }
+                        },
                       );
-                    }
+                    },
                   );
-                }
+                },
               );
-            }
+            },
           );
-        }
+        },
       );
-    }
+    },
   );
 });
 /* delete stack_bill */
@@ -5652,7 +5545,7 @@ app.post("/update_show_edit1", function (req, res) {
           m +
           "' WHERE id = '" +
           id_val +
-          "'"
+          "'",
       );
       if (err) {
         throw err;
@@ -5699,10 +5592,10 @@ app.post("/update_show_edit1", function (req, res) {
               });
               res.send(table_data);
             }
-          }
+          },
         );
       }
-    }
+    },
   );
 });
 
@@ -5746,7 +5639,7 @@ app.post("/update_show_edit3", function (req, res) {
         /*    });
                             }); */
       }
-    }
+    },
   );
 });
 /* mahsole display */
@@ -5774,8 +5667,8 @@ app.post("/forsh_items", function (req, res) {
   var my_id = req.query.param;
   // Search by item_name (more intuitive than searching by price)
   // Also handle case where user might type "item_name -- price" format from datalist
-  var searchTerm = my_id.split(' --')[0].trim(); // Extract item name if format includes price
-  
+  var searchTerm = my_id.split(" --")[0].trim(); // Extract item name if format includes price
+
   con.query(
     "select * from stack_factory_registration_list where item_name = ? LIMIT 1",
     [searchTerm],
@@ -5785,14 +5678,16 @@ app.post("/forsh_items", function (req, res) {
         return res.status(500).json({ error: "خطا در جستجو" });
       }
       console.log(
-        "select * from stack_factory_registration_list where item_name = '" + searchTerm + "'"
+        "select * from stack_factory_registration_list where item_name = '" +
+          searchTerm +
+          "'",
       );
       if (rows_02 && rows_02.length > 0) {
         res.json(rows_02[0]);
       } else {
         res.status(404).json({ error: "آیتم یافت نشد" });
       }
-    }
+    },
   );
 });
 
@@ -5807,10 +5702,10 @@ app.post("/stock_to_market_bill", function (req, res) {
       console.log(
         "SELECT id,item_name, item_type ,quantity,serial_number  FROM stack_factory_registration_list where serial_number = '" +
           my_id +
-          "'"
+          "'",
       );
       res.send(rows_02);
-    }
+    },
   );
 });
 
@@ -5824,7 +5719,7 @@ app.post("/get_stack_to_market_list", function (req, res) {
         return res.send("Error loading stack factory registration list");
       }
       res.send(rows_02);
-    }
+    },
   );
 });
 
@@ -5835,10 +5730,10 @@ app.post("/add_stack_to_market_list", function (req, res) {
   var fixed_price = req.body.fixed_price || 0;
   var sell_price = req.body.sell_price || 0;
   var quantity = req.body.quantity || 0;
-  var currency = req.body.currency || 'افغانی';
+  var currency = req.body.currency || "افغانی";
   var ex_rate = req.body.ex_rate || 1;
   var serial_number = req.body.serial_number || 0;
-  var date = req.body.date || new Date().toISOString().split('T')[0];
+  var date = req.body.date || new Date().toISOString().split("T")[0];
 
   con.query(
     "INSERT INTO stack_factory_registration_list (item_name, item_type, quantity, fixed_price, sell_price, currency, ex_rate, serial_number, date) VALUES ('" +
@@ -5873,7 +5768,7 @@ app.post("/add_stack_to_market_list", function (req, res) {
         data: rows,
         success: true,
       });
-    }
+    },
   );
 });
 
@@ -5885,7 +5780,7 @@ app.post("/update_stack_to_market_list", function (req, res) {
   var fixed_price = req.body.fixed_price || 0;
   var sell_price = req.body.sell_price || 0;
   var quantity = req.body.quantity || 0;
-  var currency = req.body.currency || 'افغانی';
+  var currency = req.body.currency || "افغانی";
   var ex_rate = req.body.ex_rate || 1;
   var serial_number = req.body.serial_number || 0;
 
@@ -5922,7 +5817,7 @@ app.post("/update_stack_to_market_list", function (req, res) {
         data: rows,
         success: true,
       });
-    }
+    },
   );
 });
 
@@ -5945,7 +5840,7 @@ app.post("/delete_stack_to_market_list", function (req, res) {
         data: rows,
         success: true,
       });
-    }
+    },
   );
 });
 
@@ -5963,7 +5858,7 @@ app.post("/mahsol_items", function (req, res) {
         return res.status(500).send([]);
       }
       res.send(rows_02 && rows_02.length ? rows_02[0] : []);
-    }
+    },
   );
 });
 
@@ -5974,10 +5869,10 @@ app.post("/get_stuff", function (req, res) {
     "SELECT * FROM stuff_registration where id = '" + my_id + "'",
     function (err, rows_02) {
       console.log(
-        "SELECT * FROM stuff_registration where id = '" + my_id + "'"
+        "SELECT * FROM stuff_registration where id = '" + my_id + "'",
       );
       res.send(rows_02);
-    }
+    },
   );
 });
 
@@ -5988,10 +5883,10 @@ app.post("/get_stuff_loan", function (req, res) {
     "SELECT * FROM stuff_registration where id = '" + my_id + "'",
     function (err, rows_02) {
       console.log(
-        "SELECT * FROM stuff_registration where id = '" + my_id + "'"
+        "SELECT * FROM stuff_registration where id = '" + my_id + "'",
       );
       res.send(rows_02);
-    }
+    },
   );
 });
 
@@ -6002,10 +5897,10 @@ app.post("/partner_details", function (req, res) {
     "SELECT * FROM partner_registration where id = '" + my_id + "'",
     function (err, rows_02) {
       console.log(
-        "SELECT * FROM partner_registration where id = '" + my_id + "'"
+        "SELECT * FROM partner_registration where id = '" + my_id + "'",
       );
       res.send(rows_02);
-    }
+    },
   );
 });
 app.post("/stuff_taken_amount", function (req, res) {
@@ -6044,7 +5939,7 @@ app.post("/stuff_taken_amount", function (req, res) {
           ex_rate +
           "','" +
           m +
-          "')"
+          "')",
       );
 
       if (err) {
@@ -6055,7 +5950,7 @@ app.post("/stuff_taken_amount", function (req, res) {
           data: rows,
         });
       }
-    }
+    },
   );
 });
 
@@ -6116,13 +6011,13 @@ app.post("/employ_salary_pay", function (req, res) {
                   console.log(
                     "update taken_amount set `amount`='0' where stuff_id = '" +
                       stf_id +
-                      "'"
+                      "'",
                   );
                   res.send("ثبت شد");
-                }
+                },
               );
             }
-          }
+          },
         );
       }
       /* if(rows_01[0].payable =="رسید")
@@ -6131,7 +6026,7 @@ app.post("/employ_salary_pay", function (req, res) {
                   }else{ */
 
       /*  } */
-    }
+    },
   );
 });
 
@@ -6199,7 +6094,7 @@ app.post("/incoming_loan", function (req, res) {
           benefit +
           "','" +
           m +
-          "')"
+          "')",
       );
 
       if (err) {
@@ -6210,7 +6105,7 @@ app.post("/incoming_loan", function (req, res) {
           data: rows,
         });
       }
-    }
+    },
   );
 });
 
@@ -6265,7 +6160,7 @@ app.post("/outgoing_loan", function (req, res) {
           tazkira +
           "','" +
           m +
-          "')"
+          "')",
       );
 
       if (err) {
@@ -6276,7 +6171,7 @@ app.post("/outgoing_loan", function (req, res) {
           data: rows,
         });
       }
-    }
+    },
   );
 });
 
@@ -6327,7 +6222,7 @@ app.post("/add_machinary", function (req, res) {
           data: rows,
         });
       }
-    }
+    },
   );
 });
 
@@ -6372,7 +6267,7 @@ app.post("/add_tools", function (req, res) {
           data: rows,
         });
       }
-    }
+    },
   );
 });
 
@@ -6428,7 +6323,7 @@ app.post("/add_customer", function (req, res) {
           email +
           "','" +
           m +
-          "')"
+          "')",
       );
 
       if (err) {
@@ -6439,7 +6334,7 @@ app.post("/add_customer", function (req, res) {
           data: rows,
         });
       }
-    }
+    },
   );
 });
 
@@ -6468,11 +6363,11 @@ app.get("/emp_removal_reg.ejs", function (req, res) {
           });
         } else {
           res.send(
-            "<h1 style='color:green; text-align:center;'>کارمند موجود نیست !</h1>"
+            "<h1 style='color:green; text-align:center;'>کارمند موجود نیست !</h1>",
           );
         }
       });
-    }
+    },
   );
 });
 
@@ -6509,12 +6404,12 @@ app.get("/emp_SP_reg.ejs", function (req, res) {
             });
           } else {
             res.send(
-              "<h1 style='color:green; text-align:center;'>کارمند موجود نیست !</h1>"
+              "<h1 style='color:green; text-align:center;'>کارمند موجود نیست !</h1>",
             );
           }
-        }
+        },
       );
-    }
+    },
   );
 });
 
@@ -6527,7 +6422,7 @@ app.post("/getUserName", function (req, res) {
       console.log(
         "select * from stack_factory_registration where item_name = '" +
           my_id +
-          "'"
+          "'",
       );
 
       // res.json({
@@ -6535,7 +6430,7 @@ app.post("/getUserName", function (req, res) {
       //     data_02:rows_02
       // });
       res.send(rows_02);
-    }
+    },
   );
 });
 
@@ -6561,11 +6456,11 @@ app.get("/emp-reg.ejs", function (req, res) {
           });
         } else {
           res.send(
-            "<h1 style='color:green; text-align:center;'>کارمند موجود نیست !</h1>"
+            "<h1 style='color:green; text-align:center;'>کارمند موجود نیست !</h1>",
           );
         }
       });
-    }
+    },
   );
 });
 
@@ -6581,40 +6476,52 @@ app.get("/fro.ejs", function (req, res) {
     }
     /* select * from stack_factory_registration_list group by item_name , item_type */
     // Load all items from stack_factory_registration_list for the dropdown
-    con.query("SELECT * FROM stack_factory_registration_list WHERE item_name IS NOT NULL AND item_name != '' ORDER BY item_name, item_type", function (err, rows_03) {
-      if (err) {
-        console.error("Error loading stack_factory_registration_list:", err);
-        return res.send("Error loading stack factory registration list: " + err.message);
-      }
-      console.log("Loaded " + (rows_03 ? rows_03.length : 0) + " items from stack_factory_registration_list (Total in table should match)");
-      con.query(
-        "SELECT MAX(id) as new_bill FROM froshat_details",
-        function (err, rows_04) {
-          if (err) {
-            console.log(err);
-            return res.send("Error loading froshat details");
-          }
-
-          con.query("SELECT * FROM customer_account", function (err, rows_05) {
+    con.query(
+      "SELECT * FROM stack_factory_registration_list WHERE item_name IS NOT NULL AND item_name != '' ORDER BY item_name, item_type",
+      function (err, rows_03) {
+        if (err) {
+          console.error("Error loading stack_factory_registration_list:", err);
+          return res.send(
+            "Error loading stack factory registration list: " + err.message,
+          );
+        }
+        console.log(
+          "Loaded " +
+            (rows_03 ? rows_03.length : 0) +
+            " items from stack_factory_registration_list (Total in table should match)",
+        );
+        con.query(
+          "SELECT MAX(id) as new_bill FROM froshat_details",
+          function (err, rows_04) {
             if (err) {
               console.log(err);
-              return res.send("Error loading customer account");
+              return res.send("Error loading froshat details");
             }
-            // Handle case when rows_04 is empty or undefined
-            var new_bill =
-              rows_04 && rows_04.length > 0 && rows_04[0].new_bill
-                ? rows_04[0].new_bill
-                : 0;
-            res.render("fro", {
-              data_02: rows_02,
-              data_03: rows_03,
-              data_04: new_bill,
-              data_05: rows_05,
-            });
-          });
-        }
-      );
-    });
+
+            con.query(
+              "SELECT * FROM customer_account",
+              function (err, rows_05) {
+                if (err) {
+                  console.log(err);
+                  return res.send("Error loading customer account");
+                }
+                // Handle case when rows_04 is empty or undefined
+                var new_bill =
+                  rows_04 && rows_04.length > 0 && rows_04[0].new_bill
+                    ? rows_04[0].new_bill
+                    : 0;
+                res.render("fro", {
+                  data_02: rows_02,
+                  data_03: rows_03,
+                  data_04: new_bill,
+                  data_05: rows_05,
+                });
+              },
+            );
+          },
+        );
+      },
+    );
   });
 });
 
@@ -6628,25 +6535,33 @@ app.get("/processing_materials.ejs", function (req, res) {
       "SELECT item_name, item_type, bill_no, SUM(quantity) AS totqunatity FROM stack_raw_materials GROUP BY item_name, item_type, bill_no",
       function (err, rows_03) {
         if (err) {
-          return res.status(500).send("خطا در بارگذاری لیست مواد اولیه از stack_raw_materials");
+          return res
+            .status(500)
+            .send("خطا در بارگذاری لیست مواد اولیه از stack_raw_materials");
         }
-        con.query("select * from ready_materials_type", function (err, rows_04) {
-          if (err) {
-            return res.status(500).send("خطا در بارگذاری انواع مواد آماده");
-          }
-          con.query("SELECT * FROM customer_account", function (err, rows_05) {
+        con.query(
+          "select * from ready_materials_type",
+          function (err, rows_04) {
             if (err) {
-              return res.status(500).send("خطا در بارگذاری حساب مشتری");
+              return res.status(500).send("خطا در بارگذاری انواع مواد آماده");
             }
-            res.render("processing_materials", {
-              data_02: rows_02 || [],
-              data_03: rows_03 || [],
-              data_04: rows_04 || [],
-              data_05: rows_05 || [],
-            });
-          });
-        });
-      }
+            con.query(
+              "SELECT * FROM customer_account",
+              function (err, rows_05) {
+                if (err) {
+                  return res.status(500).send("خطا در بارگذاری حساب مشتری");
+                }
+                res.render("processing_materials", {
+                  data_02: rows_02 || [],
+                  data_03: rows_03 || [],
+                  data_04: rows_04 || [],
+                  data_05: rows_05 || [],
+                });
+              },
+            );
+          },
+        );
+      },
     );
   });
 });
@@ -6668,11 +6583,11 @@ app.get("/baraword.ejs", function (req, res) {
                   data_04: rows_04,
                   data_05: rows_05,
                 });
-              }
+              },
             );
-          }
+          },
         );
-      }
+      },
     );
   });
 });
@@ -6710,10 +6625,10 @@ app.get("/froshat_view.ejs", function (req, res) {
           });
         } else {
           res.send(
-            "<h1 style='color:green; text-align:center;'>فروشات صورت نگرفته است !</h1>"
+            "<h1 style='color:green; text-align:center;'>فروشات صورت نگرفته است !</h1>",
           );
         }
-      }
+      },
     );
   });
 });
@@ -6735,10 +6650,10 @@ app.get("/stack_view.ejs", function (req, res) {
         res.render("stack_view", { data_01: rows_01, data_date: str_array });
       } else {
         res.send(
-          "<h1 style='color:green; text-align:center;'>فروشات صورت نگرفته است !</h1>"
+          "<h1 style='color:green; text-align:center;'>فروشات صورت نگرفته است !</h1>",
         );
       }
-    }
+    },
   );
 });
 
@@ -6748,7 +6663,7 @@ app.get("/view_creating_mahsol.ejs", function (req, res) {
       res.render("view_creating_mahsol", { data_01: rows_01 });
     } else {
       res.send(
-        "<h1 style='color:green; text-align:center;'> محصول موجود نیست !</h1>"
+        "<h1 style='color:green; text-align:center;'> محصول موجود نیست !</h1>",
       );
     }
   });
@@ -6760,7 +6675,7 @@ app.get("/view_creating_price.ejs", function (req, res) {
       res.render("view_creating_price", { data_01: rows_01 });
     } else {
       res.send(
-        "<h1 style='color:green; text-align:center;'> محصول موجود نیست !</h1>"
+        "<h1 style='color:green; text-align:center;'> محصول موجود نیست !</h1>",
       );
     }
   });
@@ -6773,7 +6688,7 @@ app.get("/city_exsistance.ejs", function (req, res) {
       if (rows_01.length > 0) {
         res.render("city_exsistance", { data_01: rows_01 });
       }
-    }
+    },
   );
 });
 
@@ -6850,18 +6765,18 @@ app.post("/searching_bill_no_01", function (req, res) {
                     });
                   }
                 }
-              }
+              },
             );
-          }
+          },
         );
         /* sending second params data */
       } else {
         res.send(
-          "<h1 style='color:green; text-align:center;'>پرداخت صورت نگرفته است !</h1>"
+          "<h1 style='color:green; text-align:center;'>پرداخت صورت نگرفته است !</h1>",
         );
         console.log("it will come here ");
       }
-    }
+    },
   );
 });
 
@@ -6896,7 +6811,7 @@ app.post("/sending_stock_details", function (req, res) {
         no++;
       });
       res.send(table_data);
-    }
+    },
   );
 });
 
@@ -6931,7 +6846,7 @@ app.post("/sending_raw_material_details", function (req, res) {
         no++;
       });
       res.send(table_data);
-    }
+    },
   );
 });
 
@@ -6957,7 +6872,7 @@ app.post("/sending_all_price_details", function (req, res) {
         no++;
       });
       res.send(table_data);
-    }
+    },
   );
 });
 
@@ -6985,12 +6900,12 @@ app.get("/hb-reg.ejs", function (req, res) {
             });
           } else {
             res.send(
-              "<h1 style='color:green; text-align:center;'>برداشت صورت نگرفته است !</h1>"
+              "<h1 style='color:green; text-align:center;'>برداشت صورت نگرفته است !</h1>",
             );
           }
-        }
+        },
       );
-    }
+    },
   );
 });
 
@@ -7046,15 +6961,15 @@ app.get("/holder_billance.ejs", function (req, res) {
                     each_partner_taken: partner_taken,
                     each_part_income: cal_each_partner_income_arr,
                   });
-                }
+                },
               );
             } else {
               res.send("<h2>! معذرت سرمایه موجود نیست</h2>");
             }
-          }
+          },
         );
       } //end of first if
-    }
+    },
   );
 });
 
@@ -7102,14 +7017,14 @@ app.get("/iloan_reg.ejs", function (req, res) {
                 });
               } else {
                 res.send(
-                  "<h1 style='color:green; text-align:center;'>قرضه برای شرکت موجود نیست !</h1>"
+                  "<h1 style='color:green; text-align:center;'>قرضه برای شرکت موجود نیست !</h1>",
                 );
               }
-            }
+            },
           );
-        }
+        },
       );
-    }
+    },
   );
 });
 app.get("/index.ejs", function (req, res) {
@@ -7169,12 +7084,12 @@ app.get("/mt_reg.ejs", function (req, res) {
             });
           } else {
             res.send(
-              "<h1 style='color:green; text-align:center;'>جنس در گدام موجود نیست !</h1>"
+              "<h1 style='color:green; text-align:center;'>جنس در گدام موجود نیست !</h1>",
             );
           }
-        }
+        },
       );
-    }
+    },
   );
 });
 app.get("/oloan_reg.ejs", function (req, res) {
@@ -7215,16 +7130,16 @@ app.get("/oloan_reg.ejs", function (req, res) {
                   out_loan: rows_05[0].total,
                   out_loan_name: str_array2,
                 });
-              }
+              },
             );
           } else {
             res.send(
-              "<h1 style='color:green; text-align:center;'>قرضه برای کارمند موجود نیست !</h1>"
+              "<h1 style='color:green; text-align:center;'>قرضه برای کارمند موجود نیست !</h1>",
             );
           }
-        }
+        },
       );
-    }
+    },
   );
 });
 app.get("/out_loan.ejs", function (req, res) {
@@ -7272,7 +7187,7 @@ app.post("/add_expense", function (req, res) {
           data: rows,
         });
       }
-    }
+    },
   );
 });
 
@@ -7308,64 +7223,86 @@ app.post("/add_expense1", function (req, res) {
           res.send(table_data);
         });
       }
-    }
+    },
   );
 });
 
 // Route to get bill items for froshat_view.ejs
 app.get("/sending_details", function (req, res) {
   var bill_id = req.query.param;
-  
+
   if (!bill_id) {
-    return res.send('<tr><td colspan="8" style="text-align:center; color:red; padding: 20px;">خطا: شماره بل مشخص نشده است</td></tr>');
+    return res.send(
+      '<tr><td colspan="8" style="text-align:center; color:red; padding: 20px;">خطا: شماره بل مشخص نشده است</td></tr>',
+    );
   }
 
   // Query bill_items joined with bill_details to get items for this bill
   con.query(
     "SELECT bill_items.*, bill_details.bill_id FROM bill_items " +
-    "INNER JOIN bill_details ON bill_items.bill_detail_id = bill_details.id " +
-    "WHERE bill_details.bill_id = '" + bill_id + "' " +
-    "ORDER BY bill_items.id",
+      "INNER JOIN bill_details ON bill_items.bill_detail_id = bill_details.id " +
+      "WHERE bill_details.bill_id = '" +
+      bill_id +
+      "' " +
+      "ORDER BY bill_items.id",
     function (err, rows) {
       if (err) {
         console.error("Error loading bill items:", err);
-        return res.send('<tr><td colspan="8" style="text-align:center; color:red; padding: 20px;">خطا در بارگذاری آیتم ها: ' + err.message + '</td></tr>');
+        return res.send(
+          '<tr><td colspan="8" style="text-align:center; color:red; padding: 20px;">خطا در بارگذاری آیتم ها: ' +
+            err.message +
+            "</td></tr>",
+        );
       }
 
       if (!rows || rows.length === 0) {
-        return res.send('<tr><td colspan="8" style="text-align:center; color:gray; padding: 20px;">هیچ آیتمی ثبت نشده است</td></tr>');
+        return res.send(
+          '<tr><td colspan="8" style="text-align:center; color:gray; padding: 20px;">هیچ آیتمی ثبت نشده است</td></tr>',
+        );
       }
 
       var table_data = "";
       var no = 1;
-      
-      rows.forEach(function(row) {
+
+      rows.forEach(function (row) {
         // Convert thickness from meters to cm for display
-        var thicknessCm = row.thickness ? (parseFloat(row.thickness) * 100).toFixed(2) : '0.00';
-        var total = (parseFloat(row.quantity || 0) * parseFloat(row.price || 0)).toFixed(2);
-        
+        var thicknessCm = row.thickness
+          ? (parseFloat(row.thickness) * 100).toFixed(2)
+          : "0.00";
+        var total = (
+          parseFloat(row.quantity || 0) * parseFloat(row.price || 0)
+        ).toFixed(2);
+
         table_data += "<tr>";
         table_data += "<td>" + no + "</td>";
-        table_data += "<td>" + (row.item_name || '') + "</td>";
-        table_data += "<td>" + (row.item_type || '') + "</td>";
+        table_data += "<td>" + (row.item_name || "") + "</td>";
+        table_data += "<td>" + (row.item_type || "") + "</td>";
         table_data += "<td>" + (row.quantity || 0) + "</td>";
         table_data += "<td>" + (row.price || 0) + "</td>";
         table_data += "<td>" + thicknessCm + " cm</td>";
         table_data += "<td>" + total + "</td>";
         table_data += "<td class='print'>";
-        table_data += "<button onclick='cat_delet1(" + row.id + ")' class='btn btn-sm btn-danger' style='margin: 2px;' title='حذف'>";
-        table_data += "<img width='15px' src='assets/img/last-project/delete.svg' alt='حذف'>";
+        table_data +=
+          "<button onclick='cat_delet1(" +
+          row.id +
+          ")' class='btn btn-sm btn-danger' style='margin: 2px;' title='حذف'>";
+        table_data +=
+          "<img width='15px' src='assets/img/last-project/delete.svg' alt='حذف'>";
         table_data += "</button>";
-        table_data += "<button onclick='cat_edit(" + row.id + ")' class='btn btn-sm btn-warning' data-toggle='modal' data-target='#basicModal' style='margin: 2px;' title='ویرایش'>";
-        table_data += "<img width='15px' src='assets/img/last-project/edit.svg' alt='ویرایش'>";
+        table_data +=
+          "<button onclick='cat_edit(" +
+          row.id +
+          ")' class='btn btn-sm btn-warning' data-toggle='modal' data-target='#basicModal' style='margin: 2px;' title='ویرایش'>";
+        table_data +=
+          "<img width='15px' src='assets/img/last-project/edit.svg' alt='ویرایش'>";
         table_data += "</button>";
         table_data += "</td>";
         table_data += "</tr>";
         no++;
       });
-      
+
       res.send(table_data);
-    }
+    },
   );
 });
 
@@ -7427,14 +7364,14 @@ app.get("/raw_material_store.ejs", function (req, res) {
                 });
               } else {
                 res.send(
-                  "<h1 style='color:green; text-align:center;'>مواد خام موجود نیست!</h1>"
+                  "<h1 style='color:green; text-align:center;'>مواد خام موجود نیست!</h1>",
                 );
               }
-            }
+            },
           );
-        }
+        },
       );
-    }
+    },
   );
 });
 
@@ -7447,7 +7384,7 @@ app.get("/raw_materials.ejs", function (req, res) {
           data_04: rows_04,
           data_03: rows_03[0].new_bill,
         });
-      }
+      },
     );
   });
 });
@@ -7509,7 +7446,7 @@ app.post("/stack_raw_regist", function (req, res) {
       } else {
         res.send("success");
       }
-    }
+    },
   );
 });
 
@@ -7562,13 +7499,13 @@ app.post("/add_new_types", function (req, res) {
                     });
                     res.send(table_data);
                   }
-                }
+                },
               );
             }
-          }
+          },
         );
       }
-    }
+    },
   );
 });
 
@@ -7616,7 +7553,7 @@ app.post("/edit_add_type", function (req, res) {
           }
         });
       }
-    }
+    },
   );
 });
 
@@ -7668,10 +7605,10 @@ app.post("/edit_add_type_02", function (req, res) {
               });
               res.send(table_data);
             }
-          }
+          },
         );
       }
-    }
+    },
   );
 });
 
@@ -7752,10 +7689,10 @@ app.post("/add_new_types_01", function (req, res) {
               });
               res.send(table_data);
             }
-          }
+          },
         );
       }
-    }
+    },
   );
 });
 
@@ -7860,7 +7797,7 @@ app.post("/stack_reg", function (req, res) {
                     "','" +
                     update_qunatity +
                     "')",
-                  function (err, rows_006) {}
+                  function (err, rows_006) {},
                 );
               }, i);
             })(i);
@@ -7888,7 +7825,7 @@ app.post("/stack_reg", function (req, res) {
                     "'",
                   function (err, rows_03) {
                     res.send("محصول در گدام موفقانه ثبت شد");
-                  }
+                  },
                 );
               } else {
                 con.query(
@@ -7913,14 +7850,14 @@ app.post("/stack_reg", function (req, res) {
                     "')",
                   function (err, rows_02) {
                     res.send("محصول در گدام موفقانه ثبت شد");
-                  }
+                  },
                 );
               }
-            }
+            },
           );
-        }
+        },
       );
-    }
+    },
   );
 });
 
@@ -7958,7 +7895,7 @@ app.post("/market_reg", function (req, res) {
           name +
           "' and item_type='" +
           item_type +
-          "' "
+          "' ",
       );
       //console.log(rows_07.length >=1);
 
@@ -8006,14 +7943,14 @@ app.post("/market_reg", function (req, res) {
                           if (db_quantity < quantity) {
                             res.send("این مقدار در گدام کارخانه موجود نیست");
                           }
-                        }
+                        },
                       );
-                    }
+                    },
                   );
                 }
-              }
+              },
             );
-          }
+          },
         );
       } else {
         con.query(
@@ -8056,15 +7993,15 @@ app.post("/market_reg", function (req, res) {
                       if (db_quantity < quantity) {
                         res.send("این مقدار در گدام کارخانه موجود نیست");
                       }
-                    }
+                    },
                   );
-                }
+                },
               );
             }
-          }
+          },
         );
       } //end of else
-    }
+    },
   );
 });
 
@@ -8119,7 +8056,7 @@ app.post("/up_image", function (req, res) {
             data: rows,
           });
         }
-      }
+      },
     );
   } else {
     var name2 = req.body.emp_name;
@@ -8189,7 +8126,7 @@ app.post("/up_image", function (req, res) {
             res.send("wowo uploaded");
           });
         }
-      }
+      },
     );
   }
 });
@@ -8233,7 +8170,7 @@ app.post("/partner_percent", function (req, res) {
             data: rows,
           });
         }
-      }
+      },
     );
   } else {
     var name2 = req.body.sh_name;
@@ -8275,7 +8212,7 @@ app.post("/partner_percent", function (req, res) {
             res.send("success");
           });
         }
-      }
+      },
     );
   }
 });
@@ -8310,7 +8247,7 @@ app.post("/partner_bardasht", function (req, res) {
           file_name +
           "','" +
           m +
-          "')"
+          "')",
       );
 
       if (err) {
@@ -8323,7 +8260,7 @@ app.post("/partner_bardasht", function (req, res) {
       }
 
       file.mv("Images/" + file_name, function (err) {});
-    }
+    },
   );
 });
 
@@ -8398,7 +8335,7 @@ app.post("/add_company_info", function (req, res) {
           back_up +
           "',`currency`='" +
           currency +
-          "' where id = '1' "
+          "' where id = '1' ",
       );
 
       if (err) {
@@ -8411,7 +8348,7 @@ app.post("/add_company_info", function (req, res) {
       }
 
       file.mv("Images/" + file_name, function (err) {});
-    }
+    },
   );
 });
 //   app.use(upload());
@@ -8561,9 +8498,9 @@ app.get("/readyMF.ejs", function (req, res) {
               stack_list: stack_list,
               stack_date: stack_date,
             });
-          }
+          },
         );
-      }
+      },
     );
   });
 });
@@ -8586,7 +8523,7 @@ app.get("/api/stack_list", function (req, res) {
         }
       }
       res.json({ stack_list: stack_list, stack_date: stack_date });
-    }
+    },
   );
 });
 
@@ -8614,12 +8551,12 @@ app.get("/tools-rge.ejs", function (req, res) {
             });
           } else {
             res.send(
-              "<h1 style='color:green; text-align:center;'>جنس در گدام موجود نیست !</h1>"
+              "<h1 style='color:green; text-align:center;'>جنس در گدام موجود نیست !</h1>",
             );
           }
-        }
+        },
       );
-    }
+    },
   );
 });
 app.get("/tool.ejs", function (req, res) {
@@ -8631,7 +8568,7 @@ app.get("/tool.ejs", function (req, res) {
         return res.send("Error loading stack factory registration list");
       }
       res.render("tool", { data: rows });
-    }
+    },
   );
 });
 app.get("/share_holders.ejs", function (req, res) {
@@ -8676,13 +8613,13 @@ app.get("/sh_reg.ejs", function (req, res) {
                 asset_data: arr_ass,
                 all_money: rows_01[0].all_assets,
               });
-            }
+            },
           );
-        }
+        },
       );
     } else {
       res.send(
-        "<h1 style='color:green; text-align:center;'>شریک موجود نیست !</h1>"
+        "<h1 style='color:green; text-align:center;'>شریک موجود نیست !</h1>",
       );
     }
   });
@@ -8712,12 +8649,12 @@ app.get("/rmf_reg.ejs", function (req, res) {
             });
           } else {
             res.send(
-              "<h1 style='color:green; text-align:center;'>محصول موجود نیست !</h1>"
+              "<h1 style='color:green; text-align:center;'>محصول موجود نیست !</h1>",
             );
           }
-        }
+        },
       );
-    }
+    },
   );
 });
 
@@ -8750,17 +8687,17 @@ app.get("/reports.ejs", function (req, res) {
                             pure_benefit: rows_05[0].benefit,
                             purchase1: rows_06[0].sell_total4,
                           });
-                        }
+                        },
                       );
-                    }
+                    },
                   );
-                }
+                },
               );
-            }
+            },
           );
-        }
+        },
       );
-    }
+    },
   );
 });
 
@@ -8833,15 +8770,15 @@ app.post("/from_date_to_date", function (req, res) {
                       var str_array = result.split(",");
 
                       res.send(str_array);
-                    }
+                    },
                   );
-                }
+                },
               );
-            }
+            },
           );
-        }
+        },
       );
-    }
+    },
   );
 });
 /* custome date */
@@ -8907,7 +8844,7 @@ app.post("/from_date_to_expense_01", function (req, res) {
         });
         res.send(table_data);
       }
-    }
+    },
   );
 });
 
@@ -8975,7 +8912,7 @@ app.post("/from_date_to_raw_m_01", function (req, res) {
         });
         res.send(table_data);
       }
-    }
+    },
   );
 });
 
@@ -9047,7 +8984,7 @@ app.post("/from_date_to_rmf_reg_01", function (req, res) {
       } else {
         res.send("<h3 style='color:brown;'>موجود نیست</h3>");
       }
-    }
+    },
   );
 });
 
@@ -9120,7 +9057,7 @@ app.post("/from_date_to_city_m_01", function (req, res) {
           res.send("<td colspan='9' style='color:red;'>موجود نیست </td>");
         }
       }
-    }
+    },
   );
 });
 
@@ -9196,7 +9133,7 @@ app.post("/from_date_to_emp_m_01", function (req, res) {
           res.send("موجود نیست");
         }
       }
-    }
+    },
   );
 });
 
@@ -9266,7 +9203,7 @@ app.post("/from_date_to_emp_removable_01", function (req, res) {
           res.send("<td colspan='9' style='color:red;'>موجود نیست </td>");
         }
       }
-    }
+    },
   );
 });
 
@@ -9339,7 +9276,7 @@ app.post("/from_date_to_emp_salpay_01", function (req, res) {
           res.send("<td colspan='9' style='color:red;'>موجود نیست </td>");
         }
       }
-    }
+    },
   );
 });
 
@@ -9412,7 +9349,7 @@ app.post("/from_date_to_oloan_reg_01", function (req, res) {
           res.send("<td colspan='9' style='color:red;'>موجود نیست </td>");
         }
       }
-    }
+    },
   );
 });
 
@@ -9444,7 +9381,7 @@ app.post("/from_date_to_iloan_reg_01", function (req, res) {
             f_d +
             "' AND '" +
             t_d +
-            "'"
+            "'",
         );
 
         if (rows_04.length > 0) {
@@ -9500,7 +9437,7 @@ app.post("/from_date_to_iloan_reg_01", function (req, res) {
           res.send("<td colspan='9' style='color:red;'>موجود نیست </td>");
         }
       }
-    }
+    },
   );
 });
 
@@ -9572,7 +9509,7 @@ app.post("/from_date_to_tools_reg_01", function (req, res) {
           res.send("<td colspan='9' style='color:red;'>موجود نیست </td>");
         }
       }
-    }
+    },
   );
 });
 
@@ -9644,7 +9581,7 @@ app.post("/from_date_to_tools_reg_02", function (req, res) {
           res.send("<td colspan='9' style='color:red;'>موجود نیست </td>");
         }
       }
-    }
+    },
   );
 });
 
@@ -9718,7 +9655,7 @@ app.post("/from_date_to_cs_reg_01", function (req, res) {
           res.send("<td colspan='12' style='color:red;'>موجود نیست </td>");
         }
       }
-    }
+    },
   );
 });
 
@@ -9753,7 +9690,7 @@ function notification1(user_id, msg) {
       function (err, response) {
         if (err) console.error(err);
         else console.log(response);
-      }
+      },
     );
   });
 }
@@ -9808,7 +9745,7 @@ function notification(id, msg) {
           function (err, res) {
             if (err) console.error(err);
             else console.log(res);
-          }
+          },
         );
       }
     }
@@ -9824,7 +9761,7 @@ function backup_func(dir_folder, file_name) {
   var just_name_without_extension = file_name.split(".");
   fs.writeFileSync(
     dir_folder + "/" + just_name_without_extension[0] + ".zip",
-    file.toBuffer()
+    file.toBuffer(),
   );
   console.log(dir_name);
 }
