@@ -1541,31 +1541,21 @@ app.post("/update_froshat_details", function (req, res) {
 
 /* mahsol processing */
 app.post("/mahsole_processing", function (req, res) {
-  var items = [];
-  var new_items = [];
-
-  var type = [];
-  var new_type = [];
-
-  var quantity = [];
-  var new_quantity = [];
   var items = req.body.item;
   var type = req.body.type;
   var quantity = req.body.quantity;
 
+  if (!items || !type || !quantity) {
+    return res.send("لطفاً حداقل یک جنس به جدول اضافه کنید");
+  }
+
+  var items_array = Array.isArray(items) ? items : [items];
+  var type_array = Array.isArray(type) ? type : [type];
+  var quantity_array = Array.isArray(quantity) ? quantity : [quantity];
+
   var mahsole_name = req.body.mahsole_name;
   var mahsole_type = req.body.mahsole_type;
   var serial_no = req.body.serial_no;
-
-  var newstr = "someerr";
-
-  new_items = items += "," + newstr;
-  new_type = type += "," + newstr;
-  new_quantity = quantity += "," + newstr;
-
-  var items_array = new_items.split(",");
-  var type_array = new_type.split(",");
-  var quantity_array = new_quantity.split(",");
 
   con.query(
     "select * from ready_materials_type where serial_no ='" + serial_no + "'",
@@ -1584,7 +1574,7 @@ app.post("/mahsole_processing", function (req, res) {
           function (err, rows_0031) {
             var item_type_id = rows_0031.insertId;
 
-            for (var i = 0; i < items_array.length - 1; i++) {
+            for (var i = 0; i < items_array.length; i++) {
               (function (i) {
                 setTimeout(function () {
                   con.query(
