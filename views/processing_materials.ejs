@@ -109,10 +109,11 @@
                         <input type="search"  placeholder="جستجوی اجناس" list="search_list" id="myinput" name="item-search"  class="print item-search form-control">
                 </div>
             </div>
+            <% /* search_list options from stack_raw_materials table (data_03) */ %>
             <datalist id="search_list">
                 <% data_03.forEach(function(item_reg) {  %>
                     <option value="<%= item_reg.bill_no %>"><%= item_reg.item_name %> -- <%= item_reg.item_type %></option>
-                    <% }); %>
+                <% }); %>
             </datalist>
             <div class="row">
                 <form class="col-sm-12 mt-5 needs-validation" action="" enctype="multipart/form-data" id="data_for_invoice" autocomplete="off">
@@ -182,65 +183,45 @@
   </script>
   <script>
        var count = 1;
-      $("#myinput").on("search",function(){
+      var lastFetch = { value: '', time: 0 };
+      function fetchFromStackRawMaterials() {
           var search_input = $("#myinput").val();
-          //alert(search_input);
-          var data ={};
-
-                $.ajax({
-                    type: 'POST',
-                    data: JSON.stringify(data),
-                    contentType: "application/json",
-                    dataType:'json',
-                    url: '/mahsol_items?param='+search_input,                      
-                    success: function(data) {
-                        var parsedJSON = Array.isArray(data) ? data[0] : data;
-                        if (!parsedJSON) return;
-                        var st_id = parsedJSON.id;
-                        
-                    //alert(st_id);
-                   //$("#stak_to_market_id").val(st_id);
-                    var name = parsedJSON.item_name;
-                    // alert(name)
-                    var quantity= 1;
-                    
-                    var buy_type = parsedJSON.item_type;
-                    var price = parsedJSON.price;
-                    //alert(price)
-                    var total = price * quantity ;
-                   
-                    var html_code = "<tr id='row_id_"+count+"'>";
-
-                    html_code+=
-                    '<td>'+count+'</td>';
-                    html_code+=
-                    '<td><input type="text" name="item" readonly value="'+name+'" class="form-control item" id="'+count+'"></td>';
-                    /* html_code+=
-                    '<input type="hidden" name="stak_r_m_id" value="'+st_id+'" id="'+count+'" class="form-control item">'; */
-                    html_code+=
-                    '<td><input type="text" name="type" readonly value="'+buy_type+'" class="form-control item" id="'+count+'"></td>';
-                    html_code+=
-                    '<td><input type="text" name="quantity" value="'+quantity+'" class="form-control quantity" id="quantity_'+count+'"></td>';
-                    /* html_code+=
-                    '<td><input type="number" name="price" value="'+price+'" class="form-control price" id="price_'+count+'"></td>';
-                    html_code+=
-                    '<td><input type="number" name="total" value="'+total+'" readonly class="form-control total" id="total_'+count+'"></td>'; */
-                    html_code+=
-                    '<td class="print"><span class="delete-img print"  id="'+count+'" ><img width="25px" style="cursor: pointer;" src="assets/img/mawadkham/trash.svg" alt=""></span></td>';
-                    html_code += "</tr>";
-                    
-                    $("#tbody").append(html_code);
-                    count++;
-
-                    $("#myinput").val("");
-                        
-                    },
-                    error: function(error) {
-                        console.log("some error in fetching the notifications");
-                    }
-                });
-          //////
-      });
+          if (!search_input || !search_input.trim()) return;
+          var now = Date.now();
+          if (search_input === lastFetch.value && (now - lastFetch.time) < 400) return;
+          lastFetch.value = search_input;
+          lastFetch.time = now;
+          $.ajax({
+              type: 'POST',
+              data: JSON.stringify({}),
+              contentType: "application/json",
+              dataType: 'json',
+              url: '/mahsol_items?param=' + encodeURIComponent(search_input.trim()),
+              success: function(data) {
+                  var parsedJSON = Array.isArray(data) ? data[0] : data;
+                  if (!parsedJSON || !parsedJSON.item_name) return;
+                  var name = parsedJSON.item_name;
+                  var quantity = 1;
+                  var buy_type = parsedJSON.item_type || '';
+                  var html_code = "<tr id='row_id_"+count+"'>";
+                  html_code += '<td>'+count+'</td>';
+                  html_code += '<td><input type="text" name="item" readonly value="'+name.replace(/"/g, '&quot;')+'" class="form-control item" id="item_'+count+'"></td>';
+                  html_code += '<td><input type="text" name="type" readonly value="'+buy_type.replace(/"/g, '&quot;')+'" class="form-control item" id="type_'+count+'"></td>';
+                  html_code += '<td><input type="text" name="quantity" value="'+quantity+'" class="form-control quantity" id="quantity_'+count+'"></td>';
+                  html_code += '<td class="print"><span class="delete-img print" id="'+count+'"><img width="25px" style="cursor: pointer;" src="assets/img/mawadkham/trash.svg" alt=""></span></td>';
+                  html_code += "</tr>";
+                  $("#tbody").append(html_code);
+                  count++;
+                  $("#myinput").val("");
+                  lastFetch.value = '';
+              },
+              error: function() {
+                  console.log("خطا در واکشی از stack_raw_materials");
+              }
+          });
+      }
+      $("#myinput").on("search", fetchFromStackRawMaterials);
+      $("#myinput").on("change", fetchFromStackRawMaterials);
   </script>
   <script>
       $(document).on('click','.delete-img',function(){

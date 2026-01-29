@@ -1539,15 +1539,15 @@ app.post("/update_froshat_details", function (req, res) {
   });
 });
 
-/* mahsol processing */
+/* mahsol processing - writes to ready_materials_type + create_mahsol */
 app.post("/mahsole_processing", function (req, res) {
   var items = req.body.item;
   var type = req.body.type;
   var quantity = req.body.quantity;
 
-  if (!items || !type || !quantity) {
-    return res.send("لطفاً حداقل یک جنس به جدول اضافه کنید");
-  }
+  // if (!items || !type || !quantity) {
+  //   return res.send("لطفاً حداقل یک جنس به جدول اضافه کنید");
+  // }
 
   var items_array = Array.isArray(items) ? items : [items];
   var type_array = Array.isArray(type) ? type : [type];
@@ -1557,52 +1557,70 @@ app.post("/mahsole_processing", function (req, res) {
   var mahsole_type = req.body.mahsole_type;
   var serial_no = req.body.serial_no;
 
+  if (!mahsole_name || !mahsole_type || !serial_no) {
+    return res.send("لطفاً نام محصول، واحد و نمبر ثبت را پر کنید");
+  }
+
   con.query(
     "select * from ready_materials_type where serial_no ='" + serial_no + "'",
     function (err, rows_05) {
-      if (rows_05.length > 0) {
-        res.send(" نمبر ثبت موجود است");
-      } else {
-        con.query(
-          "INSERT INTO `ready_materials_type`(`name`, `type`, `serial_no`) VALUES ('" +
-            mahsole_name +
-            "','" +
-            mahsole_type +
-            "','" +
-            serial_no +
-            "')",
-          function (err, rows_0031) {
-            var item_type_id = rows_0031.insertId;
-
-            for (var i = 0; i < items_array.length; i++) {
-              (function (i) {
-                setTimeout(function () {
-                  con.query(
-                    "INSERT INTO `create_mahsol`( `ready_material_type_id`, `item_name`, `item_type`, `quantity`) VALUES ('" +
-                      item_type_id +
-                      "','" +
-                      items_array[i] +
-                      "','" +
-                      type_array[i] +
-                      "','" +
-                      quantity_array[i] +
-                      "')",
-                    function (err, rows_03) {
-                      if (err) {
-                        throw err;
-                      } else {
-                        console.log("no problems");
-                      }
-                    }
-                  );
-                }, i);
-              })(i);
-            }
-
-            res.send("لیست مواد خام برای تولید محصول ذخیره شد");
-          }
-        );
+      if (err) {
+        return res.send("خطا در بررسی نمبر ثبت");
       }
+      if (rows_05.length > 0) {
+        return res.send(" نمبر ثبت موجود است");
+      }
+      con.query(
+        "INSERT INTO `ready_materials_type`(`name`, `type`, `serial_no`) VALUES ('" +
+          mahsole_name +
+          "','" +
+          mahsole_type +
+          "','" +
+          serial_no +
+          "')",
+        function (err, rows_0031) {
+          if (err) {
+            return res.send("خطا در ذخیره محصول");
+          }
+          var item_type_id = rows_0031.insertId;
+          var total = items_array.length;
+          var done = 0;
+          var hasError = false;
+
+          if (total === 0) {
+            return res.send("لیست مواد خام برای تولید محصول ذخیره شد");
+          }
+
+          for (var i = 0; i < items_array.length; i++) {
+            (function (idx) {
+              con.query(
+                "INSERT INTO `create_mahsol`( `ready_material_type_id`, `item_name`, `item_type`, `quantity`) VALUES ('" +
+                  item_type_id +
+                  "','" +
+                  String(items_array[idx] || "").replace(/'/g, "''") +
+                  "','" +
+                  String(type_array[idx] || "").replace(/'/g, "''") +
+                  "','" +
+                  quantity_array[idx] +
+                  "')",
+                function (err, rows_03) {
+                  done++;
+                  if (err) {
+                    hasError = true;
+                  }
+                  if (done === total) {
+                    if (hasError) {
+                      res.send("محصول ذخیره شد ولی برخی اقلام ذخیره نشدند");
+                    } else {
+                      res.send("لیست مواد خام برای تولید محصول ذخیره شد");
+                    }
+                  }
+                }
+              );
+            })(i);
+          }
+        }
+      );
     }
   );
 });
@@ -5931,16 +5949,20 @@ app.post("/delete_stack_to_market_list", function (req, res) {
   );
 });
 
-/* when we create formulea */
+/* item lookup from stack_raw_materials for processing_materials datalist */
 app.post("/mahsol_items", function (req, res) {
-  /* here create view and make it group by item name and type  */
   var my_id = req.query.param;
+  if (!my_id) {
+    return res.status(400).send([]);
+  }
   con.query(
-    "select * from stack_raw_materials where bill_no = '" +
-      my_id +
-      "' GROUP by bill_no ",
+    "SELECT * FROM stack_raw_materials WHERE bill_no = ? LIMIT 1",
+    [my_id],
     function (err, rows_02) {
-      res.send(rows_02);
+      if (err) {
+        return res.status(500).send([]);
+      }
+      res.send(rows_02 && rows_02.length ? rows_02[0] : []);
     }
   );
 });
@@ -6598,27 +6620,32 @@ app.get("/fro.ejs", function (req, res) {
 
 app.get("/processing_materials.ejs", function (req, res) {
   con.query("select * from company_info", function (err, rows_02) {
-    /*  con.query("select * from stack_raw_materials_list ", function(err,rows_03)
-                  { */
+    if (err) {
+      return res.status(500).send("خطا در بارگذاری اطلاعات شرکت");
+    }
+    // data_03: datalist options from stack_raw_materials
     con.query(
-      "SELECT item_name,item_type,bill_no,SUM(quantity) as totqunatity FROM `stack_raw_materials` GROUP BY item_name , item_type ,bill_no ",
+      "SELECT item_name, item_type, bill_no, SUM(quantity) AS totqunatity FROM stack_raw_materials GROUP BY item_name, item_type, bill_no",
       function (err, rows_03) {
-        con.query(
-          "select * from ready_materials_type",
-          function (err, rows_04) {
-            con.query(
-              "SELECT * FROM customer_account",
-              function (err, rows_05) {
-                res.render("processing_materials", {
-                  data_02: rows_02,
-                  data_03: rows_03,
-                  data_04: rows_04,
-                  data_05: rows_05,
-                });
-              }
-            );
+        if (err) {
+          return res.status(500).send("خطا در بارگذاری لیست مواد اولیه از stack_raw_materials");
+        }
+        con.query("select * from ready_materials_type", function (err, rows_04) {
+          if (err) {
+            return res.status(500).send("خطا در بارگذاری انواع مواد آماده");
           }
-        );
+          con.query("SELECT * FROM customer_account", function (err, rows_05) {
+            if (err) {
+              return res.status(500).send("خطا در بارگذاری حساب مشتری");
+            }
+            res.render("processing_materials", {
+              data_02: rows_02 || [],
+              data_03: rows_03 || [],
+              data_04: rows_04 || [],
+              data_05: rows_05 || [],
+            });
+          });
+        });
       }
     );
   });
