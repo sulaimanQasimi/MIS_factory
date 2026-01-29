@@ -7781,11 +7781,10 @@ app.post("/stack_reg", function (req, res) {
 
   var item_type = req.body.item_type;
   var amount = req.body.amount;
-  var fixed_price = req.body.price;
-
-  var sell_price = req.body.sell_price;
-  var currency = req.body.currency;
-  var to_dollar = req.body.to_dollar;
+  var fixed_price = req.body.price || 0;
+  var sell_price = req.body.sell_price || 0;
+  var currency = req.body.currency || "افغانی";
+  var to_dollar = req.body.to_dollar || 1;
   var date = req.body.date_man;
   var m = moment
     .from(date, "fa", "YYYY/MM/DD")
@@ -8526,13 +8525,52 @@ app.get("/readyMF.ejs", function (req, res) {
     con.query(
       "SELECT MAX(id) as new_bill  FROM ready_materials_type",
       function (err, rows_03) {
-        res.render("readyMF", {
-          data_list: rows_04,
-          data_03: rows_03[0].new_bill,
-        });
+        con.query(
+          "SELECT * FROM stack_factory_registration_list ORDER BY item_name, item_type",
+          function (err, stack_rows) {
+            var stack_list = stack_rows || [];
+            var stack_date = [];
+            if (stack_list.length > 0) {
+              for (var i = 0; i < stack_list.length; i++) {
+                var sh = moment(stack_list[i].date, "YYYY/MM/DD")
+                  .locale("fa")
+                  .format("YYYY/MM/DD");
+                stack_date.push(sh);
+              }
+            }
+            res.render("readyMF", {
+              data_list: rows_04,
+              data_03: rows_03[0].new_bill,
+              stack_list: stack_list,
+              stack_date: stack_date,
+            });
+          }
+        );
       }
     );
   });
+});
+
+app.get("/api/stack_list", function (req, res) {
+  con.query(
+    "SELECT * FROM stack_factory_registration_list ORDER BY item_name, item_type",
+    function (err, stack_rows) {
+      if (err) {
+        return res.status(500).json({ stack_list: [], stack_date: [] });
+      }
+      var stack_list = stack_rows || [];
+      var stack_date = [];
+      if (stack_list.length > 0) {
+        for (var i = 0; i < stack_list.length; i++) {
+          var sh = moment(stack_list[i].date, "YYYY/MM/DD")
+            .locale("fa")
+            .format("YYYY/MM/DD");
+          stack_date.push(sh);
+        }
+      }
+      res.json({ stack_list: stack_list, stack_date: stack_date });
+    }
+  );
 });
 
 app.get("/tools-rge.ejs", function (req, res) {

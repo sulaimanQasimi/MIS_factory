@@ -114,6 +114,62 @@
       </div>
     </div>
   </div>
+
+  <div class="modal fade" id="stackListEditModal" tabindex="-1" role="dialog" aria-labelledby="stackListEditModal" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+        <div class="modal-body">
+          <span class="closerSpan" data-dismiss="modal" aria-label="Close"><img src="assets/img/last-project/delete.svg" width="20px" alt="close"></span>
+          <h3 class="mb-2 mt-2 mr-5" style="margin-right: 40px !important;">ویرایش رکورد مواد آماده انبار</h3>
+          <form id="form_stack_list_edit" class="mt-4">
+            <input type="hidden" name="edit_id" id="stack_edit_id">
+            <div class="row">
+              <div class="col-md-6">
+                <div class="input-group mt-3">
+                  <label class="mt-2 col-4">نام محصول:</label>
+                  <input type="text" name="item_name" id="stack_item_name" class="form-control col-8" required>
+                </div>
+                <div class="input-group mt-3">
+                  <label class="mt-2 col-4">واحد:</label>
+                  <input type="text" name="item_type" id="stack_item_type" class="form-control col-8" required>
+                </div>
+                <div class="input-group mt-3">
+                  <label class="mt-2 col-4">مقدار:</label>
+                  <input type="text" name="quantity" id="stack_quantity" class="form-control col-8" required>
+                </div>
+                <div class="input-group mt-3">
+                  <label class="mt-2 col-4">قیمت خرید:</label>
+                  <input type="text" name="fixed_price" id="stack_fixed_price" class="form-control col-8">
+                </div>
+                <div class="input-group mt-3">
+                  <label class="mt-2 col-4">قیمت فروش:</label>
+                  <input type="text" name="sell_price" id="stack_sell_price" class="form-control col-8">
+                </div>
+              </div>
+              <div class="col-md-6">
+                <div class="input-group mt-3">
+                  <label class="mt-2 col-4">واحد پولی:</label>
+                  <input type="text" name="currency" id="stack_currency" class="form-control col-8">
+                </div>
+                <div class="input-group mt-3">
+                  <label class="mt-2 col-4">نرخ:</label>
+                  <input type="text" name="ex_rate" id="stack_ex_rate" class="form-control col-8">
+                </div>
+                <div class="input-group mt-3">
+                  <label class="mt-2 col-4">نمبر ثبت:</label>
+                  <input type="text" name="serial_number" id="stack_serial_number" class="form-control col-8">
+                </div>
+              </div>
+            </div>
+            <div class="mt-4">
+              <button type="submit" class="btn btn-success rounded-pill">ذخیره تغییرات</button>
+              <button type="button" class="btn btn-secondary rounded-pill" data-dismiss="modal">لغو</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
   
   <!-- container start -->
     <div class="container">
@@ -147,53 +203,14 @@
               <label class="mt-2" for="amount" >مقدار :</label>
               <input type="text" id="amount" name="amount" required class="amount mb-3 col-12 form-control">
             </div>
-            <!-- <div class="input-group">
-              <label class="mt-2" for="price" >قیمت (فی دانه) :</label>
-              <input type="text" id="price" name="price" required class="price mb-3 col-12 form-control">
-            </div> -->
+            <input type="hidden" name="price" id="price" value="0">
+            <input type="hidden" name="sell_price" value="0">
+            <input type="hidden" name="currency" value="افغانی">
+            <input type="hidden" name="to_dollar" value="1">
             <!-- heere -->
             
           </div>
-          <!-- second -->
-          <!-- <div class="col-xs-12 col-sm-12 col-md-10 col-lg-4"> -->
-            <!-- <div class="input-group">
-              <label class="mt-2" for="total" >قیمت مجموعی :</label>
-              <input type="text" id="total" name="total" required class="total mb-3 col-12 form-control">
-            </div> -->
-
-            <!-- <div class="input-group">
-              <label class="mt-2" for="sell_price" > قیمت فروش:</label>
-              <input type="number" id="sell_price" name="sell_price" required class="sale_price mb-3 col-12 form-control">
-            </div> -->
-
-            <!-- <div class="input-group">
-              <label class="mt-2" for="currency" >واحد پولی  :</label>
-              <select type="number" id="currency" name="currency" onchange="change_c()" required class="currency mb-3 col-12 form-control">
-            <option value="دالر">دالر</option>      
-             
-            <option value="افغانی">افغانی</option>      
-            </select> -->
-           
             <script>
-                /* function change_c(){
-                  var exchangeRate = $("#currency").val();
-                  if(exchangeRate == "دالر"){
-                      $("#to_dollar").val(localStorage.getItem(1));
-                  }
-                  else if(exchangeRate == "یورو"){
-                      $("#to_dollar").val(localStorage.getItem(2));
-                  }
-                  else if(exchangeRate == "افغانی"){
-                      $("#to_dollar").val(1);
-                  }
-                  else if(exchangeRate == "کلدار"){
-                      $("#to_dollar").val(localStorage.getItem(3));
-                  }
-                  else if(exchangeRate == "تومان"){
-                      $("#to_dollar").val(localStorage.getItem(4));
-                  }
-                } */
-
                 function change_c(){
                   var exchangeRate = $("#currency").val();
                   if(exchangeRate == "دالر"){
@@ -219,16 +236,6 @@
                   }
                 }
               </script>
-           
-           <!--  </div>
-            <div class="input-group">
-            
-              <label class="mt-2" id="dynamic_ex_rate" for="to_dollar" >به افغانی :</label>
-              <input type="text" id="to_dollar" readonly name="to_dollar" required class="to_dollar mb-3 col-12 form-control">
-            </div>
-            
-          </div> -->
-          <!-- third -->
           <div class="col-xs-12 col-sm-12 col-md-10 col-lg-4">
           
           <div class="input-group">
@@ -239,18 +246,6 @@
               <label class="mt-2" for="pro_no" >نمبر ثبت محصول:</label>
               <input type="text" id="pro_no" name="pro_no" required class="pro_no mb-3 col-12 form-control">
             </div>
-         <!--   <div class="input-group">
-              <label class="mt-2 " for="emp_img" > تصویر:</label>
-               <input type="file"  id="emp_img" name="emp_img" class="emp_img mb-3 col-12 form-control"> 
-              <label class="btn mb-3 mt-2 st btn-default btn-sm form-control center-block btn-file">
-                <i style="color:dodgerblue;" class="fa fa-upload fa-2x" aria-hidden="true"></i>
-                <input type="file" style="display: none;">
-              </label>
-            </div>
-            <div class="input-group">
-              <label class="mt-2" for="date-man" >تاریخ :</label>
-              <input type="text" id="date-man" name="date-man" class="date-man mb-3 col-12 form-control">
-            </div> -->
           </div>
           <div class="col-sm-12 height" style="height:40px;"></div>
           <div class="col-sm-3"><a style="color: #fff;" href="rmf_reg.ejs" class="btn btn-sm btn-success">معلومات ثبت شده</a></div>
@@ -266,6 +261,51 @@
           
         </div>
       </form>
+
+        <h4 class="mt-5 mb-3" style="text-align: center;">جدول مواد آماده انبار (موجودی)</h4>
+        <div class="table-responsive">
+          <table class="table table-striped" id="table-stack-list">
+            <thead>
+              <tr>
+                <th>شماره</th>
+                <th>نام محصول</th>
+                <th>واحد</th>
+                <th>مقدار</th>
+                <th>قیمت خرید</th>
+                <th>قیمت فروش</th>
+                <th>واحد پولی</th>
+                <th>نرخ</th>
+                <th>نمبر ثبت</th>
+                <th>تاریخ</th>
+                <th>عملیات</th>
+              </tr>
+            </thead>
+            <tbody id="stack_list_tbody">
+              <% if (typeof stack_list !== 'undefined' && stack_list && stack_list.length > 0) { %>
+                <% for (var i = 0; i < stack_list.length; i++) { var row = stack_list[i]; %>
+              <tr>
+                <td><%= i + 1 %></td>
+                <td><%= row.item_name %></td>
+                <td><%= row.item_type %></td>
+                <td><%= row.quantity %></td>
+                <td><%= row.fixed_price %></td>
+                <td><%= row.sell_price %></td>
+                <td><%= row.currency %></td>
+                <td><%= row.ex_rate %></td>
+                <td><%= row.serial_number %></td>
+                <td><%= typeof stack_date !== 'undefined' && stack_date[i] ? stack_date[i] : row.date %></td>
+                <td>
+                  <button data-toggle="tooltip" title="ویرایش" class="edt edit-tbl btn-stack-edit" data-id="<%= row.id %>"><img width="15px" src="assets/img/last-project/edit.svg" alt=""></button>
+                  <button data-toggle="tooltip" title="حذف" class="edt del btn-stack-delete" data-id="<%= row.id %>"><img width="15px" src="assets/img/last-project/delete.svg" alt=""></button>
+                </td>
+              </tr>
+                <% } %>
+              <% } else { %>
+              <tr><td colspan="11" style="text-align: center;">هیچ رکوردی موجود نیست</td></tr>
+              <% } %>
+            </tbody>
+          </table>
+        </div>
       
         
       </section>
@@ -321,7 +361,26 @@ $('.amount').keyup(()=>{
       alert(response);
       document.getElementById("form1").reset();
       change_c();
+      refreshStackList();
     })
+  }
+
+  function refreshStackList() {
+    $.getJSON('/api/stack_list', function (data) {
+      var list = data.stack_list || [];
+      var dates = data.stack_date || [];
+      var html = '';
+      if (list.length === 0) {
+        html = '<tr><td colspan="11" style="text-align: center;">هیچ رکوردی موجود نیست</td></tr>';
+      } else {
+        for (var i = 0; i < list.length; i++) {
+          var row = list[i];
+          var dateStr = dates[i] || (row.date || '');
+          html += '<tr><td>' + (i + 1) + '</td><td>' + (row.item_name || '') + '</td><td>' + (row.item_type || '') + '</td><td>' + (row.quantity || '') + '</td><td>' + (row.fixed_price || '') + '</td><td>' + (row.sell_price || '') + '</td><td>' + (row.currency || '') + '</td><td>' + (row.ex_rate || '') + '</td><td>' + (row.serial_number || '') + '</td><td>' + dateStr + '</td><td><button data-toggle="tooltip" title="ویرایش" class="edt edit-tbl btn-stack-edit" data-id="' + row.id + '"><img width="15px" src="assets/img/last-project/edit.svg" alt=""></button> <button data-toggle="tooltip" title="حذف" class="edt del btn-stack-delete" data-id="' + row.id + '"><img width="15px" src="assets/img/last-project/delete.svg" alt=""></button></td></tr>';
+        }
+      }
+      $("#stack_list_tbody").html(html);
+    });
   }
 
   function show_all()
@@ -464,6 +523,75 @@ $('.amount').keyup(()=>{
       return false;
                    
   }
+
+  function edit_stack_list(id) {
+    $.ajax({
+      type: 'POST',
+      url: '/get_stack_to_market_list?param=' + id,
+      contentType: "application/json",
+      data: JSON.stringify({}),
+      dataType: 'json',
+      success: function (data) {
+        var row = Array.isArray(data) && data.length > 0 ? data[0] : data;
+        $("#stack_edit_id").val(row.id);
+        $("#stack_item_name").val(row.item_name);
+        $("#stack_item_type").val(row.item_type);
+        $("#stack_quantity").val(row.quantity);
+        $("#stack_fixed_price").val(row.fixed_price);
+        $("#stack_sell_price").val(row.sell_price);
+        $("#stack_currency").val(row.currency);
+        $("#stack_ex_rate").val(row.ex_rate);
+        $("#stack_serial_number").val(row.serial_number);
+        $("#stackListEditModal").modal('show');
+      },
+      error: function () {
+        alert('خطا در بارگذاری رکورد');
+      }
+    });
+  }
+
+  function delete_stack_list(id) {
+    if (!confirm('آیا مطمئن هستید؟')) return;
+    $.ajax({
+      type: 'POST',
+      url: '/delete_stack_to_market_list?param=' + id,
+      contentType: "application/json",
+      data: JSON.stringify({}),
+      dataType: 'json',
+      success: function () {
+        refreshStackList();
+      },
+      error: function () {
+        refreshStackList();
+      }
+    });
+  }
+
+  $("#form_stack_list_edit").on('submit', function (e) {
+    e.preventDefault();
+    $.ajax({
+      url: '/update_stack_to_market_list',
+      type: 'POST',
+      data: $(this).serialize(),
+      success: function () {
+        $("#stackListEditModal").modal('hide');
+        window.location.href = 'readyMF.ejs';
+      },
+      error: function (xhr) {
+        alert(xhr.responseText || 'خطا در ذخیره');
+      }
+    });
+    return false;
+  });
+
+  $(document).on('click', '.btn-stack-edit', function () {
+    var id = $(this).data('id');
+    if (id) edit_stack_list(id);
+  });
+  $(document).on('click', '.btn-stack-delete', function () {
+    var id = $(this).data('id');
+    if (id) delete_stack_list(id);
+  });
 
   $(function(){
     var dis_type = $("#dis_type").val();
