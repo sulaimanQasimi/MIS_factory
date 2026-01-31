@@ -7746,39 +7746,154 @@ app.post("/stack_reg", function (req, res) {
     .format("YYYY/MM/DD");
   var serail_no = req.body.pro_no;
 
-  // stack_factory_registration_list
+  // Check sufficient raw materials before saving (amount will be minus from stack_raw_materials)
   con.query(
-    "INSERT INTO stack_factory_registration(`item_name`,`item_type`,`quantity`,`fixed_price`,`sell_price`,`currency`,`ex_rate`,`serial_number`,`date`) VALUES ('" +
-      name +
-      "','" +
-      item_type +
-      "','" +
-      amount +
-      "','" +
-      fixed_price +
-      "','" +
-      sell_price +
-      "','" +
-      currency +
-      "','" +
-      to_dollar +
-      "','" +
-      serail_no +
-      "','" +
-      m +
-      "')",
-    function (err, rows) {
-      /* all raw_material should be mines from each mahsol */
-      /* lastrowss of stack_fa_reg , name , type, quantity */
-      con.query(
-        "select * from create_mahsol where ready_material_type_id='" +
-          mahsole_id +
-          "'",
-        function (err, rows_0002) {
-          var stack_fac_reg = rows.insertId; //
-          console.log(stack_fac_reg);
+    "select * from create_mahsol where ready_material_type_id='" +
+      mahsole_id +
+      "'",
+    function (err, rows_0002) {
+      if (err || !rows_0002 || rows_0002.length === 0) {
+        con.query(
+          "INSERT INTO stack_factory_registration(`item_name`,`item_type`,`quantity`,`fixed_price`,`sell_price`,`currency`,`ex_rate`,`serial_number`,`date`) VALUES ('" +
+            name +
+            "','" +
+            item_type +
+            "','" +
+            amount +
+            "','" +
+            fixed_price +
+            "','" +
+            sell_price +
+            "','" +
+            currency +
+            "','" +
+            to_dollar +
+            "','" +
+            serail_no +
+            "','" +
+            m +
+            "')",
+          function (err, rows) {
+            if (err) return res.send("خطا در ثبت: " + (err.message || err));
+            con.query(
+              "select * from stack_factory_registration_list where item_name='" +
+                name +
+                "' and item_type='" +
+                item_type +
+                "'",
+              function (err, rows_02) {
+                if (err) return res.send("خطا: " + (err.message || err));
+                if (rows_02.length > 0) {
+                  var update_qunatity =
+                    parseFloat(rows_02[0].quantity) + parseFloat(amount);
+                  con.query(
+                    "update stack_factory_registration_list set quantity = '" +
+                      update_qunatity +
+                      "' where item_name='" +
+                      name +
+                      "' and item_type='" +
+                      item_type +
+                      "'",
+                    function (err) {
+                      res.send(err ? "خطا در بروزرسانی" : "محصول در گدام موفقانه ثبت شد");
+                    }
+                  );
+                } else {
+                  con.query(
+                    "INSERT INTO stack_factory_registration_list(`item_name`,`item_type`,`quantity`,`fixed_price`,`sell_price`,`currency`,`ex_rate`,`serial_number`,`date`) VALUES ('" +
+                      name +
+                      "','" +
+                      item_type +
+                      "','" +
+                      amount +
+                      "','" +
+                      fixed_price +
+                      "','" +
+                      sell_price +
+                      "','" +
+                      currency +
+                      "','" +
+                      to_dollar +
+                      "','" +
+                      serail_no +
+                      "','" +
+                      m +
+                      "')",
+                    function (err) {
+                      res.send(err ? "خطا در ثبت" : "محصول در گدام موفقانه ثبت شد");
+                    }
+                  );
+                }
+              }
+            );
+          }
+        );
+        return;
+      }
+      var checkIndex = 0;
+      function checkNext() {
+        if (checkIndex >= rows_0002.length) {
+          doInsert();
+          return;
+        }
+        var r = rows_0002[checkIndex];
+        var needed = parseFloat(amount) * parseFloat(r.quantity);
+        con.query(
+          "SELECT COALESCE(SUM(quantity),0) AS total FROM stack_raw_materials WHERE item_name=? AND item_type=?",
+          [r.item_name, r.item_type],
+          function (err, sumRows) {
+            if (err) return res.send("خطا در بررسی موجودی مواد اولیه");
+            var available = parseFloat(sumRows[0].total);
+            if (available < needed) {
+              return res.send(
+                "مواد اولیه کافی نیست. " +
+                  r.item_name +
+                  " (" +
+                  r.item_type +
+                  "): موجود " +
+                  available +
+                  "، مورد نیاز " +
+                  needed
+              );
+            }
+            checkIndex++;
+            checkNext();
+          }
+        );
+      }
+      function doInsert() {
+        con.query(
+          "INSERT INTO stack_factory_registration(`item_name`,`item_type`,`quantity`,`fixed_price`,`sell_price`,`currency`,`ex_rate`,`serial_number`,`date`) VALUES ('" +
+            name +
+            "','" +
+            item_type +
+            "','" +
+            amount +
+            "','" +
+            fixed_price +
+            "','" +
+            sell_price +
+            "','" +
+            currency +
+            "','" +
+            to_dollar +
+            "','" +
+            serail_no +
+            "','" +
+            m +
+            "')",
+          function (err, rows) {
+            if (err) return res.send("خطا در ثبت: " + (err.message || err));
+            /* amount is minus from stack_raw_materials via DB trigger on raw_material_each_mahsol */
+            con.query(
+              "select * from create_mahsol where ready_material_type_id='" +
+                mahsole_id +
+                "'",
+              function (err, rows_0002) {
+                var stack_fac_reg = rows.insertId;
+                console.log(stack_fac_reg);
 
-          for (var i = 0; i < rows_0002.length; i++) {
+                for (var i = 0; i < rows_0002.length; i++) {
             (function (i) {
               setTimeout(function () {
                 var mahsol_item_name = rows_0002[i].item_name;
@@ -7859,6 +7974,8 @@ app.post("/stack_reg", function (req, res) {
       );
     },
   );
+  }
+  });
 });
 
 // app.post("/market_reg1", function(req,res){

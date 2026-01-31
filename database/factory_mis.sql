@@ -13,6 +13,9 @@
 
  Date: 28/01/2026 09:14:22
 */
+DROP DATABASE IF EXISTS `f2`;
+CREATE DATABASE `f2` DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_persian_ci;
+USE `f2`;
 
 SET NAMES utf8mb4;
 SET FOREIGN_KEY_CHECKS = 0;
@@ -685,7 +688,7 @@ CREATE TABLE `taken_amount`  (
 -- ----------------------------
 DROP TABLE IF EXISTS `users`;
 CREATE TABLE `users`  (
-  `id` int NOT NULL AUTO_INCREMENT,
+  `id` int UNSIGNED NOT NULL AUTO_INCREMENT,
   `username` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_persian_ci NOT NULL,
   `full_name` varchar(50) CHARACTER SET utf8mb3 COLLATE utf8mb3_persian_ci NOT NULL,
   `authority` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_persian_ci NOT NULL,
@@ -693,6 +696,19 @@ CREATE TABLE `users`  (
   `profile` text CHARACTER SET utf8mb4 COLLATE utf8mb4_persian_ci NOT NULL,
   PRIMARY KEY (`id`) USING BTREE
 ) ENGINE = InnoDB AUTO_INCREMENT = 5 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_persian_ci ROW_FORMAT = DYNAMIC;
+
+-- ----------------------------
+-- Table structure for exports
+-- ----------------------------
+DROP TABLE IF EXISTS `exports`;
+CREATE TABLE `exports`  (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `user_id` int UNSIGNED NOT NULL,
+  `date` datetime NULL DEFAULT NULL,
+  PRIMARY KEY (`id`) USING BTREE,
+  INDEX `exports_user_id_foreign`(`user_id` ASC) USING BTREE,
+  CONSTRAINT `exports_user_id_foreign` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE RESTRICT ON UPDATE RESTRICT
+) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_persian_ci ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- View structure for rawmin
@@ -721,6 +737,32 @@ CREATE EVENT `min_1_day`
 ON SCHEDULE
 EVERY '1' DAY STARTS '2021-03-20 10:40:36'
 DO UPDATE item_registration set machine_life = machine_life-1
+;;
+delimiter ;
+
+-- ----------------------------
+-- Triggers structure for table raw_material_each_mahsol (minus from stack_raw_materials on readyMF save)
+-- ----------------------------
+DROP TRIGGER IF EXISTS `minus_stack_raw_materials_after_raw_material_each_mahsol_insert`;
+delimiter ;;
+CREATE TRIGGER `minus_stack_raw_materials_after_raw_material_each_mahsol_insert` AFTER INSERT ON `raw_material_each_mahsol` FOR EACH ROW BEGIN
+  DECLARE done INT DEFAULT FALSE;
+  DECLARE r_id INT;
+  DECLARE r_qty FLOAT;
+  DECLARE to_deduct FLOAT DEFAULT NEW.quantity;
+  DECLARE deduct_amt FLOAT;
+  DECLARE cur CURSOR FOR SELECT id, quantity FROM stack_raw_materials WHERE item_name = NEW.item_name AND item_type = NEW.item_type AND quantity > 0 ORDER BY id ASC;
+  DECLARE CONTINUE HANDLER FOR NOT FOUND SET done = TRUE;
+  OPEN cur;
+  deduct_loop: LOOP
+    FETCH cur INTO r_id, r_qty;
+    IF done OR to_deduct <= 0 THEN LEAVE deduct_loop; END IF;
+    SET deduct_amt = LEAST(to_deduct, r_qty);
+    UPDATE stack_raw_materials SET quantity = ROUND(quantity - deduct_amt, 4) WHERE id = r_id;
+    SET to_deduct = to_deduct - deduct_amt;
+  END LOOP;
+  CLOSE cur;
+END
 ;;
 delimiter ;
 
